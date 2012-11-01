@@ -18,7 +18,6 @@ Scanner::Scanner(string _fileName) {
 	InitOperationsTable();
 	InitSeparatorsTable();
 	
-	cout << "line\tpos\ttype\t\ttext\t\t\tvalue" << endl;
 	Start();
 }
 
@@ -162,6 +161,7 @@ Token* Scanner::GetToken() {
 }
 
 void Scanner::Start() {
+	cout << "line\tpos\ttype\t\ttext\t\t\tvalue" << endl << endl;
 	while(Next()) {}
 	cout << endl;
 }
