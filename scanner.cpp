@@ -21,137 +21,6 @@ Scanner::Scanner(string _fileName) {
 	Start();
 }
 
-void Scanner::InitOperationsTable() {
-	operation["+"] = true;
-	operation["-"] = true;
-	operation["*"] = true;
-	operation["/"] = true;
-	operation["=="] = true;
-	operation[">="] = true;
-	operation["<="] = true;
-	operation["!="] = true;
-	operation["="] = true;
-	operation["%"] = true;
-	operation["<"] = true;
-	operation[">"] = true;
-	operation["!"] = true;
-	operation["."] = true;
-	operation["::"] = true;
-	operation["++"] = true;
-	operation["--"] = true;
-	operation[">>"] = true;
-	operation["<<"] = true;
-	operation["&"] = true;
-	operation["~"] = true;
-	operation["|"] = true;
-	operation["||"] = true;
-	operation["&&"] = true;
-	operation["^"] = true;
-	operation["+="] = true;
-	operation["-="] = true;
-	operation["*="] = true;
-	operation["/="] = true;
-	operation["%="] = true;
-	operation["<<="] = true;
-	operation[">>="] = true;
-	operation["&="] = true;
-	operation["|="] = true;
-	operation["^="] = true;
-	operation["->"] = true;
-	operation["?"] = true;
-	operation[":"] = true;
-}
-
-void Scanner::InitSeparatorsTable() {
-	separator["("] = true;
-	separator[")"] = true;
-	separator["["] = true;
-	separator["]"] = true;
-	separator["{"] = true;
-	separator["}"] = true;
-	separator[";"] = true;
-	separator["'"] = true;
-	separator["\""] = true;
-	separator[","] = true;
-}
-
-void Scanner::InitKeyWordsTable() {
-	keyWord["and"] = true;
-	keyWord["and_eq"] = true;
-	keyWord["asm"] = true;
-	keyWord["auto"] = true;
-	keyWord["bitand"] = true;
-	keyWord["bitor"] = true;
-	keyWord["bool"] = true;
-	keyWord["break"] = true;
-	keyWord["case"] = true;
-	keyWord["catch"] = true;
-	keyWord["char"] = true;
-	keyWord["class"] = true;
-	keyWord["compl"] = true;
-	keyWord["const"] = true;
-	keyWord["const_char"] = true;
-	keyWord["continue"] = true;
-	keyWord["default"] = true;
-	keyWord["delete"] = true;
-	keyWord["do"] = true;
-	keyWord["double"] = true;
-	keyWord["dynamic_cast"] = true;
-	keyWord["else"] = true;
-	keyWord["enum"] = true;
-	keyWord["explicit"] = true;
-	keyWord["export"] = true;
-	keyWord["extern"] = true;
-	keyWord["false"] = true;
-	keyWord["float"] = true;
-	keyWord["for"] = true;
-	keyWord["friend"] = true;
-	keyWord["goto"] = true;
-	keyWord["if"] = true;
-	keyWord["inline"] = true;
-	keyWord["int"] = true;
-	keyWord["long"] = true;
-	keyWord["mutable"] = true;
-	keyWord["namespace"] = true;
-	keyWord["new"] = true;
-	keyWord["not"] = true;
-	keyWord["not_eq"] = true;
-	keyWord["operator"] = true;
-	keyWord["or"] = true;
-	keyWord["or_eq"] = true;
-	keyWord["private"] = true;
-	keyWord["protected"] = true;
-	keyWord["public"] = true;
-	keyWord["register"] = true;
-	keyWord["reinterpret_cast"] = true;
-	keyWord["return"] = true;
-	keyWord["short"] = true;
-	keyWord["signed"] = true;
-	keyWord["sizeof"] = true;
-	keyWord["static"] = true;
-	keyWord["static_cast"] = true;
-	keyWord["struct"] = true;
-	keyWord["switch"] = true;
-	keyWord["template"] = true;
-	keyWord["this"] = true;
-	keyWord["throw"] = true;
-	keyWord["true"] = true;
-	keyWord["try"] = true;
-	keyWord["typedef"] = true;
-	keyWord["typeid"] = true;
-	keyWord["typename"] = true;
-	keyWord["union"] = true;
-	keyWord["unsigned"] = true;
-	keyWord["using"] = true;
-	keyWord["virtual"] = true;
-	keyWord["void"] = true;
-	keyWord["volatile"] = true;
-	keyWord["wchar_t"] = true;
-	keyWord["while"] = true;
-	keyWord["xor"] = true;
-	keyWord["xor_eq"] = true;
-}
-
 Scanner::~Scanner() {
 	inputStream.close();
 }
@@ -170,33 +39,31 @@ char Scanner::GetChar() {
 	if(currentPos < currentString.length())
 		return currentString[currentPos++];
 
-	getline(inputStream, currentString);
-	currentPos = 0;
-	currentLine++;
-
+	NextLine();
 	return '\0';
 }
 
+void Scanner::NextLine() {
+	if(inputStream.eof()) return;
+	getline(inputStream, currentString);
+	currentPos = 0;
+	currentLine++;
+}
+
 bool Scanner::IsKeyWord(string str) {
-	if(keyWord[str])
-		return true;
-	return false;
+	return keyWord[str];
 }
 
 bool Scanner::IsOperation(string str) {
-	if(operation[str])
-		return true;
-	return false;
+	return operation[str];
 }
 
-bool Scanner::IsSeparator(string str) {
-	if(separator[str])
-		return true;
-	return false;
+bool Scanner::IsSeparator(char ch) {
+	return separator[ch];
 }
 
 bool Scanner::IsLetter(char ch) {
-	return 'a' <= ch && ch <= 'z' || ch == '_';
+	return ('a' <= ch && ch <= 'z') || ch == '_';
 }
 
 bool Scanner::IsNumber(char ch) {
@@ -220,23 +87,37 @@ bool Scanner::IsStringSeparator(char ch) {
 }
 
 bool Scanner::IsSpecialSymbol(char ch) {
-	return ('!' <= ch && ch <= '/') || (':' <= ch && ch <= '?') || ('[' <= ch && ch <= '^') || 
+	/*return ('!' <= ch && ch <= '/') || (':' <= ch && ch <= '?') || ('[' <= ch && ch <= '^') || 
 		   ('{' <= ch && ch <= '~') || ('\'' <= ch && ch <= '"') || 
-		   ch == '<' || ch == '>' || ch == ',' || ch == '.';
+		   ch == '<' || ch == '>' || ch == ',' || ch == '.';*/
+
+	return ch == '=' || ch == '+' || ch == '-' || ch == '>' || ch == '<' || ch == '&' || ch == '|';
 }
 
 bool Scanner::Next() {
 	char currentChar = GetChar();
 
-	if(currentChar == '\0') return false;
-	if(IsSpace(currentChar) || currentChar == '\t') return true;
+	if(inputStream.eof()) return false;
+
+	if(IsSpace(currentChar) || currentChar == '\t' || currentChar == '\0') return true;
+
+	if(currentChar == '/') {
+		if( (currentChar = GetChar()) == '/') {
+			NextLine();
+			return true;
+		}
+		if(currentChar == '*') {
+			while( GetChar() != '*' || GetChar() != '/') {} 
+			return true;
+		}
+	}
 
 	string s = "", type;
-	int pos = currentPos + 1, line = currentLine;
+	int pos = currentPos, line = currentLine;
 	s += currentChar;
 
 	if(IsLetter(currentChar)) {	
-		while((currentChar = GetChar()) != '\0' && !IsSpace(currentChar)) {
+		while( (currentChar = GetChar()) != '\0' && !IsSpace(currentChar)) {
 			if(IsLetter(currentChar) || IsNumber(currentChar))
 				s += currentChar;
 			else {
@@ -252,8 +133,9 @@ bool Scanner::Next() {
 	else
 		if(IsNumber(currentChar)) {
 			bool dot = false;
+			int dotCount = 0;
 
-			while((currentChar = GetChar()) != '\0' && !IsSpace(currentChar)) {
+			while( (currentChar = GetChar()) != '\0' && !IsSpace(currentChar)) {
 				if(IsNumber(currentChar) || ( dot = IsDot(currentChar) ))
 					s += currentChar;
 				else {
@@ -269,7 +151,7 @@ bool Scanner::Next() {
 		else 
 			if(IsCharSeparator(currentChar)) {
 				s = "";
-				while((currentChar = GetChar()) != '\0' && !IsCharSeparator(currentChar)) {
+				while( (currentChar = GetChar()) != '\0' && !IsCharSeparator(currentChar)) {
 					s += currentChar;
 				}
 				type = "char";
@@ -282,21 +164,115 @@ bool Scanner::Next() {
 					}
 					type = "string";
 				}
-				else {
-					while((currentChar = GetChar()) != '\0' && !IsSpace(currentChar)) {
-						if(!IsSeparator(currentChar + "")) {
-							s += currentChar;
-						}
-						else {
-							currentPos--;
-							break;
-						}
+				else 
+					if(IsSeparator(currentChar)) {
+						type = "separat";
 					}
-					type = "separat";
-				}
+					else {
+						char lastChar = currentChar;
+						type = "operat";
+						if( !IsSpecialSymbol(currentChar = GetChar()) )
+							if(IsOperation( string(1, lastChar) + string(1, currentChar) )) {
+								s += currentChar;
+							}
+							else
+								if( IsOperation(string(1, currentChar)) ) {
+									type = "operat";
+								}
+					}
 
 	currentToken = new Token(line, pos, type, s, NULL);
 	currentToken->Print();
 	
 	return true;
+}
+
+void Scanner::InitOperationsTable() {
+	operation["+"] = true;
+	operation["-"] = true;
+	operation["*"] = true;
+	operation["/"] = true;
+	operation["=="] = true;
+	operation[">="] = true;
+	operation["<="] = true;
+	operation["!="] = true;
+	operation["="] = true;
+	operation["%"] = true;
+	operation["<"] = true;
+	operation[">"] = true;
+	operation["!"] = true;
+	operation["."] = true;
+	operation["++"] = true;
+	operation["--"] = true;
+	operation[">>"] = true;
+	operation["<<"] = true;
+	operation["&"] = true;
+	operation["~"] = true;
+	operation["|"] = true;
+	operation["||"] = true;
+	operation["&&"] = true;
+	operation["^"] = true;
+	operation["+="] = true;
+	operation["-="] = true;
+	operation["*="] = true;
+	operation["/="] = true;
+	operation["%="] = true;
+	operation["&="] = true;
+	operation["|="] = true;
+	operation["^="] = true;
+	operation["->"] = true;
+	operation["?"] = true;
+	operation[":"] = true;
+}
+
+void Scanner::InitSeparatorsTable() {
+	separator['('] = true;
+	separator[')'] = true;
+	separator['['] = true;
+	separator[']'] = true;
+	separator['{'] = true;
+	separator['}'] = true;
+	separator[';'] = true;
+	separator['\''] = true;
+	separator['"'] = true;
+	separator[','] = true;
+}
+
+void Scanner::InitKeyWordsTable() {
+	keyWord["asm"] = true;
+	keyWord["auto"] = true;
+	keyWord["break"] = true;
+	keyWord["case"] = true;
+	keyWord["char"] = true;
+	keyWord["const"] = true;
+	keyWord["continue"] = true;
+	keyWord["default"] = true;
+	keyWord["do"] = true;
+	keyWord["double"] = true;
+	keyWord["else"] = true;
+	keyWord["enum"] = true;
+	keyWord["extern"] = true;
+	keyWord["false"] = true;
+	keyWord["float"] = true;
+	keyWord["for"] = true;
+	keyWord["goto"] = true;
+	keyWord["if"] = true;
+	keyWord["inline"] = true;
+	keyWord["int"] = true;
+	keyWord["long"] = true;
+	keyWord["register"] = true;
+	keyWord["return"] = true;
+	keyWord["short"] = true;
+	keyWord["signed"] = true;
+	keyWord["sizeof"] = true;
+	keyWord["static"] = true;
+	keyWord["struct"] = true;
+	keyWord["switch"] = true;
+	keyWord["true"] = true;
+	keyWord["typedef"] = true;
+	keyWord["union"] = true;
+	keyWord["unsigned"] = true;
+	keyWord["void"] = true;
+	keyWord["volatile"] = true;
+	keyWord["while"] = true;
 }

@@ -6,7 +6,8 @@
 #include "token.h"
 
 class Scanner {
-	map<string, bool> keyWord, operation, separator;
+	map<string, bool> keyWord, operation;
+	map<char, bool> separator;
 	Token* currentToken;
 	string fileName, currentString;
 	ifstream inputStream;
@@ -19,6 +20,7 @@ public:
 
 	Token* GetToken();
 	void Start();
+	void NextLine();
 	void InitKeyWordsTable();
 	void InitOperationsTable();
 	void InitSeparatorsTable();
@@ -36,7 +38,7 @@ public:
 
 	bool IsKeyWord(string);
 	bool IsOperation(string);
-	bool IsSeparator(string);
+	bool IsSeparator(char);
 };
 
 #endif 
