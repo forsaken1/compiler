@@ -25,9 +25,6 @@ Scanner::~Scanner() {
 	inputStream.close();
 }
 
-Token* Scanner::GetToken() {
-	return currentToken;
-}
 
 void Scanner::Start() {
 	cout << "line\tpos\ttype\t\ttext\t\t\tvalue" << endl << endl;
@@ -50,65 +47,78 @@ void Scanner::NextLine() {
 	currentLine++;
 }
 
-bool Scanner::IsKeyWord(string str) {
-	return keyWord[str];
+Token* Scanner::GetToken()					{ return currentToken; }
+bool Scanner::IsKeyWord(string str)			{ return keyWord[str]; }
+bool Scanner::IsOperation(string str)		{ return operation[str]; }
+bool Scanner::IsSeparator(char ch)			{ return separator[ch]; }
+bool Scanner::IsLetter(char ch)				{ return ('a' <= ch && ch <= 'z') || ch == '_'; }
+bool Scanner::IsNumber(char ch)				{ return '0' <= ch && ch <= '9'; }
+bool Scanner::IsDot(char ch)				{ return ch == '.'; }
+bool Scanner::IsSpace(char ch)				{ return ch == ' '; }
+bool Scanner::IsCharSeparator(char ch)		{ return ch == '\''; }
+bool Scanner::IsStringSeparator(char ch)	{ return ch == '"'; }
+bool Scanner::IsTabulationSymbol(char ch)	{ return ch == '\t'; }
+bool Scanner::IsEndOfLine(char ch)			{ return ch == '\0'; }
+bool Scanner::IsCommentBegin(char ch)		{ return ch == '/'; }
+bool Scanner::IsSpecialSymbol(char ch)		{ return ch == '=' || ch == '+' || ch == '-' || ch == '>' || ch == '<' || ch == '&' || ch == '|'; }
+
+void Scanner::BackToPreviousChar() {
+	currentPos--;
 }
 
-bool Scanner::IsOperation(string str) {
-	return operation[str];
-}
-
-bool Scanner::IsSeparator(char ch) {
-	return separator[ch];
-}
-
-bool Scanner::IsLetter(char ch) {
-	return ('a' <= ch && ch <= 'z') || ch == '_';
-}
-
-bool Scanner::IsNumber(char ch) {
-	return '0' <= ch && ch <= '9';
-}
-
-bool Scanner::IsDot(char ch) {
-	return ch == '.';
-}
-
-bool Scanner::IsSpace(char ch) {
-	return ch == ' ';
-}
-
-bool Scanner::IsCharSeparator(char ch) {
-	return ch == '\'';
-}
-
-bool Scanner::IsStringSeparator(char ch) {
-	return ch == '"';
-}
-
-bool Scanner::IsSpecialSymbol(char ch) {
-	/*return ('!' <= ch && ch <= '/') || (':' <= ch && ch <= '?') || ('[' <= ch && ch <= '^') || 
-		   ('{' <= ch && ch <= '~') || ('\'' <= ch && ch <= '"') || 
-		   ch == '<' || ch == '>' || ch == ',' || ch == '.';*/
-
-	return ch == '=' || ch == '+' || ch == '-' || ch == '>' || ch == '<' || ch == '&' || ch == '|';
+int	Scanner::GetCharType(char ch) {
+	/*if(IsLetter(currentChar)) {	
+		
+	}
+	else
+		if(IsNumber(currentChar)) {
+			
+		}
+		else 
+			if(IsCharSeparator(currentChar)) {
+				
+			}
+			else 
+				if(IsSpecialSymbol(currentChar))
+				if(IsStringSeparator(currentChar)) {
+					
+				}
+				else 
+					if(IsSeparator(currentChar)) {
+						
+					}
+					else {
+						char lastChar = currentChar;
+						type = "operat";
+						if( !IsSpecialSymbol(currentChar = GetChar()) )
+							if(IsOperation( string(1, lastChar) + string(1, currentChar) )) {
+								s += currentChar;
+							}
+							else
+								if( IsOperation(string(1, currentChar)) ) {
+									type = "operat";
+								}
+					}*/
+	return 0;
 }
 
 bool Scanner::Next() {
 	char currentChar = GetChar();
 
-	if(inputStream.eof()) return false;
+	if(inputStream.eof()) 
+		return false;
 
-	if(IsSpace(currentChar) || currentChar == '\t' || currentChar == '\0') return true;
+	if(IsSpace(currentChar) || IsTabulationSymbol(currentChar) || IsEndOfLine(currentChar)) 
+		return Next();
 
-	if(currentChar == '/') {
-		if( (currentChar = GetChar()) == '/') {
+	if(IsCommentBegin(currentChar)) {
+		if( IsCommentBegin(currentChar = GetChar()) ) {
 			NextLine();
-			return true;
+			return Next();
 		}
 		if(currentChar == '*') {
-			while( GetChar() != '*' || GetChar() != '/') {} 
-			return true;
+			while( GetChar() != '*' || !IsCommentBegin(GetChar()) ) {} 
+			return Next();
 		}
 	}
 
@@ -117,11 +127,11 @@ bool Scanner::Next() {
 	s += currentChar;
 
 	if(IsLetter(currentChar)) {	
-		while( (currentChar = GetChar()) != '\0' && !IsSpace(currentChar)) {
-			if(IsLetter(currentChar) || IsNumber(currentChar))
+		while( !IsEndOfLine(currentChar = GetChar()) && !IsSpace(currentChar)) {
+			if( IsLetter(currentChar) || IsNumber(currentChar) )
 				s += currentChar;
 			else {
-				currentPos--;
+				BackToPreviousChar();
 				break;
 			}
 		}
@@ -139,7 +149,7 @@ bool Scanner::Next() {
 				if(IsNumber(currentChar) || ( dot = IsDot(currentChar) ))
 					s += currentChar;
 				else {
-					currentPos--;
+					BackToPreviousChar();
 					break;
 				}
 			}

@@ -2,7 +2,8 @@
 
 int main() {
 	Scanner scannerNull;
-	Scanner scanner("input.txt");
+	Scanner scanner("input.txt")
+		;
 
 	system("PAUSE");
 	return 0;

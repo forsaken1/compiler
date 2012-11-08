@@ -24,7 +24,9 @@ public:
 	void InitKeyWordsTable();
 	void InitOperationsTable();
 	void InitSeparatorsTable();
+	void BackToPreviousChar();
 
+	int  GetCharType(char);
 	char GetChar();
 	bool Next();
 
@@ -35,6 +37,9 @@ public:
 	bool IsStringSeparator(char);
 	bool IsSpace(char);
 	bool IsSpecialSymbol(char);
+	bool IsTabulationSymbol(char);
+	bool IsEndOfLine(char);
+	bool IsCommentBegin(char);
 
 	bool IsKeyWord(string);
 	bool IsOperation(string);
