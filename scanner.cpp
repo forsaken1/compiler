@@ -32,7 +32,6 @@ Scanner::~Scanner() {
 void Scanner::Start() {
 	lastString = false;
 	while(Next()) {}
-	~Scanner();
 }
 
 bool Scanner::Next() {
