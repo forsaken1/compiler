@@ -1,5 +1,6 @@
 #include "scanner.h"
 #include <math.h>
+//#include <boost/regex.hpp>
 
 Scanner::Scanner() {
 	cout << "Scanner. Author: Krilov Alexey, C8303A" << endl << endl;
@@ -88,9 +89,10 @@ bool Scanner::IsKeyWord(string str)			{ return keyWord[str]; }
 bool Scanner::IsOperation(string str)		{ return operation[str]; }
 bool Scanner::IsSeparator(char ch)			{ return separator[ch]; }
 bool Scanner::IsSpecialSymbol(char ch)		{ return specialSymbol[ch]; }
-bool Scanner::IsLetter(char ch)				{ return ('a' <= ch && ch <= 'z') || ch == '_'; }
+bool Scanner::IsLetter(char ch)				{ return ('A' <= ch && ch <= 'Z') || ('a' <= ch && ch <= 'z') || ch == '_'; }
 bool Scanner::IsNumber(char ch)				{ return '0' <= ch && ch <= '9'; }
 bool Scanner::IsDot(char ch)				{ return ch == '.'; }
+bool Scanner::IsE(char ch)					{ return ch == 'E' || ch == 'e'; }
 bool Scanner::IsSpace(char ch)				{ return ch == ' '; }
 bool Scanner::IsCharSeparator(char ch)		{ return ch == '\''; }
 bool Scanner::IsStringSeparator(char ch)	{ return ch == '"'; }
@@ -129,38 +131,59 @@ int StrToInt(string s) {
 	}
 	return result;
 }
+
+string DeleteZero(string s) { //ref.
+	if(IsDot(s[1]) || IsE(s[1])) return s;
+
+	int zeroCount = 0;
+
+	for(int i = 0; i < s.length() - 1; i++) {
+		if(s[i + 1] == '.') break;
+		if(s[i] == '0') 
+			zeroCount++;
+		else
+			break;
+	}
+	return zeroCount == 0 ? s : string(s, zeroCount, s.length() - zeroCount);
+}
+
+string DeleteE(string s) {
+	int i;
+	for(i = 0; i < s.length(); i++) {
+		if(s[i] == 'E' || s[i] == 'e') {
+			break;
+		}
+	}
+	if(s[i + 1] == '-')
+		
+	return s;
+}
 */
 Token* Scanner::GetNumber() {
 	string s = "";
 	int pos = currentPos, line = currentLine, dotCount = 0;
-	bool dot = false;
+	bool dot = false, E = false;
 	s += currentChar;
 
 	while( (currentChar = GetChar()) != '\0' && !IsSpace(currentChar)) {
-		if(IsNumber(currentChar) || ( dot = IsDot(currentChar) ))
+		if(IsNumber(currentChar) || ( E = IsE(currentChar) ) || currentChar == '-' || currentChar == '+' || ( dot = IsDot(currentChar) ))
 			s += currentChar;
 		else {
 			BackToPreviousChar();
 			break;
 		}
 	}
-	if(dot) {
-		return new TokenReal(line, pos, "REAL", s, s);
-	}
-	return new TokenInteger(line, pos, "INT", s, s);
+	return new Token(line, pos, dot || E ? "REAL" : "INT", s);
 }
 
 Token* Scanner::GetSymbol() {
 	string s = "";
 	int pos = currentPos, line = currentLine;
 
-	while( (currentChar = GetChar()) != '\0' && !IsCharSeparator(currentChar)) {
+	while( (currentChar = GetChar()) != '\0' && !IsCharSeparator(currentChar) ) {
 		s += currentChar;
 	}
-	if(IsEscapeSequence(s)) {
-		return new TokenString(line, pos, "ESCAPE", s, s);
-	}
-	return new TokenString(line, pos, "CHAR", s, s);
+	return new Token(line, pos, IsEscapeSequence(s) ? "ESCAPE" : "CHAR", s);
 }
 
 Token* Scanner::GetString() {
@@ -170,7 +193,7 @@ Token* Scanner::GetString() {
 	while((currentChar = GetChar()) != '\0' && !IsStringSeparator(currentChar)) {
 		s += currentChar;
 	}
-	return new TokenString(line, pos, "STRING", s, s);
+	return new Token(line, pos, "STRING", s);
 }
 
 Token* Scanner::GetSeparator() {
@@ -200,6 +223,7 @@ void Scanner::InitEscapeSequencesTable() {
 	escapeSequence["\r"] = true;
 	escapeSequence["\f"] = true;
 	escapeSequence["\'"] = true;
+	escapeSequence["\""] = true;
 	escapeSequence["\\"] = true;
 }
 
@@ -264,8 +288,6 @@ void Scanner::InitSeparatorsTable() {
 	separator['{'] = true;
 	separator['}'] = true;
 	separator[';'] = true;
-	separator['\''] = true;
-	separator['"'] = true;
 	separator[','] = true;
 }
 

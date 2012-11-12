@@ -24,22 +24,22 @@ public:
 
 //---Integer---
 class TokenInteger: public Token {
-	string value;
+	int value;
 
 public:
-	TokenInteger(int, int, string, string, string);
+	TokenInteger(int, int, string, string, int);
 	
-	string GetValue();
+	int GetValue();
 };
 
 //---Real---
 class TokenReal: public Token {
-	string value;
+	double value;
 
 public:
-	TokenReal(int, int, string, string, string);
+	TokenReal(int, int, string, string, double);
 
-	string GetValue();
+	double GetValue();
 };
 
 //---String---

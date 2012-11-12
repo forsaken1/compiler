@@ -34,6 +34,7 @@ class Scanner {
 	bool IsLetter(char);
 	bool IsNumber(char);
 	bool IsDot(char);	
+	bool IsE(char);
 	bool IsCharSeparator(char);
 	bool IsStringSeparator(char);
 	bool IsSpace(char);

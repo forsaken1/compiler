@@ -1,7 +1,4 @@
 #include "scanner.h"
-#include "scanner.cpp"
-#include "token.h"
-#include "token.cpp"
 
 using namespace std;
 
@@ -21,7 +18,7 @@ bool CompareFiles(const char *fileOut, const char *fileTestOut) {
 	return true;
 }
 
-void test(int i, bool exp) {
+void test(int i, bool exp) { 
 	if(exp) cout << "Test " << i << " successful" << endl;
 	else	cout << "Test " << i << " error" << endl;
 }
@@ -34,9 +31,10 @@ string IntToStr(int n) {
 }
 
 int main() {
-	int g = 5.435E-2;
-	cout << g << endl;
-	for(int i = 1; i <= 20; i++) {
+	//double g = E4; 
+	//cout << g << endl;
+
+	for(int i = 30; i <= 33; i++) { 
 		string str  = string("tests/") + IntToStr(i) + string(".in");
 		string str1 = string("tests/") + IntToStr(i) + string(".out");
 
