@@ -3,14 +3,14 @@
 
 #include <string>
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
 class Token {
 protected:
-	string type, text, valueString;
-	int pos, line, valueInt;
-	float valueFloat;
+	string type, text;
+	int pos, line;
 
 public:
 	Token(int, int, string, string);
@@ -19,7 +19,7 @@ public:
 	string GetText();
 	int GetPos();
 	int GetLine();
-	virtual void Print();
+	virtual void Print(ostream&);
 };
 
 //---Integer---
@@ -29,7 +29,6 @@ class TokenInteger: public Token {
 public:
 	TokenInteger(int, int, string, string, string);
 	
-	void Print();
 	string GetValue();
 };
 
@@ -40,7 +39,6 @@ class TokenReal: public Token {
 public:
 	TokenReal(int, int, string, string, string);
 
-	void Print();
 	string GetValue();
 };
 
@@ -51,7 +49,6 @@ class TokenString: public Token {
 public:
 	TokenString(int, int, string, string, string);
 	
-	void Print();
 	string GetValue();
 };
 

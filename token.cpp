@@ -7,8 +7,8 @@ Token::Token(int _line, int _pos, string _type, string _text) {
 	text = _text;
 }
 
-void Token::Print() {
-	cout << line << '\t' << pos << '\t' << type << "\t\t" << text << "\t" << endl;
+void Token::Print(ostream& outputStream) {
+	outputStream << line << '\t' << pos << '\t' << type << "\t\t" << text << endl;
 }
 
 string Token::GetType() {
@@ -32,10 +32,6 @@ TokenInteger::TokenInteger(int _line, int _pos, string _type, string _text, stri
 	value = _value;
 }
 
-void TokenInteger::Print() {
-	cout << line << '\t' << pos << '\t' << type << "\t\t" << text << "\t\t" << value << endl;
-}
-
 string TokenInteger::GetValue() {
 	return value;
 }
@@ -45,10 +41,6 @@ TokenReal::TokenReal(int _line, int _pos, string _type, string _text, string _va
 	value = _value;
 }
 
-void TokenReal::Print() {
-	cout << line << '\t' << pos << '\t' << type << "\t\t" << text << "\t\t" << value << endl;
-}
-
 string TokenReal::GetValue() {
 	return value;
 }
@@ -56,10 +48,6 @@ string TokenReal::GetValue() {
 //---String---
 TokenString::TokenString(int _line, int _pos, string _type, string _text, string _value): Token(_line,_pos, _type, _text) {
 	value = _value;
-}
-
-void TokenString::Print() {
-	cout << line << '\t' << pos << '\t' << type << "\t\t" << text << "\t\t" << value << endl;
 }
 
 string TokenString::GetValue() {

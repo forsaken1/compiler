@@ -5,40 +5,44 @@ Scanner::Scanner() {
 	cout << "Scanner. Author: Krilov Alexey, C8303A" << endl << endl;
 }
 
-Scanner::Scanner(const char* fileName) {
+Scanner::Scanner(const char* _fileName) {
 	currentToken = NULL;
 	currentString = "";
 	currentPos = 0;
 	currentLine = 1;
 	currentChar = '\0';
-
-	inputStream.open(fileName, ios::in);
-	outputStream.open("output.txt", ios::out);
-	getline(inputStream, currentString);
+	fileName = _fileName;
 
 	InitKeyWordsTable();
 	InitOperationsTable();
 	InitSeparatorsTable();
 	InitSpecialSymbolTable();
+	InitEscapeSequencesTable();
 	
 	Start();
 }
 
-Scanner::~Scanner() {
+void Scanner::Start() {
+	lastString = false;
+	inputStream.open(fileName, ios::in);
+	outputStream.open("output.txt", ios::out);
+	getline(inputStream, currentString);
+
+	while(Next()) {
+		currentToken->Print(outputStream);
+		delete currentToken; //for debug
+	}
 	inputStream.close();
 	outputStream.close();
 }
 
-void Scanner::Start() {
-	lastString = false;
-	while(Next()) {}
-}
-
 bool Scanner::Next() {
-	if(lastString) 
-		return false;
-
-	currentChar = GetChar();
+	do {
+		currentChar = GetChar();
+		if(lastString) 
+			return false;
+	}
+	while(IsSpace(currentChar) || IsTabulationSymbol(currentChar) || IsEndOfLine(currentChar));
 
 	if(IsCommentBegin(currentChar)) {
 		char secondChar;
@@ -51,25 +55,13 @@ bool Scanner::Next() {
 			return Next();
 		}
 	}
-
-	switch( GetCharType(currentChar) ) {
-		case 1: currentToken = GetIdentificator(); break;
-		case 2: currentToken = GetNumber(); break;
-		case 3: currentToken = GetSymbol(); break;
-		case 4: currentToken = GetString(); break;
-		case 5: currentToken = GetSeparator(); break;
-		case 6: currentToken = GetOperation(); break;
-		case 7: return Next(); break;
-		case 0: return Next(); break;
-	}
-	Print();
-	delete currentToken; //for debug
+	if(IsLetter(currentChar))			currentToken = GetIdentificator();
+	if(IsNumber(currentChar))			currentToken = GetNumber();
+	if(IsCharSeparator(currentChar))	currentToken = GetSymbol();
+	if(IsStringSeparator(currentChar))	currentToken = GetString();
+	if(IsSeparator(currentChar))		currentToken = GetSeparator();
+	if(IsSpecialSymbol(currentChar))	currentToken = GetOperation();
 	return true;
-}
-
-void Scanner::Print() {
-	outputStream << currentToken->GetLine() << '\t'   << currentToken->GetPos() << '\t' 
-				 << currentToken->GetType() << "\t\t" << currentToken->GetText() << endl;
 }
 
 char Scanner::GetChar() {
@@ -90,18 +82,8 @@ void Scanner::NextLine() {
 	currentLine++;
 }
 
-int	Scanner::GetCharType(char ch) {
-	if(IsLetter(ch))			return 1;
-	if(IsNumber(ch))			return 2;
-	if(IsCharSeparator(ch))		return 3;	
-	if(IsStringSeparator(ch))	return 4;
-	if(IsSeparator(ch))			return 5;
-	if(IsSpecialSymbol(ch))		return 6;
-	if(IsSpace(ch) || IsTabulationSymbol(ch) || IsEndOfLine(ch)) return 7;
-	return 0;
-}
-
 Token* Scanner::GetToken()					{ return currentToken; }
+bool Scanner::IsEscapeSequence(string str)  { return escapeSequence[str]; }
 bool Scanner::IsKeyWord(string str)			{ return keyWord[str]; }
 bool Scanner::IsOperation(string str)		{ return operation[str]; }
 bool Scanner::IsSeparator(char ch)			{ return separator[ch]; }
@@ -121,7 +103,7 @@ void Scanner::BackToPreviousChar() {
 }
 
 Token* Scanner::GetIdentificator() {
-	string s = "", type = "IDENTIF";
+	string s = "";
 	int pos = currentPos, line = currentLine;
 	s += currentChar;
 
@@ -133,10 +115,7 @@ Token* Scanner::GetIdentificator() {
 			break;
 		}
 	}
-	if(IsKeyWord(s))
-		type = "KEYWORD";
-
-	return new Token(line, pos, type, s);
+	return new Token(line, pos, IsKeyWord(s) ? "KEYWORD" : "IDENTIF", s);
 }
 /* //making...
 int CharToInt(char ch) {
@@ -152,7 +131,7 @@ int StrToInt(string s) {
 }
 */
 Token* Scanner::GetNumber() {
-	string s = "", type = "INT";
+	string s = "";
 	int pos = currentPos, line = currentLine, dotCount = 0;
 	bool dot = false;
 	s += currentChar;
@@ -166,46 +145,43 @@ Token* Scanner::GetNumber() {
 		}
 	}
 	if(dot) {
-		type = "REAL";
-		return new TokenReal(line, pos, type, s, s);
+		return new TokenReal(line, pos, "REAL", s, s);
 	}
-	return new TokenInteger(line, pos, type, s, s);
+	return new TokenInteger(line, pos, "INT", s, s);
 }
 
 Token* Scanner::GetSymbol() {
-	string s = "", type = "CHAR";
+	string s = "";
 	int pos = currentPos, line = currentLine;
 
 	while( (currentChar = GetChar()) != '\0' && !IsCharSeparator(currentChar)) {
 		s += currentChar;
 	}
-	return new TokenString(line, pos, type, s, s);
+	if(IsEscapeSequence(s)) {
+		return new TokenString(line, pos, "ESCAPE", s, s);
+	}
+	return new TokenString(line, pos, "CHAR", s, s);
 }
 
 Token* Scanner::GetString() {
-	string s = "", type = "STRING";
+	string s = "";
 	int pos = currentPos, line = currentLine;
 
 	while((currentChar = GetChar()) != '\0' && !IsStringSeparator(currentChar)) {
 		s += currentChar;
 	}
-	return new TokenString(line, pos, type, s, s);
+	return new TokenString(line, pos, "STRING", s, s);
 }
 
 Token* Scanner::GetSeparator() {
-	string s = "", type = "SEPARAT";
-	int pos = currentPos, line = currentLine;
-	s += currentChar;
-
-	return new Token(line, pos, type, s);
+	return new Token(currentLine, currentPos, "SEPARAT", string(1, currentChar));
 }
 
 Token* Scanner::GetOperation() {
-	string s = "", type = "OPERAT";
+	string s = "";
+	char lastChar = currentChar;
 	int pos = currentPos, line = currentLine;
 	s += currentChar;
-
-	char lastChar = currentChar;
 
 	if(IsOperation( string(1, lastChar) + string(1, GetChar()) )) {
 		s += currentChar;
@@ -213,7 +189,18 @@ Token* Scanner::GetOperation() {
 	else
 		BackToPreviousChar();
 
-	return new Token(line, pos, type, s);
+	return new Token(line, pos, "OPERAT", s);
+}
+
+void Scanner::InitEscapeSequencesTable() {
+	escapeSequence["\n"] = true;
+	escapeSequence["\t"] = true;
+	escapeSequence["\v"] = true;
+	escapeSequence["\b"] = true;
+	escapeSequence["\r"] = true;
+	escapeSequence["\f"] = true;
+	escapeSequence["\'"] = true;
+	escapeSequence["\\"] = true;
 }
 
 void Scanner::InitSpecialSymbolTable() {
