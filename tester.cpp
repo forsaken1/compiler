@@ -32,9 +32,11 @@ string IntToStr(int n) {
 
 int main() {
 	//double g = E4; 
-	//cout << g << endl;
+	//string str = "";
+	//str = "df" "df";
+	//cout << str << endl;
 
-	for(int i = 30; i <= 33; i++) { 
+	/*for(int i = 1; i <= 50; i++) { 
 		string str  = string("tests/") + IntToStr(i) + string(".in");
 		string str1 = string("tests/") + IntToStr(i) + string(".out");
 
@@ -43,6 +45,14 @@ int main() {
 
 		Scanner scanner(s);
 		test(i, CompareFiles("output.txt", s1));
+	}*/
+	for(int i = 51; i <= 60; i++) {
+		string str  = string("tests/") + IntToStr(i) + string(".in");
+		string str1 = string("tests/") + IntToStr(i) + string(".out");
+		const char* s = str.c_str();
+		const char* s1 = str1.c_str();
+		ofstream fo(s, ios::out);
+		ofstream fo1(s1, ios::out);
 	}
 
 	system("PAUSE");

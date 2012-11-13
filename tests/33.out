@@ -5,4 +5,5 @@
 5	1	ESCAPE		\r
 6	1	ESCAPE		\f
 7	1	ESCAPE		\'
-8	1	ESCAPE		\\
+8	1	ESCAPE		\"
+9	1	ESCAPE		\\

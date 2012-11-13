@@ -39,9 +39,9 @@ void Scanner::Start() {
 
 bool Scanner::Next() {
 	do {
-		currentChar = GetChar();
 		if(lastString) 
 			return false;
+		currentChar = GetChar();
 	}
 	while(IsSpace(currentChar) || IsTabulationSymbol(currentChar) || IsEndOfLine(currentChar));
 
@@ -81,27 +81,6 @@ void Scanner::NextLine() {
 	getline(inputStream, currentString);
 	currentPos = 0;
 	currentLine++;
-}
-
-Token* Scanner::GetToken()					{ return currentToken; }
-bool Scanner::IsEscapeSequence(string str)  { return escapeSequence[str]; }
-bool Scanner::IsKeyWord(string str)			{ return keyWord[str]; }
-bool Scanner::IsOperation(string str)		{ return operation[str]; }
-bool Scanner::IsSeparator(char ch)			{ return separator[ch]; }
-bool Scanner::IsSpecialSymbol(char ch)		{ return specialSymbol[ch]; }
-bool Scanner::IsLetter(char ch)				{ return ('A' <= ch && ch <= 'Z') || ('a' <= ch && ch <= 'z') || ch == '_'; }
-bool Scanner::IsNumber(char ch)				{ return '0' <= ch && ch <= '9'; }
-bool Scanner::IsDot(char ch)				{ return ch == '.'; }
-bool Scanner::IsE(char ch)					{ return ch == 'E' || ch == 'e'; }
-bool Scanner::IsSpace(char ch)				{ return ch == ' '; }
-bool Scanner::IsCharSeparator(char ch)		{ return ch == '\''; }
-bool Scanner::IsStringSeparator(char ch)	{ return ch == '"'; }
-bool Scanner::IsTabulationSymbol(char ch)	{ return ch == '\t'; }
-bool Scanner::IsEndOfLine(char ch)			{ return ch == '\0'; }
-bool Scanner::IsCommentBegin(char ch)		{ return ch == '/'; }
-
-void Scanner::BackToPreviousChar() {
-	currentPos--;
 }
 
 Token* Scanner::GetIdentificator() {
@@ -179,11 +158,16 @@ Token* Scanner::GetNumber() {
 Token* Scanner::GetSymbol() {
 	string s = "";
 	int pos = currentPos, line = currentLine;
+	currentChar = GetChar();
+	s += currentChar;
 
-	while( (currentChar = GetChar()) != '\0' && !IsCharSeparator(currentChar) ) {
-		s += currentChar;
+	if(currentChar == '\\') {
+		s += GetChar();
+		GetChar();
+		return new Token(line, pos, "ESCAPE", s);
 	}
-	return new Token(line, pos, IsEscapeSequence(s) ? "ESCAPE" : "CHAR", s);
+	GetChar();
+	return new Token(line, pos, "CHAR", s);
 }
 
 Token* Scanner::GetString() {
@@ -205,15 +189,37 @@ Token* Scanner::GetOperation() {
 	char lastChar = currentChar;
 	int pos = currentPos, line = currentLine;
 	s += currentChar;
+	currentChar = GetChar();
 
-	if(IsOperation( string(1, lastChar) + string(1, GetChar()) )) {
-		s += currentChar;
+	if(!IsSpace(currentChar) && !IsTabulationSymbol(currentChar) && !IsEndOfLine(currentChar)) {
+		if(IsOperation( string(1, lastChar) + string(1, currentChar) )) {
+			s += currentChar;
+		}
+		else
+			BackToPreviousChar();
 	}
-	else
-		BackToPreviousChar();
-
 	return new Token(line, pos, "OPERAT", s);
 }
+
+Token* Scanner::GetToken()					{ return currentToken; }
+bool Scanner::IsEscapeSequence(string str)  { return escapeSequence[str]; }
+bool Scanner::IsKeyWord(string str)			{ return keyWord[str]; }
+bool Scanner::IsOperation(string str)		{ return operation[str]; }
+bool Scanner::IsSeparator(char ch)			{ return separator[ch]; }
+bool Scanner::IsSpecialSymbol(char ch)		{ return specialSymbol[ch]; }
+bool Scanner::IsLetter(char ch)				{ return ('A' <= ch && ch <= 'Z') || ('a' <= ch && ch <= 'z') || ch == '_'; }
+bool Scanner::IsNumber(char ch)				{ return '0' <= ch && ch <= '9'; }
+bool Scanner::IsDot(char ch)				{ return ch == '.'; }
+bool Scanner::IsE(char ch)					{ return ch == 'E' || ch == 'e'; }
+bool Scanner::IsSpace(char ch)				{ return ch == ' '; }
+bool Scanner::IsCharSeparator(char ch)		{ return ch == '\''; }
+bool Scanner::IsStringSeparator(char ch)	{ return ch == '"'; }
+bool Scanner::IsTabulationSymbol(char ch)	{ return ch == '\t'; }
+bool Scanner::IsEndOfLine(char ch)			{ return ch == '\0'; }
+bool Scanner::IsCommentBegin(char ch)		{ return ch == '/'; }
+
+void Scanner::BackToPreviousChar()			{ currentPos--; }
+void Scanner::GoToNextChar()				{ currentPos++; }
 
 void Scanner::InitEscapeSequencesTable() {
 	escapeSequence["\n"] = true;
@@ -240,6 +246,9 @@ void Scanner::InitSpecialSymbolTable() {
 	specialSymbol['^'] = true;
 	specialSymbol['*'] = true;
 	specialSymbol['/'] = true;
+	specialSymbol['?'] = true;
+	specialSymbol[':'] = true;
+	specialSymbol['.'] = true;
 }
 
 void Scanner::InitOperationsTable() {

@@ -23,6 +23,7 @@ class Scanner {
 	void InitSpecialSymbolTable();
 	void InitEscapeSequencesTable();
 	void BackToPreviousChar();
+	void GoToNextChar();
 
 	Token* GetIdentificator();
 	Token* GetNumber(); 
