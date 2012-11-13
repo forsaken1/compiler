@@ -1,1 +1,5 @@
-Exception: Indefinite token
+1	1	CHAR		a
+1	4	CHAR		b
+1	7	CHAR		c
+1	10	CHAR		d
+1	13	ESCAPE		\n

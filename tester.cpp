@@ -1,7 +1,5 @@
 #include "scanner.h"
 
-using namespace std;
-
 bool CompareFiles(const char *fileOut, const char *fileTestOut) {
 	ifstream out, testOut;
 	string str1, str2;
@@ -44,8 +42,8 @@ void MakeFiles(int from, int to) {
 }
 
 int main() {
-	int FROM = 52;
-	int TO	 = 52;
+	int FROM = 1;
+	int TO	 = 41;
 	for(int i = FROM; i <= TO; i++) { 
 		string str  = string("tests/") + IntToStr(i) + string(".in");
 		string str1 = string("tests/") + IntToStr(i) + string(".out");

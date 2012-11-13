@@ -12,7 +12,6 @@ class Scanner {
 	ifstream inputStream;
 	ofstream outputStream;
 	unsigned int currentPos, currentLine;
-	//char currentChar;
 	const char* fileName;
 	bool lastString;
 
@@ -49,6 +48,8 @@ class Scanner {
 	bool IsEscapeSequence(string);
 	
 	char GetChar();
+
+	string GetInvalidToken(int);
 
 public:
 	Scanner();

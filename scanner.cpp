@@ -11,7 +11,6 @@ Scanner::Scanner(const char* _fileName) {
 	currentString = "";
 	currentPos = 0;
 	currentLine = 1;
-	//currentChar = '\0';
 	fileName = _fileName;
 
 	InitKeyWordsTable();
@@ -40,7 +39,6 @@ void Scanner::Start() {
 bool Scanner::Next() {
 	try {
 		char currentChar;
-
 		do {
 			if(lastString) 
 				return false;
@@ -65,12 +63,12 @@ bool Scanner::Next() {
 		if(IsStringSeparator(currentChar))		currentToken = GetString(currentChar); else 
 		if(IsSeparator(currentChar))			currentToken = GetSeparator(currentChar); else 
 		if(IsSpecialSymbol(currentChar))		currentToken = GetOperation(currentChar); else 
-		throw "Indefinite token";
+		throw "Indefinite character: \"" + string(1, currentChar) + "\"";
 
 		return true;
 	}
-	catch(char *str) {
-		outputStream << "Exception: " << str << endl;
+	catch(string &str) {
+		outputStream << "Error: " << str << endl;
 		return false;
 	}
 }
@@ -108,46 +106,17 @@ Token* Scanner::GetIdentificator(char currentChar) {
 	}
 	return new Token(line, pos, IsKeyWord(s) ? "KEYWORD" : "IDENTIF", s);
 }
-/* //making...
-int CharToInt(char ch) {
-	return ch - 48;
-}
 
-int StrToInt(string s) {
-	int result = 0;
-	for(int i = 0; i < s.length(); i++) {
-		result += CharToInt(s[i]) * (int)pow((float)10, i);
-	}
-	return result;
-}
-
-string DeleteZero(string s) { //ref.
-	if(IsDot(s[1]) || IsE(s[1])) return s;
-
-	int zeroCount = 0;
-
-	for(int i = 0; i < s.length() - 1; i++) {
-		if(s[i + 1] == '.') break;
-		if(s[i] == '0') 
-			zeroCount++;
-		else
+string Scanner::GetInvalidToken(int pos) {
+	string str = "";
+	for(int i = pos - 1; i < currentString.length(); i++) {
+		if(IsSpace(currentString[i]) || IsTabulationSymbol(currentString[i]))
 			break;
+		str += currentString[i];
 	}
-	return zeroCount == 0 ? s : string(s, zeroCount, s.length() - zeroCount);
+	return str;
 }
 
-string DeleteE(string s) {
-	int i;
-	for(i = 0; i < s.length(); i++) {
-		if(s[i] == 'E' || s[i] == 'e') {
-			break;
-		}
-	}
-	if(s[i + 1] == '-')
-		
-	return s;
-}
-*/
 Token* Scanner::GetNumber(char currentChar) {
 	string s = "";
 	int pos = currentPos, line = currentLine, dotCount = 0;
@@ -158,6 +127,9 @@ Token* Scanner::GetNumber(char currentChar) {
 		if(IsNumber(currentChar) || ( E = IsE(currentChar) ) || currentChar == '-' || currentChar == '+' || ( dot = IsDot(currentChar) ))
 			s += currentChar;
 		else {
+			if(IsLetter(currentChar))
+				throw "Invalid identificator: \"" + GetInvalidToken(pos) + "\"";
+
 			BackToPreviousChar();
 			break;
 		}
@@ -173,9 +145,12 @@ Token* Scanner::GetSymbol(char currentChar) {
 
 	if(currentChar == '\\') {
 		s += GetChar();
+		//if(!IsEscapeSequence(s)) throw "Invalid ESCAPE-sequence: \"" + s + "\"";
 		GetChar();
 		return new Token(line, pos, "ESCAPE", s);
 	}
+	//if(IsCharSeparator(currentChar))	throw "Empty character constant";
+	//if(IsEndOfLine(currentChar))		throw "Newline in character constant";
 	GetChar();
 	return new Token(line, pos, "CHAR", s);
 }
