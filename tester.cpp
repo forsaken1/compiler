@@ -30,13 +30,23 @@ string IntToStr(int n) {
 		return string(1, n / 10 + 48) + string(1, n % 10 + 48);
 }
 
-int main() {
-	//double g = E4; 
-	//string str = "";
-	//str = "df" "df";
-	//cout << str << endl;
+void MakeFiles(int from, int to) {
+	for(int i = from; i <= to; i++) {
+		string str  = string("tests/") + IntToStr(i) + string(".in");
+		string str1 = string("tests/") + IntToStr(i) + string(".out");
+		const char* s = str.c_str();
+		const char* s1 = str1.c_str();
+		ofstream fo(s, ios::out);
+		ofstream fo1(s1, ios::out);
+		fo.close();
+		fo1.close();
+	}
+}
 
-	/*for(int i = 1; i <= 50; i++) { 
+int main() {
+	int FROM = 52;
+	int TO	 = 52;
+	for(int i = FROM; i <= TO; i++) { 
 		string str  = string("tests/") + IntToStr(i) + string(".in");
 		string str1 = string("tests/") + IntToStr(i) + string(".out");
 
@@ -45,14 +55,6 @@ int main() {
 
 		Scanner scanner(s);
 		test(i, CompareFiles("output.txt", s1));
-	}*/
-	for(int i = 51; i <= 60; i++) {
-		string str  = string("tests/") + IntToStr(i) + string(".in");
-		string str1 = string("tests/") + IntToStr(i) + string(".out");
-		const char* s = str.c_str();
-		const char* s1 = str1.c_str();
-		ofstream fo(s, ios::out);
-		ofstream fo1(s1, ios::out);
 	}
 
 	system("PAUSE");

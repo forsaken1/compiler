@@ -12,7 +12,7 @@ class Scanner {
 	ifstream inputStream;
 	ofstream outputStream;
 	unsigned int currentPos, currentLine;
-	char currentChar;
+	//char currentChar;
 	const char* fileName;
 	bool lastString;
 
@@ -25,12 +25,12 @@ class Scanner {
 	void BackToPreviousChar();
 	void GoToNextChar();
 
-	Token* GetIdentificator();
-	Token* GetNumber(); 
-	Token* GetSymbol();
-	Token* GetString(); 
-	Token* GetSeparator();
-	Token* GetOperation(); 
+	Token* GetIdentificator(char);
+	Token* GetNumber(char); 
+	Token* GetSymbol(char);
+	Token* GetString(char); 
+	Token* GetSeparator(char);
+	Token* GetOperation(char); 
 	
 	bool IsLetter(char);
 	bool IsNumber(char);
