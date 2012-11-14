@@ -43,7 +43,7 @@ void MakeFiles(int from, int to) {
 
 int main() {
 	int FROM = 1;
-	int TO	 = 41;
+	int TO	 = 60;
 	for(int i = FROM; i <= TO; i++) { 
 		string str  = string("tests/") + IntToStr(i) + string(".in");
 		string str1 = string("tests/") + IntToStr(i) + string(".out");

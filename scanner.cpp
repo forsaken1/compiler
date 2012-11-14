@@ -109,7 +109,7 @@ Token* Scanner::GetIdentificator(char currentChar) {
 
 string Scanner::GetInvalidToken(int pos) {
 	string str = "";
-	for(int i = pos - 1; i < currentString.length(); i++) {
+	for(int i = pos - 1; i < (int)currentString.length(); i++) {
 		if(IsSpace(currentString[i]) || IsTabulationSymbol(currentString[i]))
 			break;
 		str += currentString[i];
@@ -119,40 +119,62 @@ string Scanner::GetInvalidToken(int pos) {
 
 Token* Scanner::GetNumber(char currentChar) {
 	string s = "";
-	int pos = currentPos, line = currentLine, dotCount = 0;
-	bool dot = false, E = false;
+	int pos = currentPos, line = currentLine, dot = 0, E = 0;
 	s += currentChar;
 
 	while( (currentChar = GetChar()) != '\0' && !IsSpace(currentChar)) {
-		if(IsNumber(currentChar) || ( E = IsE(currentChar) ) || currentChar == '-' || currentChar == '+' || ( dot = IsDot(currentChar) ))
-			s += currentChar;
-		else {
-			if(IsLetter(currentChar))
-				throw "Invalid identificator: \"" + GetInvalidToken(pos) + "\"";
+		if(dot && IsDot(currentChar))	throw string("Too many dots in real number: \"" + GetInvalidToken(pos) + "\"");
 
+		if(E) {
+			if(IsE(currentChar))		throw string("Too many symbol \"E\" in real number: \"" + GetInvalidToken(pos) + "\"");
+			if(IsNumber(currentChar) || currentChar == '-' || currentChar == '+') {
+				s += currentChar;
+				continue;
+			}
+			else
+				throw string("Invalid real number: \"" + GetInvalidToken(pos) + "\"");
+		}
+
+		if( IsNumber(currentChar) || IsE(currentChar) || IsDot(currentChar) ) {
+			E += IsE(currentChar);
+			dot += IsDot(currentChar);
+			s += currentChar;
+		}
+		else {
+			if(IsLetter(currentChar))	throw "Invalid identificator: \"" + GetInvalidToken(pos) + "\"";
 			BackToPreviousChar();
 			break;
 		}
 	}
+	if(IsE(s[s.length() - 1]) || IsDot(s[s.length() - 1])) throw string("Invalid real number: \"" + s + "\"");
+
 	return new Token(line, pos, dot || E ? "REAL" : "INT", s);
 }
 
 Token* Scanner::GetSymbol(char currentChar) {
 	string s = "";
 	int pos = currentPos, line = currentLine;
+	bool escapeDetector = false;
 	currentChar = GetChar();
 	s += currentChar;
 
+	if(IsCharSeparator(currentChar))	throw string("Empty character constant");
+	if(IsEndOfLine(currentChar))		throw string("Newline in character constant");
+	if(IsTabulationSymbol(currentChar))	throw string("Tabulation symbol in character constant");
+
 	if(currentChar == '\\') {
-		s += GetChar();
-		//if(!IsEscapeSequence(s)) throw "Invalid ESCAPE-sequence: \"" + s + "\"";
-		GetChar();
-		return new Token(line, pos, "ESCAPE", s);
+		escapeDetector = true;
+		s += (currentChar = GetChar());
+		if(!IsEscapeSequence(currentChar)) 
+			throw "Invalid ESCAPE-sequence: \"" + s + "\"";
 	}
-	//if(IsCharSeparator(currentChar))	throw "Empty character constant";
-	//if(IsEndOfLine(currentChar))		throw "Newline in character constant";
-	GetChar();
-	return new Token(line, pos, "CHAR", s);
+
+	if( IsCharSeparator(currentChar = GetChar()) )
+		return new Token(line, pos, escapeDetector ? "ESCAPE" : "CHAR", s);
+	else {
+		s += currentChar;
+		throw "Too many long character constant: \"" + s + "\"";
+	}
 }
 
 Token* Scanner::GetString(char currentChar) {
@@ -187,15 +209,15 @@ Token* Scanner::GetOperation(char currentChar) {
 }
 
 Token* Scanner::GetToken()					{ return currentToken; }
-bool Scanner::IsEscapeSequence(string str)  { return escapeSequence[str]; }
+int  Scanner::IsDot(char ch)				{ return ch == '.' ? 1 : 0; }
+int  Scanner::IsE(char ch)					{ return ch == 'E' || ch == 'e' ? 1 : 0; }
 bool Scanner::IsKeyWord(string str)			{ return keyWord[str]; }
 bool Scanner::IsOperation(string str)		{ return operation[str]; }
+bool Scanner::IsEscapeSequence(char ch)		{ return escapeSequence[ch]; }
 bool Scanner::IsSeparator(char ch)			{ return separator[ch]; }
 bool Scanner::IsSpecialSymbol(char ch)		{ return specialSymbol[ch]; }
 bool Scanner::IsLetter(char ch)				{ return ('A' <= ch && ch <= 'Z') || ('a' <= ch && ch <= 'z') || ch == '_'; }
 bool Scanner::IsNumber(char ch)				{ return '0' <= ch && ch <= '9'; }
-bool Scanner::IsDot(char ch)				{ return ch == '.'; }
-bool Scanner::IsE(char ch)					{ return ch == 'E' || ch == 'e'; }
 bool Scanner::IsSpace(char ch)				{ return ch == ' '; }
 bool Scanner::IsCharSeparator(char ch)		{ return ch == '\''; }
 bool Scanner::IsStringSeparator(char ch)	{ return ch == '"'; }
@@ -207,15 +229,26 @@ void Scanner::BackToPreviousChar()			{ currentPos--; }
 void Scanner::GoToNextChar()				{ currentPos++; }
 
 void Scanner::InitEscapeSequencesTable() {
-	escapeSequence["\n"] = true;
-	escapeSequence["\t"] = true;
-	escapeSequence["\v"] = true;
-	escapeSequence["\b"] = true;
-	escapeSequence["\r"] = true;
-	escapeSequence["\f"] = true;
-	escapeSequence["\'"] = true;
-	escapeSequence["\""] = true;
-	escapeSequence["\\"] = true;
+	escapeSequence['n'] = true;
+	escapeSequence['t'] = true;
+	escapeSequence['v'] = true;
+	escapeSequence['b'] = true;
+	escapeSequence['r'] = true;
+	escapeSequence['f'] = true;
+	escapeSequence['\''] = true;
+	escapeSequence['"'] = true;
+	escapeSequence['\\'] = true;
+}
+
+void Scanner::InitSeparatorsTable() {
+	separator['('] = true;
+	separator[')'] = true;
+	separator['['] = true;
+	separator[']'] = true;
+	separator['{'] = true;
+	separator['}'] = true;
+	separator[';'] = true;
+	separator[','] = true;
 }
 
 void Scanner::InitSpecialSymbolTable() {
@@ -272,17 +305,6 @@ void Scanner::InitOperationsTable() {
 	operation["->"] = true;
 	operation["?"] = true;
 	operation[":"] = true;
-}
-
-void Scanner::InitSeparatorsTable() {
-	separator['('] = true;
-	separator[')'] = true;
-	separator['['] = true;
-	separator[']'] = true;
-	separator['{'] = true;
-	separator['}'] = true;
-	separator[';'] = true;
-	separator[','] = true;
 }
 
 void Scanner::InitKeyWordsTable() {

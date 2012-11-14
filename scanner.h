@@ -5,8 +5,8 @@
 #include "token.h"
 
 class Scanner {
-	map<string, bool> keyWord, operation, escapeSequence;
-	map<char, bool> separator, specialSymbol;
+	map<string, bool> keyWord, operation;
+	map<char, bool> separator, specialSymbol, escapeSequence;
 	Token* currentToken;
 	string currentString;
 	ifstream inputStream;
@@ -31,10 +31,10 @@ class Scanner {
 	Token* GetSeparator(char);
 	Token* GetOperation(char); 
 	
+	int  IsDot(char);	
+	int  IsE(char);
 	bool IsLetter(char);
 	bool IsNumber(char);
-	bool IsDot(char);	
-	bool IsE(char);
 	bool IsCharSeparator(char);
 	bool IsStringSeparator(char);
 	bool IsSpace(char);
@@ -43,9 +43,9 @@ class Scanner {
 	bool IsCommentBegin(char);
 	bool IsSeparator(char);
 	bool IsSpecialSymbol(char);
+	bool IsEscapeSequence(char);
 	bool IsKeyWord(string);
 	bool IsOperation(string);
-	bool IsEscapeSequence(string);
 	
 	char GetChar();
 
