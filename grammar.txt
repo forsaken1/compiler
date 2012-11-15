@@ -1,0 +1,25 @@
+program 	::= function { function }
+
+function	::= type ident "(" [arg {"," arg}] ")" block 
+arg     	::= type ident 
+type 		::= ident | type "[]" | "void" | "char"  | "int" | "float"  
+
+stmt     	::= ";" | decl | expr ";" | while | for | if | return | block  | break | continue 
+block    	::= "{" {stmt} "}" 
+decl     	::= type ident [ = expr] {"," ident [ = expr]} ";" 
+while    	::= "while" "(" expr ")" stmt 
+for      	::= "for" "(" [expr] ";" [expr] ";" [expr] ")" stmt 
+if       	::= "if" "(" expr ")" stmt ["else" stmt] 
+return   	::= "return" expr ";" 
+break    	::= "break" ";" 
+continue 	::= "continue" ";" 
+
+expr 		::= bool-expr
+mul-expr  	::= [ mul-expr ("*" | "/" | "%") ] primary 
+add-expr  	::= [ add-expr  ("+" | "-") ] mul-expr 
+rel-expr  	::= add-expr [ ("<" | ">" | "<=" | ">=" | "==" | "!=") add-expr ] 
+bool-expr 	::= [ bool-expr ("&&" | "&" | "|" | "^") ] bool-expr 
+assign-expr 	::= bool-expr [ "=" bool-expr] 
+primary   	::= ident | int-const | float-const | char-const | string-const  | "(" expr ")" 
+args      	::= "(" [expr {"," expr } ] ")" 
+postfix   	::= primary { "[" expr "]" | args } 

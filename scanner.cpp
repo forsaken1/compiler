@@ -1,6 +1,5 @@
 #include "scanner.h"
 #include <math.h>
-//#include <boost/regex.hpp>
 
 Scanner::Scanner() {
 	cout << "Scanner. Author: Krilov Alexey, C8303A" << endl << endl;
