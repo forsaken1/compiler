@@ -1,10 +1,6 @@
 #include "scanner.h"
 #include <math.h>
 
-Scanner::Scanner() {
-	cout << "Scanner. Author: Krilov Alexey, C8303A" << endl << endl;
-}
-
 Scanner::Scanner(const char* _fileName) {
 	currentToken = NULL;
 	currentString = "";
@@ -12,21 +8,19 @@ Scanner::Scanner(const char* _fileName) {
 	currentLine = 1;
 	fileName = _fileName;
 
-	InitKeyWordsTable();
-	InitOperationsTable();
-	InitSeparatorsTable();
-	InitSpecialSymbolTable();
-	InitEscapeSequencesTable();
-	
-	Start();
-}
-
-void Scanner::Start() {
 	lastString = false;
 	inputStream.open(fileName, ios::in);
 	outputStream.open("output.txt", ios::out);
 	getline(inputStream, currentString);
 
+	InitKeyWordsTable();
+	InitOperationsTable();
+	InitSeparatorsTable();
+	InitSpecialSymbolTable();
+	InitEscapeSequencesTable();
+}
+
+void Scanner::Start() {
 	while(Next()) {
 		currentToken->Print(outputStream);
 		delete currentToken; //for debug
@@ -62,12 +56,12 @@ bool Scanner::Next() {
 		if(IsStringSeparator(currentChar))		currentToken = GetString(currentChar); else 
 		if(IsSeparator(currentChar))			currentToken = GetSeparator(currentChar); else 
 		if(IsSpecialSymbol(currentChar))		currentToken = GetOperation(currentChar); else 
-		throw "Indefinite character: \"" + string(1, currentChar) + "\"";
+		throw ScannerException("Indefinite character: \"" + string(1, currentChar) + "\"");
 
 		return true;
 	}
-	catch(string &str) {
-		outputStream << "Error: " << str << endl;
+	catch(ScannerException &e) {
+		outputStream << e.GetMessage() << endl;
 		return false;
 	}
 }
@@ -122,16 +116,16 @@ Token* Scanner::GetNumber(char currentChar) {
 	s += currentChar;
 
 	while( (currentChar = GetChar()) != '\0' && !IsSpace(currentChar)) {
-		if(dot && IsDot(currentChar))	throw string("Too many dots in real number: \"" + GetInvalidToken(pos) + "\"");
+		if(dot && IsDot(currentChar))	throw ScannerException("Too many dots in real number: \"" + GetInvalidToken(pos) + "\"");
 
 		if(E) {
-			if(IsE(currentChar))		throw string("Too many symbol \"E\" in real number: \"" + GetInvalidToken(pos) + "\"");
+			if(IsE(currentChar))		throw ScannerException("Too many symbol \"E\" in real number: \"" + GetInvalidToken(pos) + "\"");
 			if(IsNumber(currentChar) || currentChar == '-' || currentChar == '+') {
 				s += currentChar;
 				continue;
 			}
 			else
-				throw string("Invalid real number: \"" + GetInvalidToken(pos) + "\"");
+				throw ScannerException("Invalid real number: \"" + GetInvalidToken(pos) + "\"");
 		}
 
 		if( IsNumber(currentChar) || IsE(currentChar) || IsDot(currentChar) ) {
@@ -140,12 +134,12 @@ Token* Scanner::GetNumber(char currentChar) {
 			s += currentChar;
 		}
 		else {
-			if(IsLetter(currentChar))	throw "Invalid identificator: \"" + GetInvalidToken(pos) + "\"";
+			if(IsLetter(currentChar))	throw ScannerException("Invalid identificator: \"" + GetInvalidToken(pos) + "\"");
 			BackToPreviousChar();
 			break;
 		}
 	}
-	if(IsE(s[s.length() - 1]) || IsDot(s[s.length() - 1])) throw string("Invalid real number: \"" + s + "\"");
+	if(IsE(s[s.length() - 1]) || IsDot(s[s.length() - 1])) throw ScannerException("Invalid real number: \"" + s + "\"");
 
 	return new Token(line, pos, dot || E ? "REAL" : "INT", s);
 }
@@ -157,22 +151,22 @@ Token* Scanner::GetSymbol(char currentChar) {
 	currentChar = GetChar();
 	s += currentChar;
 
-	if(IsCharSeparator(currentChar))	throw string("Empty character constant");
-	if(IsEndOfLine(currentChar))		throw string("Newline in character constant");
-	if(IsTabulationSymbol(currentChar))	throw string("Tabulation symbol in character constant");
+	if(IsCharSeparator(currentChar))	throw ScannerException("Empty character constant");
+	if(IsEndOfLine(currentChar))		throw ScannerException("Newline in character constant");
+	if(IsTabulationSymbol(currentChar))	throw ScannerException("Tabulation symbol in character constant");
 
 	if(currentChar == '\\') {
 		escapeDetector = true;
 		s += (currentChar = GetChar());
 		if(!IsEscapeSequence(currentChar)) 
-			throw "Invalid ESCAPE-sequence: \"" + s + "\"";
+			throw ScannerException("Invalid ESCAPE-sequence: \"" + s + "\"");
 	}
 
 	if( IsCharSeparator(currentChar = GetChar()) )
 		return new Token(line, pos, escapeDetector ? "ESCAPE" : "CHAR", s);
 	else {
 		s += currentChar;
-		throw "Too many long character constant: \"" + s + "\"";
+		throw ScannerException("Too many long character constant: \"" + s + "\"");
 	}
 }
 

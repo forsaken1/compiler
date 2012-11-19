@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
 			break;
 		}
 		case 2: {
-			if(argv[1][0] == 'H')
+			if(argv[1][0] == 'H' || argv[1][0] == 'h')
 				GetHelp();
 			else
 				cout << "Error: Invalid argument" << endl;
@@ -27,9 +27,15 @@ int main(int argc, char *argv[]) {
 		}
 		case 3: {
 			if(FileExists(argv[2])) {
-				if(argv[1][0] == 'L') {
+				if(argv[1][0] == 'L' || argv[1][0] == 'l') {
 					Scanner scanner(argv[2]);
-					cout << "Analysis is completed. Result saved in \"output.txt\"" << endl;
+					scanner.Start();
+					cout << "Lexical analysis is completed." << endl;
+				}
+				if(argv[1][0] == 'S' || argv[1][0] == 's') {
+					Scanner scanner(argv[2]);
+					scanner.Start();
+					cout << "Syntax analysis is completed." << endl;
 				}
 			}
 			else

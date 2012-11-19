@@ -19,7 +19,7 @@ public:
 	string GetText();
 	int GetPos();
 	int GetLine();
-	virtual void Print(ostream&);
+	virtual void Print(ofstream&);
 };
 
 //---Integer---

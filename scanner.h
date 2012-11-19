@@ -52,12 +52,24 @@ class Scanner {
 	string GetInvalidToken(int);
 
 public:
-	Scanner();
 	Scanner(const char*);
 
 	Token* GetToken();
 	void Start();
 	bool Next();
+};
+
+class ScannerException {
+	string msg;
+
+public:
+	ScannerException(string _msg) {
+		msg = _msg;
+	}
+
+	string GetMessage() {
+		return "Error: " + msg;
+	}
 };
 
 #endif 

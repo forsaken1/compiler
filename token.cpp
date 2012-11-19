@@ -7,7 +7,7 @@ Token::Token(int _line, int _pos, string _type, string _text) {
 	text = _text;
 }
 
-void Token::Print(ostream& outputStream) {
+void Token::Print(ofstream& outputStream) {
 	outputStream << line << '\t' << pos << '\t' << type << "\t\t" << text << endl;
 }
 

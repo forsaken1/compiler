@@ -52,6 +52,7 @@ int main() {
 		const char* s1 = str1.c_str();
 
 		Scanner scanner(s);
+		scanner.Start();
 		test(i, CompareFiles("output.txt", s1));
 	}
 
