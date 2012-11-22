@@ -20,6 +20,7 @@ int main(int argc, char *argv[]) {
 			//GetHelp();
 			Scanner scanner("input.txt");
 			ProtoParser parser(&scanner);
+			cout << endl;
 			system("PAUSE");
 			break;
 		}
@@ -40,7 +41,7 @@ int main(int argc, char *argv[]) {
 				if(argv[1][0] == 'P' || argv[1][0] == 'p') {
 					Scanner scanner(argv[2]);
 					ProtoParser parser(&scanner);
-					cout << "Syntax analysis is completed." << endl;
+					cout << endl << "Syntax analysis is completed." << endl;
 				}
 			}
 			else

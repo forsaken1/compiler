@@ -1,4 +1,5 @@
 #include "scanner.h"
+#include "proto_parser.h"
 
 bool CompareFiles(const char *fileOut, const char *fileTestOut) {
 	ifstream out, testOut;
@@ -30,8 +31,8 @@ string IntToStr(int n) {
 
 void MakeFiles(int from, int to) {
 	for(int i = from; i <= to; i++) {
-		string str  = string("tests/") + IntToStr(i) + string(".in");
-		string str1 = string("tests/") + IntToStr(i) + string(".out");
+		string str  = string("tests1/") + IntToStr(i) + string(".in");
+		string str1 = string("tests1/") + IntToStr(i) + string(".out");
 		const char* s = str.c_str();
 		const char* s1 = str1.c_str();
 		ofstream fo(s, ios::out);
@@ -42,7 +43,7 @@ void MakeFiles(int from, int to) {
 }
 
 int main() {
-	int FROM = 1;
+	/*int FROM = 1;
 	int TO	 = 60;
 	for(int i = FROM; i <= TO; i++) { 
 		string str  = string("tests/") + IntToStr(i) + string(".in");
@@ -54,8 +55,22 @@ int main() {
 		Scanner scanner(s);
 		scanner.Start();
 		test(i, CompareFiles("output.txt", s1));
-	}
+	}*/
+	int FROM = 1;
+	int TO	 = 10;
+	for(int i = FROM; i <= TO; i++) { 
+		string str  = string("tests1/") + IntToStr(i) + string(".in");
+		string str1 = string("tests1/") + IntToStr(i) + string(".out");
 
+		const char* s = str.c_str();
+		const char* s1 = str1.c_str();
+		
+		freopen("output.txt", "w", stdout);
+		Scanner scanner(s);
+		ProtoParser parser(&scanner);
+		freopen("CON", "w", stdout);
+		test(i, CompareFiles("output.txt", s1));
+	}
 	system("PAUSE");
 	return 0;
 }

@@ -10,26 +10,31 @@ void Print(Node *p) {
 	if(p == NULL) {
 		return;
 	}
+	cout << "(";
 	Print(p->left);
-	cout << p->oper->GetText();
+	cout << " " << p->oper->GetText() << " ";
 	Print(p->right);
+	cout << ")";
 }
 
 void ProtoParser::Start() {
+	NextToken();
 	Node *top = ParseExpression();
 	Print(top);
-	cout << endl;
 }
 
 bool IsNumber(Token *token) {
+	if(token == NULL) return false;
 	return token->GetType() == "INT" || token->GetType() == "REAL";
 }
 
 bool IsAdditive(Token *token) {
+	if(token == NULL) return false;
 	return token->GetText() == "+" || token->GetText() == "-";
 }
 
 bool IsMultiplicative(Token *token) {
+	if(token == NULL) return false;
 	return token->GetText() == "*" || token->GetText() == "/";
 }
 
@@ -42,21 +47,19 @@ bool ProtoParser::NextToken() {
 Node* ProtoParser::ParseExpression() {
 	Node *left = NULL, *right = NULL;
 	Token *tk = NULL;
-
-	if(!NextToken()) return new Node(left, token, right);
 	
 	if(IsNumber(token))
 		left = ParseTerm();
-
-	if(!NextToken()) return left;
+	
+	if(scanner->EoF())
+		return left;
 
 	if(IsAdditive(token)) {
 		tk = token;
-	}
-	if(IsNumber(token)) {
+		NextToken();
 		right = ParseTerm();
 	}
-	return new Node(left, token, right);
+	return new Node(left, tk, right);
 }
 
 Node* ProtoParser::ParseTerm() {
@@ -65,21 +68,25 @@ Node* ProtoParser::ParseTerm() {
 
 	if(IsNumber(token))
 		left = ParseFactor();
-	
-	if(!NextToken()) return left;
-	if(IsAdditive(token)) return new Node(left, token, right);
+
+	if(IsAdditive(token) || scanner->EoF())
+		return left;
 
 	if(IsMultiplicative(token)) {
-		NextToken();
 		tk = token;
-		right = ParseFactor();
+		if(NextToken())
+			right = ParseFactor();
 	}
 	return new Node(left, tk, right);
 }
 
 Node* ProtoParser::ParseFactor() {
 	Node *left = NULL, *right = NULL;
+	Token *tk = NULL;
 
-	if(IsNumber(token))
-		return new Node(left, token, right);
+	if(IsNumber(token)) {
+		tk = token;
+		NextToken();
+		return new Node(left, tk, right);
+	}
 }

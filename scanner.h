@@ -57,6 +57,7 @@ public:
 	Token* GetToken();
 	void Start();
 	bool Next();
+	bool EoF();
 };
 
 class ScannerException {

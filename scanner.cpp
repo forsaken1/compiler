@@ -10,7 +10,6 @@ Scanner::Scanner(const char* _fileName) {
 
 	lastString = false;
 	inputStream.open(fileName, ios::in);
-	outputStream.open("output.txt", ios::out);
 	getline(inputStream, currentString);
 
 	InitKeyWordsTable();
@@ -20,7 +19,12 @@ Scanner::Scanner(const char* _fileName) {
 	InitEscapeSequencesTable();
 }
 
+bool Scanner::EoF() {
+	return lastString;
+}
+
 void Scanner::Start() {
+	outputStream.open("output.txt", ios::out);
 	while(Next()) {
 		currentToken->Print(outputStream);
 		delete currentToken; //for debug
