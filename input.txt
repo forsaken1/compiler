@@ -1,12 +1,1 @@
-int main() {
-	char ch = 'a';
-	char *str = "hello word!";
-	for(int i = 0; i < 10; i++)
-		cout << i << endl;
-
-	/* error
-	error 
-	error */
-
-	return 0; //fuuuu
-}
+1

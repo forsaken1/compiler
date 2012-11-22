@@ -9,4 +9,4 @@ public:
 	void ParseStatement();
 };
 
-#endif 
+#endif PARSER_H

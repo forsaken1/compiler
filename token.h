@@ -52,4 +52,4 @@ public:
 	string GetValue();
 };
 
-#endif 
+#endif TOKEN_H

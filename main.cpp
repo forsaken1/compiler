@@ -17,7 +17,10 @@ void GetHelp() {
 int main(int argc, char *argv[]) {
 	switch(argc) {
 		case 1: {
-			GetHelp();
+			//GetHelp();
+			Scanner scanner("input.txt");
+			ProtoParser parser(&scanner);
+			system("PAUSE");
 			break;
 		}
 		case 2: {
@@ -34,9 +37,9 @@ int main(int argc, char *argv[]) {
 					scanner.Start();
 					cout << "Lexical analysis is completed." << endl;
 				}
-				if(argv[1][0] == 'S' || argv[1][0] == 's') {
+				if(argv[1][0] == 'P' || argv[1][0] == 'p') {
 					Scanner scanner(argv[2]);
-					ProtoParser parser(scanner);
+					ProtoParser parser(&scanner);
 					cout << "Syntax analysis is completed." << endl;
 				}
 			}
