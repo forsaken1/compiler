@@ -38,6 +38,16 @@ bool IsMultiplicative(Token *token) {
 	return token->GetText() == "*" || token->GetText() == "/";
 }
 
+bool IsLeftBracket(Token *token) {
+	if(token == NULL) return false;
+	return token->GetText() == "(";
+}
+
+bool IsRightBracket(Token *token) {
+	if(token == NULL) return false;
+	return token->GetText() == ")";
+}
+
 bool ProtoParser::NextToken() {
 	bool b = scanner->Next();
 	token = scanner->GetToken();
@@ -48,7 +58,7 @@ Node* ProtoParser::ParseExpression() {
 	Node *left = NULL, *right = NULL;
 	Token *tk = NULL;
 	
-	if(IsNumber(token))
+	if(IsNumber(token) || IsLeftBracket(token))
 		left = ParseTerm();
 	
 	if(scanner->EoF())
@@ -66,27 +76,35 @@ Node* ProtoParser::ParseTerm() {
 	Node *left = NULL, *right = NULL;
 	Token *tk = NULL;
 
-	if(IsNumber(token))
+	if(IsNumber(token) || IsLeftBracket(token))
 		left = ParseFactor();
 
-	if(IsAdditive(token) || scanner->EoF())
+	if(IsAdditive(token) || IsRightBracket(token) || scanner->EoF())
 		return left;
 
 	if(IsMultiplicative(token)) {
 		tk = token;
-		if(NextToken())
-			right = ParseFactor();
+		NextToken();
+		right = ParseFactor();
 	}
 	return new Node(left, tk, right);
 }
 
 Node* ProtoParser::ParseFactor() {
-	Node *left = NULL, *right = NULL;
+	Node *left = NULL, *right = NULL, *t;
 	Token *tk = NULL;
 
 	if(IsNumber(token)) {
 		tk = token;
 		NextToken();
 		return new Node(left, tk, right);
+	}
+	if(IsLeftBracket(token)) {
+		NextToken();
+		t = ParseExpression();
+	}
+	if(IsRightBracket(token)) {
+		NextToken();
+		return t;
 	}
 }
