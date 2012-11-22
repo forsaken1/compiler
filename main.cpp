@@ -1,4 +1,6 @@
 #include "scanner.h"
+#include "parser.h"
+#include "proto_parser.h"
 #include <io.h>
 
 bool FileExists(const char *fname) {
@@ -6,7 +8,7 @@ bool FileExists(const char *fname) {
 }
 
 void GetHelp() {
-	cout << "Scanner. Author: Krilov Alexey, C8303A" << endl;
+	cout << "Compilator C. Author: Krilov Alexey, C8303A" << endl;
 	cout << "L <filename> - lexical analysis" << endl;
 	cout << "S <filename> - syntax analysis" << endl;
 	cout << "H - help" << endl << endl;
@@ -34,7 +36,7 @@ int main(int argc, char *argv[]) {
 				}
 				if(argv[1][0] == 'S' || argv[1][0] == 's') {
 					Scanner scanner(argv[2]);
-					scanner.Start();
+					ProtoParser parser(scanner);
 					cout << "Syntax analysis is completed." << endl;
 				}
 			}

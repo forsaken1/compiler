@@ -105,8 +105,6 @@ assignment-operator
     %=
     +=
     -=
-    <<=
-    >>=
     &=
     ^=
     |=
@@ -152,13 +150,9 @@ storage-class-specifier
 type-specifier
     void
     char
-    short
     int
-    long
     float
     double
-    signed
-    unsigned
     struct-or-union-specifier
     enum-specifier
     typedef-name
