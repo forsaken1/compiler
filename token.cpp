@@ -1,6 +1,6 @@
 #include "token.h"
 
-Token::Token(int _line, int _pos, string _type, string _text) {
+Token::Token(int _line, int _pos, TokenType t, string _type, string _text) {
 	pos = _pos;
 	line = _line;
 	type = _type;

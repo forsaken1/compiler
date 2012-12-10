@@ -101,7 +101,7 @@ Token* Scanner::GetIdentificator(char currentChar) {
 			break;
 		}
 	}
-	return new Token(line, pos, IsKeyWord(s) ? "KEYWORD" : "IDENTIF", s);
+	return new Token(line, pos, IsKeyWord(s) ? KEYWORD : IDENTIFIER, IsKeyWord(s) ? "KEYWORD" : "IDENTIF", s);
 }
 
 string Scanner::GetInvalidToken(int pos) {
@@ -145,7 +145,7 @@ Token* Scanner::GetNumber(char currentChar) {
 	}
 	if(IsE(s[s.length() - 1]) || IsDot(s[s.length() - 1])) throw ScannerException("Invalid real number: \"" + s + "\"");
 
-	return new Token(line, pos, dot || E ? "REAL" : "INT", s);
+	return new Token(line, pos, dot || E ? CONST_REAL : CONST_INTEGER, dot || E ? "REAL" : "INT", s);
 }
 
 Token* Scanner::GetSymbol(char currentChar) {
@@ -167,7 +167,7 @@ Token* Scanner::GetSymbol(char currentChar) {
 	}
 
 	if( IsCharSeparator(currentChar = GetChar()) )
-		return new Token(line, pos, escapeDetector ? "ESCAPE" : "CHAR", s);
+		return new Token(line, pos, escapeDetector ESCAPE_SEQUENCE? : , escapeDetector ? "ESCAPE" : "CHAR", s);
 	else {
 		s += currentChar;
 		throw ScannerException("Too many long character constant: \"" + s + "\"");

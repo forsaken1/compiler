@@ -7,13 +7,25 @@
 
 using namespace std;
 
+enum TokenType {
+	KEYWORD,
+	IDENTIFIER,
+	CONST_REAL,
+	CONST_INTEGER,
+	CONST_CHAR,
+	CONST_STRING,
+	ESCAPE_SEQUENCE,
+	SEPARATOR,
+	OPERATOR
+};
+
 class Token {
 protected:
 	string type, text;
 	int pos, line;
 
 public:
-	Token(int, int, string, string);
+	Token(int, int, TokenType, string, string);
 	
 	string GetType();
 	string GetText();
