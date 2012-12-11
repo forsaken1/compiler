@@ -110,9 +110,21 @@ Node* Parser::PrimaryExpr() {
 	if(currentToken->GetType() == IDENTIFIER)
 		return new NodeVar(currentToken->GetText());
 
-	//if(currentToken->GetType() == CONST_CHAR ||
-	  // currentToken->GetType() == CONST_STRING)
+	if(currentToken->GetType() == CONST_INTEGER ||
+	   currentToken->GetType() == CONST_REAL ||
+	   currentToken->GetType() == CONST_CHAR ||
+	   currentToken->GetType() == CONST_STRING)
+		return new NodeConst(currentToken->GetText());
 
+	Next();
+	Node *expr = NULL;
+
+	if(currentToken->GetText() == "(") {
+		expr = Expression();
+		Next();
+		if(currentToken->GetText() == ")") 
+			return expr;
+	}
 }
 
 //--- Parse Statement ----------
