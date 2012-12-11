@@ -3,6 +3,42 @@
 
 class Node {};
 
+class NodeConstInt: public Node {
+public:
+	int constant;
+
+	NodeConstInt(int _constant) {
+		constant = _constant;
+	}
+};
+
+class NodeConstFloat: public Node {
+public:
+	float constant;
+
+	NodeConstFloat(float _constant) {
+		constant = _constant;
+	}
+};
+
+class NodeConstChar: public Node {
+public:
+	char constant;
+
+	NodeConstChar(char _constant) {
+		constant = _constant;
+	}
+};
+
+class NodeConstString: public Node {
+public:
+	string constant;
+
+	NodeConstString(string _constant) {
+		constant = _constant;
+	}
+};
+
 class NodeVar: public Node {
 public:
 	string name;
