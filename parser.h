@@ -8,8 +8,10 @@ class Parser {
 	Token *currentToken, *lastToken;
 	Node *top;
 	Scanner *scanner;
+	string oper;
+	map<string, bool> assignmentOperator, unaryOperator;
 	
-	Node* Parse();
+	void Parse();
 
 	Node* Expression();
 	Node* AssignmentExpr();
@@ -30,6 +32,7 @@ class Parser {
 	Node* JumpStmt();
 	
 	void Next();
+	void InitHashes();
 
 public:
 	Parser(Scanner*);

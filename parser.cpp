@@ -4,26 +4,28 @@ Parser::Parser(Scanner *_scanner) {
 	scanner = _scanner;
 	currentToken = NULL;
 	lastToken = NULL;
-	top = NULL;
 
-	top = Parse();
+	Parse();
 }
 
 void Parser::Next() {
+	if(scanner->EoF())
+		throw ParserException("Syntax analisys success");
+
 	scanner->Next();
 	lastToken = currentToken;
 	currentToken = scanner->GetToken();
+	oper = currentToken->GetText();
 }
 
 //--- Parse Expression ----------
 
-Node* Parser::Parse() {
+void Parser::Parse() {
 	try {
-		return Expression();
+		top = Expression();
 	}
 	catch(ParserException &e) {
 		cout << e.GetMessage() << endl;
-		return NULL;
 	}
 }
 
@@ -40,6 +42,20 @@ Node* Parser::Expression() {
 Node* Parser::AssignmentExpr() {
 	Node *left = ConditionalExpr();
 
+	string oper = currentToken->GetText();
+
+	if(oper == "++" || oper == "--" || oper == "sizeof") { //unary-expr
+		Next();
+		oper = currentToken->GetText();
+		if(assignmentOperator[oper]) {
+			Next();
+			Node *right = AssignmentExpr();
+			return ;
+		}
+	}
+	if(unaryOperator[oper]) { //cast-expr
+
+	}
 	return left;
 }
 
@@ -81,7 +97,13 @@ Node* Parser::BinaryOperationExpr(int priority) {
 }
 
 Node* Parser::CastExpr() {
-	Node *left = UnaryExpr();
+	Node *left = NULL;
+
+	if(oper == "(") {
+		Next();
+		
+	}
+	left = UnaryExpr();
 
 	return left;
 }
@@ -114,14 +136,18 @@ Node* Parser::PostfixExpr() {
 }
 
 Node* Parser::PrimaryExpr() {
-	if(currentToken->GetType() == IDENTIFIER)
-		return new NodeVar(currentToken->GetText());
+	if(currentToken->GetType() == IDENTIFIER) {
+		Next();
+		return new NodeVar(lastToken->GetText());
+	}
 
 	if(currentToken->GetType() == CONST_INTEGER ||
 	   currentToken->GetType() == CONST_REAL ||
 	   currentToken->GetType() == CONST_CHAR ||
-	   currentToken->GetType() == CONST_STRING)
-		return new NodeConst(currentToken->GetText());
+	   currentToken->GetType() == CONST_STRING) {
+		Next();
+		return new NodeConst(lastToken->GetText());
+	}
 
 	Next();
 	Node *expr = NULL;
@@ -129,8 +155,10 @@ Node* Parser::PrimaryExpr() {
 	if(currentToken->GetText() == "(") {
 		expr = Expression();
 		Next();
-		if(currentToken->GetText() == ")") 
+		if(currentToken->GetText() == ")") {
+			Next();
 			return expr;
+		}
 	}
 }
 
@@ -177,3 +205,22 @@ Node* Parser::JumpStmt() {
 }
 
 //--- Parse Definition ---
+
+void Parser::InitHashes() {
+	assignmentOperator["="] = true;
+	assignmentOperator["*="] = true;
+	assignmentOperator["/="] = true;
+	assignmentOperator["%="] = true;
+	assignmentOperator["+="] = true;
+	assignmentOperator["-="] = true;
+	assignmentOperator["&="] = true;
+	assignmentOperator["^="] = true;
+	assignmentOperator["|="] = true;
+
+	unaryOperator["&"] = true;
+	unaryOperator["*"] = true;
+	unaryOperator["+"] = true;
+	unaryOperator["-"] = true;
+	unaryOperator["~"] = true;
+	unaryOperator["!"] = true;
+}
