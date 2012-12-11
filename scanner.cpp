@@ -1,5 +1,4 @@
 #include "scanner.h"
-#include <math.h>
 
 Scanner::Scanner(const char* _fileName) {
 	currentToken = NULL;

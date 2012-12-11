@@ -19,12 +19,6 @@ enum TokenType {
 	OPERATOR
 };
 
-enum Type {
-	KEYWORD_FOR,
-	KEYWORD_WHILE,
-	KEYWORD_IF
-};
-
 class Token {
 protected:
 	string type, text;
@@ -47,7 +41,7 @@ class TokenInteger: public Token {
 	int value;
 
 public:
-	TokenInteger(int, int, string, string, int);
+	TokenInteger(int, int, TokenType, string, string);
 	
 	int GetValue();
 };
@@ -57,7 +51,7 @@ class TokenReal: public Token {
 	double value;
 
 public:
-	TokenReal(int, int, string, string, double);
+	TokenReal(int, int, TokenType, string, string);
 
 	double GetValue();
 };
@@ -67,7 +61,7 @@ class TokenString: public Token {
 	string value;
 
 public:
-	TokenString(int, int, string, string, string);
+	TokenString(int, int, TokenType, string, string);
 	
 	string GetValue();
 };

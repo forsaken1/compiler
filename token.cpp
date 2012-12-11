@@ -33,8 +33,8 @@ int Token::GetLine() {
 }
 
 //---Integer---
-TokenInteger::TokenInteger(int _line, int _pos, string _type, string _text, int _value): Token(_line, _pos, _type, _text) {
-	value = _value;
+TokenInteger::TokenInteger(int _line, int _pos, TokenType _t, string _type, string _text): Token(_line, _pos, _t, _type, _text) {
+	//value = _value;
 }
 
 int TokenInteger::GetValue() {
@@ -42,8 +42,8 @@ int TokenInteger::GetValue() {
 }
 
 //---Real---
-TokenReal::TokenReal(int _line, int _pos, string _type, string _text, double _value): Token(_line, _pos, _type, _text) {
-	value = _value;
+TokenReal::TokenReal(int _line, int _pos, TokenType _t, string _type, string _text): Token(_line, _pos, _t, _type, _text) {
+	//value = _value;
 }
 
 double TokenReal::GetValue() {
@@ -51,8 +51,8 @@ double TokenReal::GetValue() {
 }
 
 //---String---
-TokenString::TokenString(int _line, int _pos, string _type, string _text, string _value): Token(_line, _pos, _type, _text) {
-	value = _value;
+TokenString::TokenString(int _line, int _pos, TokenType _t, string _type, string _text): Token(_line, _pos, _t, _type, _text) {
+	//value = _value;
 }
 
 string TokenString::GetValue() {

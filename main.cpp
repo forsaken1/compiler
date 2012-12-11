@@ -1,6 +1,5 @@
 #include "scanner.h"
 #include "parser.h"
-#include "proto_parser.h"
 #include <io.h>
 
 bool FileExists(const char *fname) {
