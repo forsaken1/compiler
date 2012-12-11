@@ -106,7 +106,7 @@ Node* Parser::PostfixExpr() {
 	}
 }
 
-Node* Parser::PrimaryExpr() { //класс для констант
+Node* Parser::PrimaryExpr() {
 	if(currentToken->GetType() == IDENTIFIER)
 		return new NodeVar(currentToken->GetText());
 

@@ -3,38 +3,11 @@
 
 class Node {};
 
-class NodeConstInt: public Node {
-public:
-	int constant;
-
-	NodeConstInt(int _constant) {
-		constant = _constant;
-	}
-};
-
-class NodeConstFloat: public Node {
-public:
-	float constant;
-
-	NodeConstFloat(float _constant) {
-		constant = _constant;
-	}
-};
-
-class NodeConstChar: public Node {
-public:
-	char constant;
-
-	NodeConstChar(char _constant) {
-		constant = _constant;
-	}
-};
-
-class NodeConstString: public Node {
+class NodeConst: public Node {
 public:
 	string constant;
 
-	NodeConstString(string _constant) {
+	NodeConst(string _constant) {
 		constant = _constant;
 	}
 };
