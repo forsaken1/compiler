@@ -5,14 +5,16 @@
 #include "node.h"
 
 class Parser {
-	Token *currentToken;
+	Token *currentToken, *lastToken;
 	Scanner *scanner;
 	
 	void Next();
 
+	Node* BinaryOperationExpr(int);
+
 	Node* AssignmentExpr();
 	Node* ConditionalExpr();
-	Node* LogicalORExpr();
+	/*Node* LogicalORExpr();
 	Node* LogicalANDExpr();
 	Node* InclusiveORExpr();
 	Node* ExclusiveORExpr();
@@ -21,7 +23,7 @@ class Parser {
 	Node* RelationalExpr();
 	Node* ShiftExpr();
 	Node* AdditiveExpr();
-	Node* MultiplicativeExpr();
+	Node* MultiplicativeExpr();*/
 	Node* CastExpr();
 	Node* UnaryExpr();
 	Node* PostfixExpr();

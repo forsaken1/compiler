@@ -167,7 +167,7 @@ Token* Scanner::GetSymbol(char currentChar) {
 	}
 
 	if( IsCharSeparator(currentChar = GetChar()) )
-		return new Token(line, pos, escapeDetector ESCAPE_SEQUENCE? : , escapeDetector ? "ESCAPE" : "CHAR", s);
+		return new Token(line, pos, escapeDetector ? ESCAPE_SEQUENCE : CONST_CHAR, escapeDetector ? "ESCAPE" : "CHAR", s);
 	else {
 		s += currentChar;
 		throw ScannerException("Too many long character constant: \"" + s + "\"");

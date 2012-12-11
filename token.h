@@ -19,15 +19,23 @@ enum TokenType {
 	OPERATOR
 };
 
+enum Type {
+	KEYWORD_FOR,
+	KEYWORD_WHILE,
+	KEYWORD_IF
+};
+
 class Token {
 protected:
 	string type, text;
 	int pos, line;
+	TokenType t;
 
 public:
 	Token(int, int, TokenType, string, string);
 	
-	string GetType();
+	TokenType GetType();
+	string GetTypeName();
 	string GetText();
 	int GetPos();
 	int GetLine();
