@@ -36,8 +36,9 @@ bool Scanner::Next() {
 	try {
 		char currentChar;
 		do {
-			if(lastString) 
+			if(lastString) {
 				return false;
+			}
 			currentChar = GetChar();
 		}
 		while(IsSpace(currentChar) || IsTabulationSymbol(currentChar) || IsEndOfLine(currentChar));
@@ -180,11 +181,11 @@ Token* Scanner::GetString(char currentChar) {
 	while((currentChar = GetChar()) != '\0' && !IsStringSeparator(currentChar)) {
 		s += currentChar;
 	}
-	return new Token(line, pos, "STRING", s);
+	return new Token(line, pos, CONST_STRING, "STRING", s);
 }
 
 Token* Scanner::GetSeparator(char currentChar) {
-	return new Token(currentLine, currentPos, "SEPARAT", string(1, currentChar));
+	return new Token(currentLine, currentPos, SEPARATOR, "SEPARAT", string(1, currentChar));
 }
 
 Token* Scanner::GetOperation(char currentChar) {
@@ -201,7 +202,7 @@ Token* Scanner::GetOperation(char currentChar) {
 		else
 			BackToPreviousChar();
 	}
-	return new Token(line, pos, "OPERAT", s);
+	return new Token(line, pos, OPERATOR, "OPERAT", s);
 }
 
 Token* Scanner::GetToken()					{ return currentToken; }

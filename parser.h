@@ -9,7 +9,7 @@ class Parser {
 	Node *top;
 	Scanner *scanner;
 	
-	void Next();
+	Node* Parse();
 
 	Node* Expression();
 	Node* AssignmentExpr();
@@ -28,12 +28,11 @@ class Parser {
 	Node* IterationStmt();
 	Node* FunctionDefinitionStmt();
 	Node* JumpStmt();
+	
+	void Next();
 
 public:
 	Parser(Scanner*);
-
-	void ParseExpression();
-	void ParseStatement();
 };
 
 #endif PARSER_H

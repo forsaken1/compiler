@@ -6,7 +6,7 @@ Parser::Parser(Scanner *_scanner) {
 	lastToken = NULL;
 	top = NULL;
 
-	ParseExpression();
+	top = Parse();
 }
 
 void Parser::Next() {
@@ -16,9 +16,9 @@ void Parser::Next() {
 }
 
 //--- Parse Expression ----------
-void Parser::ParseExpression() {
-	Next();
-	top = Expression();
+
+Node* Parser::Parse() {
+	return Expression();
 }
 
 Node* Parser::Expression() {
@@ -61,10 +61,10 @@ Node* Parser::BinaryOperationExpr(int priority) {
 		case 3: condition = oper == "^"; break;
 		case 4: condition = oper == "&"; break;
 		case 5: condition = oper == "==" || oper == "!="; break;
-		case 6: condition = oper == "<" || oper == ">" || oper == "<=" || oper == ">="; break;
+		case 6: condition = oper == "<"  || oper == ">" || oper == "<=" || oper == ">="; break;
 		case 7: condition = oper == ">>" || oper == "<<"; break;
-		case 8: condition = oper == "+" || oper == "-"; break;
-		case 9: condition = oper == "*" || oper == "/" || oper == "%"; break;
+		case 8: condition = oper == "+"  || oper == "-"; break;
+		case 9: condition = oper == "*"  || oper == "/" || oper == "%"; break;
 	}
 	if(condition) {
 		Next();
@@ -104,6 +104,7 @@ Node* Parser::PostfixExpr() {
 	if(currentToken->GetText() == "++" || currentToken->GetText() == "--") {
 
 	}
+	return left;
 }
 
 Node* Parser::PrimaryExpr() {
@@ -128,6 +129,45 @@ Node* Parser::PrimaryExpr() {
 }
 
 //--- Parse Statement ----------
-void Parser::ParseStatement() {
 
+Node* Parser::Statement() {
+
+	return NULL;
 }
+
+Node* Parser::CompoundStmt() {
+
+	return NULL;
+}
+
+Node* Parser::ExpressionStmt() {
+
+	return NULL;
+}
+
+Node* Parser::DeclarationStmt() {
+
+	return NULL;
+}
+
+Node* Parser::SelectionStmt() {
+
+	return NULL;
+}
+
+Node* Parser::IterationStmt() {
+
+	return NULL;
+}
+
+Node* Parser::FunctionDefinitionStmt() {
+
+	return NULL;
+}
+
+Node* Parser::JumpStmt() {
+
+	return NULL;
+}
+
+//--- Parse Definition ---
