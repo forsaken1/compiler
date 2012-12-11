@@ -35,4 +35,17 @@ public:
 	Parser(Scanner*);
 };
 
+class ParserException {
+	string msg;
+
+public:
+	ParserException(string _msg) {
+		msg = _msg;
+	}
+
+	string GetMessage() {
+		return "Syntax error: " + msg;
+	}
+};
+
 #endif PARSER_H

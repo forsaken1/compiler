@@ -18,7 +18,13 @@ void Parser::Next() {
 //--- Parse Expression ----------
 
 Node* Parser::Parse() {
-	return Expression();
+	try {
+		return Expression();
+	}
+	catch(ParserException &e) {
+		cout << e.GetMessage() << endl;
+		return NULL;
+	}
 }
 
 Node* Parser::Expression() {
