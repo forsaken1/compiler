@@ -3,6 +3,8 @@
 
 class Node {};
 
+//---Expression---
+
 class NodeConst: public Node {
 public:
 	string constant;
@@ -62,6 +64,38 @@ public:
 };
 
 class NodeFunc: public Node {
+
+};
+
+//---Statement---
+
+class NodeCompoundStmt: public Node {
+public:
+
+};
+
+class NodeExpressionStmt: public Node {
+public:
+
+};
+
+class NodeIterationStmt: public Node {
+public:
+
+};
+
+class NodeSelectionStmt: public Node {
+public:
+
+};
+
+class NodeJumpStmt: public Node {
+public:
+
+};
+
+class NodeFuncDefStmt: public Node {
+public:
 
 };
 

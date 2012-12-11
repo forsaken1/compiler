@@ -6,12 +6,12 @@
 
 class Parser {
 	Token *currentToken, *lastToken;
-	Node* top;
+	Node *top;
 	Scanner *scanner;
 	
 	void Next();
 
-	Node* Expression():
+	Node* Expression();
 	Node* AssignmentExpr();
 	Node* ConditionalExpr();
 	Node* BinaryOperationExpr(int);
@@ -19,6 +19,15 @@ class Parser {
 	Node* UnaryExpr();
 	Node* PostfixExpr();
 	Node* PrimaryExpr();
+
+	Node* Statement();
+	Node* CompoundStmt();
+	Node* ExpressionStmt();
+	Node* DeclarationStmt();
+	Node* SelectionStmt();
+	Node* IterationStmt();
+	Node* FunctionDefinitionStmt();
+	Node* JumpStmt();
 
 public:
 	Parser(Scanner*);
