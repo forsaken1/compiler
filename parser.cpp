@@ -4,8 +4,8 @@ Parser::Parser(Scanner *_scanner) {
 	scanner = _scanner;
 	currentToken = NULL;
 	lastToken = NULL;
+	top = NULL;
 
-	Next();
 	ParseExpression();
 }
 
@@ -17,37 +17,43 @@ void Parser::Next() {
 
 //--- Parse Expression ----------
 void Parser::ParseExpression() {
-	Node *left = AssignmentExpr();
 	Next();
-	if(currentToken->GetText() == ",")
-		Node *right = AssignmentExpr();
+	top = Expression();
+}
+
+Node* Parser::Expression() {
+	Node *left = AssignmentExpr();
+
+	if(currentToken->GetText() == ",") {
+		Next();
+		Node *right = Expression();
+	}
+	return left;
 }
 
 Node* Parser::AssignmentExpr() {
 	Node *left = ConditionalExpr();
 
+	return left;
 }
 
-
-Node* Parser::ConditionalExpr() { //нужен класс для тернарной операции
+Node* Parser::ConditionalExpr() { 
 	Node *left = BinaryOperationExpr(0);
-	/*Next();
-	string oper = currentToken->GetText();
-	if(oper == "?") {
-		Next();
-		Node *node 
-	}*/
+
+	return left;
 }
 
 Node* Parser::BinaryOperationExpr(int priority) {
-	if(priority > 9)
-		Node* left = CastExpr();
-	else
-		Node* left = BinaryOperationExpr(priority + 1);
+	Node *left = NULL;
 
-	Next();
+	if(priority == 9)
+		left = CastExpr();
+	else
+		left = BinaryOperationExpr(priority + 1);
+
 	string oper = currentToken->GetText();
 	bool condition = false;
+
 	switch(priority) {
 		case 0: condition = oper == "||"; break;
 		case 1: condition = oper == "&&"; break;
@@ -65,152 +71,26 @@ Node* Parser::BinaryOperationExpr(int priority) {
 		Node *right = BinaryOperationExpr(priority);
 		return new NodeBinary(left, oper, right);
 	}
+	return left;
 }
-
-	/*
-Node* Parser::LogicalORExpr() {
-	Node *left = LogicalANDExpr();
-	Next();
-	string oper = currentToken->GetText();
-	if(oper == "||") {
-		Next();
-		Node *right = LogicalORExpr();
-		return new NodeBinary(left, oper, right);
-	}
-	else
-		return left;
-}
-	
-Node* Parser::LogicalANDExpr() {
-	Node *left = InclusiveORExpr();
-	Next();
-	string oper = currentToken->GetText();
-	if(oper == "&&") {
-		Next();
-		Node *right = LogicalANDExpr();
-		return new NodeBinary(left, oper, right);
-	}
-	else
-		return left;
-}
-	
-Node* Parser::InclusiveORExpr() {
-	Node *left = ExclusiveORExpr();
-	Next();
-	string oper = currentToken->GetText();
-	if(oper == "|") {
-		Next();
-		Node *right = InclusiveORExpr();
-		return new NodeBinary(left, oper, right);
-	}
-	else
-		return left;
-}
-
-Node* Parser::ExclusiveORExpr() {
-	Node *left = ANDExpr();
-	Next();
-	string oper = currentToken->GetText();
-	if(oper == "^") {
-		Next();
-		Node *right = ExclusiveORExpr();
-		return new NodeBinary(left, oper, right);
-	}
-	else
-		return left;
-}
-	
-Node* Parser::ANDExpr() {
-	Node *left = EqualityExpr();
-	Next();
-	string oper = currentToken->GetText();
-	if(oper == "&") {
-		Next();
-		Node *right = ANDExpr();
-		return new NodeBinary(left, oper, right);
-	}
-	else
-		return left;
-}
-
-Node* Parser::EqualityExpr() {
-	Node *left = RelationalExpr();
-	Next();
-	string oper = currentToken->GetText();
-	if(oper == "==" || oper == "!=") {
-		Next();
-		Node *right = EqualityExpr();
-		return new NodeBinary(left, oper, right);
-	}
-	else
-		return left;
-}
-
-Node* Parser::RelationalExpr() {
-	Node *left = ShiftExpr();
-	Next();
-	string oper = currentToken->GetText();
-	if(oper == ">" || oper == "<" || oper == ">=" || oper == "<=") {
-		Next();
-		Node *right = RelationalExpr();
-		return new NodeBinary(left, oper, right);
-	}
-	else
-		return left;
-}
-
-Node* Parser::ShiftExpr() {
-	Node *left = AdditiveExpr();
-	Next();
-	string oper = currentToken->GetText();
-	if(oper == ">>" || oper == "<<") {
-		Next();
-		Node *right = ShiftExpr();
-		return new NodeBinary(left, oper, right);
-	}
-	else
-		return left;
-}
-
-Node* Parser::AdditiveExpr() {
-	Node *left = MultiplicativeExpr();
-	Next();
-	string oper = currentToken->GetText();
-	if(oper == "+" || oper == "-") {
-		Next();
-		Node *right = AdditiveExpr();
-		return new NodeBinary(left, oper, right);
-	}
-	else
-		return left;
-}
-
-Node* Parser::MultiplicativeExpr() {
-	Node *left = CastExpr();
-	Next();
-	string oper = currentToken->GetText();
-	if(oper == "*" || oper == "/" || oper == "%") {
-		Next();
-		Node *right = MultiplicativeExpr();
-		return new NodeBinary(left, oper, right);
-	}
-	else
-		return left;
-}*/
 
 Node* Parser::CastExpr() {
 	Node *left = UnaryExpr();
+
+	return left;
 }
 
 Node* Parser::UnaryExpr() {
 	Node *left = PostfixExpr();
+
+	return left;
 }
 
 Node* Parser::PostfixExpr() {
 	Node *left = PrimaryExpr();
-	Next();
+
 	if(currentToken->GetText() == "[") {
-		Next();
+
 	}
 	if(currentToken->GetText() == "(") {
 
@@ -222,7 +102,7 @@ Node* Parser::PostfixExpr() {
 
 	}
 	if(currentToken->GetText() == "++" || currentToken->GetText() == "--") {
-		return ;
+
 	}
 }
 

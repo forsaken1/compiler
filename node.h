@@ -30,7 +30,7 @@ public:
 		opname = _opname;
 		right = _right;
 	}
-}
+};
 
 class NodeBinary: public NodeUnary {
 public:
@@ -39,7 +39,18 @@ public:
 	NodeBinary(Node *_left, string _opname, Node *_right): NodeUnary(_opname, _right) {
 		left = _left;
 	}
-}
+};
+
+class NodeTernary: public Node {
+public:
+	Node *condition, *cond_true, *cond_false;
+
+	NodeTernary(Node *_condition, Node *_cond_true, Node *_cond_false) {
+		condition = _condition;
+		cond_true = _cond_true;
+		cond_false = _cond_false;
+	}
+};
 
 class NodeFunc: public Node {
 

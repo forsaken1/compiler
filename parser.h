@@ -6,24 +6,15 @@
 
 class Parser {
 	Token *currentToken, *lastToken;
+	Node* top;
 	Scanner *scanner;
 	
 	void Next();
 
-	Node* BinaryOperationExpr(int);
-
+	Node* Expression():
 	Node* AssignmentExpr();
 	Node* ConditionalExpr();
-	/*Node* LogicalORExpr();
-	Node* LogicalANDExpr();
-	Node* InclusiveORExpr();
-	Node* ExclusiveORExpr();
-	Node* ANDExpr();
-	Node* EqualityExpr();
-	Node* RelationalExpr();
-	Node* ShiftExpr();
-	Node* AdditiveExpr();
-	Node* MultiplicativeExpr();*/
+	Node* BinaryOperationExpr(int);
 	Node* CastExpr();
 	Node* UnaryExpr();
 	Node* PostfixExpr();
