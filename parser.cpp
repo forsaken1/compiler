@@ -199,7 +199,10 @@ Node* Parser::FunctionDefinitionStmt() {
 Node* Parser::CompoundStmt() {
 	if(oper == "{") {
 		Next();
-
+		Node* link = StatementList();
+		
+		if(link == NULL) link = DeclarationStmt();
+		//Добавить StatementList();
 	}
 	return NULL;
 }

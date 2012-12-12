@@ -23,6 +23,7 @@ class Parser {
 	Node* PrimaryExpr();
 
 	Node* Statement();
+	Node* StatementList();
 	Node* CompoundStmt();
 	Node* ExpressionStmt();
 	Node* DeclarationStmt();
