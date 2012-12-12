@@ -224,7 +224,28 @@ Node* Parser::DeclarationStmt() {
 }
 
 Node* Parser::SelectionStmt() {
+	if(oper == "if" || oper == "switch") {
+		Next();
+		if(oper != "(")
+			throw ParserException("Selection operator without left bracket");
+		
+		Next();
+		Node *expr = Expression();
 
+		Next();
+		if(oper != "(")
+			throw ParserException("Selection operator without right bracket");
+		
+		Next();
+		Node *ifTrue = Statement();
+
+		if(oper == "else") {
+			Next();
+			Node *ifFalse = Statement();
+			return new NodeSelectionStmt();
+		}
+		return new NodeSelectionStmt(); //Разные конструкторы
+	}
 	return NULL;
 }
 
