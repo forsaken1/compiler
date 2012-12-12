@@ -30,6 +30,15 @@ class Parser {
 	Node* IterationStmt();
 	Node* FunctionDefinitionStmt();
 	Node* JumpStmt();
+
+	Node* Declaration();
+	Node* DeclarationSpec();
+	Node* TypeSpec();
+	Node* InitDeclarationList();
+	Node* InitDeclarator();
+	Node* Declarator();
+	Node* DirectDeclarator();
+	Node* Pointer();
 	
 	void Next();
 	void InitHashes();

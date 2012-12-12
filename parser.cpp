@@ -11,9 +11,6 @@ Parser::Parser(Scanner *_scanner) {
 }
 
 void Parser::Next() {
-	//if(scanner->EoF())
-		//throw ParserException(SUCCESS, "Syntax analisys success");
-
 	scanner->Next();
 	lastToken = currentToken;
 	currentToken = scanner->GetToken();
@@ -182,12 +179,28 @@ Node* Parser::PrimaryExpr() {
 //--- Parse Statement ----------
 
 Node* Parser::Statement() {
+	Node *link = FunctionDefinitionStmt();
+
+	if(link == NULL) link = CompoundStmt();
+	if(link == NULL) link = ExpressionStmt();
+	if(link == NULL) link = DeclarationStmt();
+	if(link == NULL) link = SelectionStmt();
+	if(link == NULL) link = IterationStmt();
+	if(link == NULL) link = JumpStmt();
+
+	return NULL;
+}
+
+Node* Parser::FunctionDefinitionStmt() {
 
 	return NULL;
 }
 
 Node* Parser::CompoundStmt() {
+	if(oper == "{") {
+		Next();
 
+	}
 	return NULL;
 }
 
@@ -207,11 +220,6 @@ Node* Parser::SelectionStmt() {
 }
 
 Node* Parser::IterationStmt() {
-
-	return NULL;
-}
-
-Node* Parser::FunctionDefinitionStmt() {
 
 	return NULL;
 }
