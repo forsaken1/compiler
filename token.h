@@ -66,4 +66,6 @@ public:
 	string GetValue();
 };
 
+#include "token.cpp"
+
 #endif TOKEN_H
