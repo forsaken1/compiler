@@ -36,8 +36,7 @@ Node* Parser::Expression() {
 	if(oper == ",") {
 		string _oper = oper;
 		Next();
-		Node *right = Expression();
-		return new NodeBinary(left, _oper, right);
+		return new NodeBinary(left, _oper, Expression());
 	}
 	return left;
 }
@@ -48,8 +47,7 @@ Node* Parser::AssignmentExpr() {
 	if(assignmentOperator[oper]) {
 		string _oper = oper;
 		Next();
-		Node *right = AssignmentExpr();
-		return new NodeBinary(left, _oper, right);
+		return new NodeBinary(left, _oper, AssignmentExpr());
 	}
 	return left;
 }
@@ -63,8 +61,7 @@ Node* Parser::ConditionalExpr() {
 
 		if(oper == ":") {
 			Next();
-			Node *cond_false = ConditionalExpr();
-			return new NodeTernary(condition, cond_true, cond_false);
+			return new NodeTernary(condition, cond_true, ConditionalExpr());
 		}
 	}
 	return condition;
@@ -95,25 +92,20 @@ Node* Parser::BinaryOperationExpr(int priority) {
 	if(condition) {
 		string _oper = oper;
 		Next();
-		Node *right = BinaryOperationExpr(priority);
-		return new NodeBinary(left, _oper, right);
+		return new NodeBinary(left, _oper, BinaryOperationExpr(priority));
 	}
 	return left;
 }
 
-Node* Parser::CastExpr() { //путаница между (TypeName) и ( Expression )
-	/*if(oper == "(") {
-		Next();
+Node* Parser::CastExpr() {
+	if(typeName[oper] && lastToken->GetText() == "(") {
 		string _oper = oper;
-
-		if(typeName[oper]) {
-			Next();
-		}
+		Next();
 		if(oper == ")") {
 			Next();
-			return new NodeUnary(_oper, CastExpr());
+			return new NodeUnaryPostfix(_oper, CastExpr());
 		}
-	}*/
+	}
 	return UnaryExpr();
 }
 
@@ -153,25 +145,7 @@ Node* Parser::UnaryExpr() {
 Node* Parser::PostfixExpr() {
 	Node *left = PrimaryExpr();
 
-	if(left == NULL) {
-		left = PostfixExpr();
-
-		if(oper == "[") {
-
-		}
-		if(oper == "(") {
-
-		}
-		if(oper == ".") {
-
-		}
-		if(oper == "->") {
-
-		}
-		if(oper == "++" || oper == "--") {
-
-		}
-	}
+	
 	return left;
 }
 
@@ -199,6 +173,7 @@ Node* Parser::PrimaryExpr() {
 			Next();
 			return expr;
 		}
+		return expr;
 	}
 }
 

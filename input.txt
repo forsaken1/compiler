@@ -1,1 +1,1 @@
-!id;
+(char)ident;

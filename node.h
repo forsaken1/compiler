@@ -66,6 +66,17 @@ public:
 	}
 };
 
+class NodeUnaryPostfix: public NodeUnary {
+public:
+	NodeUnaryPostfix(string _opname, Node *_right): NodeUnary(_opname, _right) {}
+
+	void Print() {
+		cout << "[ (" << opname << ") ";
+		right->Print();
+		cout << " ]";
+	}
+};
+
 class NodeBinary: public NodeUnary {
 public:
 	Node *left;
