@@ -352,7 +352,41 @@ Node* Parser::JumpStmt() {
 	return NULL;
 }
 
-//--- Parse Definition ---
+//--- Parse Declaration ---
+
+Node* Declaration() {
+
+}
+
+Node* DeclarationSpec() {
+
+}
+
+Node* TypeSpec() {
+
+}
+
+Node* InitDeclarationList() {
+
+}
+
+Node* InitDeclarator() {
+
+}
+
+Node* Declarator() {
+
+}
+
+Node* DirectDeclarator() {
+
+}
+
+Node* Pointer() {
+
+}
+
+//--- Init Hashes ---
 
 void Parser::InitHashes() {
 	assignmentOperator["="] = true;
