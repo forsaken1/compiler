@@ -1,6 +1,7 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+#include "sym_table.h"
 #include "scanner.h"
 #include "node.h"
 
@@ -32,14 +33,14 @@ class Parser {
 	Node* FunctionDefinitionStmt();
 	Node* JumpStmt();
 
-	Node* Declaration();
-	Node* DeclarationSpec();
-	Node* TypeSpec();
-	Node* InitDeclarationList();
-	Node* InitDeclarator();
-	Node* Declarator();
-	Node* DirectDeclarator();
-	Node* Pointer();
+	Symbol* Declaration();
+	Symbol* DeclarationSpec();
+	Symbol* TypeSpec();
+	Symbol* InitDeclarationList();
+	Symbol* InitDeclarator();
+	Symbol* Declarator();
+	Symbol* DirectDeclarator();
+	Symbol* Pointer();
 	
 	void Next();
 	void InitHashes();

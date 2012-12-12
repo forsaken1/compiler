@@ -1,12 +1,11 @@
 #ifndef SYM_TABLE_H
 #define SYM_TABLE_H
 
-#include <string>
-
 class Symbol {
-public:
+protected:
 	string name;
 
+public:
 	Symbol(string _name) {
 		name = _name;
 	}
@@ -15,9 +14,9 @@ public:
 //--- SymVar ---
 
 class SymVar: public Symbol {
-public:
 	SymType *type;
 
+public:
 	SymVar(SymType *_type, string _name): Symbol(_name) {
 		type = _type;
 	}
@@ -65,9 +64,11 @@ class SymTypeInteger: public SymTypeScalar {
 };
 
 class SymTypeArray: public SymType {
-public:
 	SymType *elemType;
 	int length;
+
+public:
+	
 };
 
 class SymTypeRecord: public SymType {
@@ -75,8 +76,10 @@ class SymTypeRecord: public SymType {
 };
 
 class SymTypePointer: public SymType {
-public:
 	SymType *refType;
+
+public:
+
 };
 
 //--- SymTable ---

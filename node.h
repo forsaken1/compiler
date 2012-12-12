@@ -202,6 +202,9 @@ public:
 //--- Declaration ---
 
 class NodeDeclaration: public Node {
+	
+
+public:
 
 };
 
