@@ -1,1 +1,1 @@
-ident = 34 + ident;
+ident ? 1: 2;

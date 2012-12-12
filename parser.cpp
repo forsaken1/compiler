@@ -55,9 +55,19 @@ Node* Parser::AssignmentExpr() {
 }
 
 Node* Parser::ConditionalExpr() { 
-	Node *left = BinaryOperationExpr(0);
+	Node *condition = BinaryOperationExpr(0);
 
-	return left;
+	if(oper == "?") {
+		Next();
+		Node *cond_true = Expression();
+
+		if(oper == ":") {
+			Next();
+			Node *cond_false = ConditionalExpr();
+			return new NodeTernary(condition, cond_true, cond_false);
+		}
+	}
+	return condition;
 }
 
 Node* Parser::BinaryOperationExpr(int priority) {
