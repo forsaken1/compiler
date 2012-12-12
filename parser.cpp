@@ -101,7 +101,11 @@ Node* Parser::CastExpr() {
 
 	if(oper == "(") {
 		Next();
-		
+		//считать TypeName
+		if(oper == ")") {
+			Next();
+			return new NodeUnary("(TypeName)", CastExpr());//исправить с TypeName
+		}
 	}
 	left = UnaryExpr();
 
@@ -126,20 +130,24 @@ Node* Parser::UnaryExpr() {
 Node* Parser::PostfixExpr() {
 	Node *left = PrimaryExpr();
 
-	if(oper == "[") {
+	if(left == NULL) {
+		left = PostfixExpr();
 
-	}
-	if(oper == "(") {
+		if(oper == "[") {
 
-	}
-	if(oper == ".") {
+		}
+		if(oper == "(") {
 
-	}
-	if(oper == "->") {
+		}
+		if(oper == ".") {
 
-	}
-	if(oper == "++" || oper == "--") {
+		}
+		if(oper == "->") {
 
+		}
+		if(oper == "++" || oper == "--") {
+
+		}
 	}
 	return left;
 }
