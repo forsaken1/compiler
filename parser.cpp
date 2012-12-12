@@ -227,14 +227,14 @@ Node* Parser::SelectionStmt() {
 	if(oper == "if" || oper == "switch") {
 		Next();
 		if(oper != "(")
-			throw ParserException("Selection operator without left bracket");
+			throw ParserException("Selection statement without left bracket");
 		
 		Next();
 		Node *expr = Expression();
 
 		Next();
 		if(oper != "(")
-			throw ParserException("Selection operator without right bracket");
+			throw ParserException("Selection statement without right bracket");
 		
 		Next();
 		Node *ifTrue = Statement();
@@ -250,7 +250,71 @@ Node* Parser::SelectionStmt() {
 }
 
 Node* Parser::IterationStmt() {
+	if(oper == "for") {
+		Next();
+		if(oper != "(")
+			throw ParserException("Iteration statement without left bracket");
 
+		Next();
+		Node *forInit = Expression();
+
+		if(oper != ";")
+			throw ParserException("Iteration statement without separator in condition");
+
+		Next();
+		Node *forCond = Expression();
+
+		if(oper != ";")
+			throw ParserException("Iteration statement without separator in condition");
+
+		Next();
+		Node *forIter = Expression();
+
+		if(oper != ")")
+			throw ParserException("Iteration statement without right bracket");
+
+		Next();
+		Node *stmt = Statement();
+
+		return new NodeIterationStmt(); //Доделать конструктор
+	}
+	if(oper == "while") {
+		Node();
+		if(oper != "(")
+			throw ParserException("Iteration statement without left bracket");
+
+		Next();
+		Node *expr = Expression();
+
+		Next();
+		if(oper != ")")
+			throw ParserException("Iteration statement without right bracket");
+
+		Next();
+		Node *stmt = Statement();
+
+		return new NodeIterationStmt();
+	}
+	if(oper == "do") {
+		Node *stmt = Statement();
+		
+		if(oper == "while") {
+			Next();
+			if(oper != "(")
+				throw ParserException("Iteration statement without right bracket");
+
+			Next();
+			Node *expr = Expression();
+
+			if(oper != ")")
+				throw ParserException("Iteration statement without left bracket");
+
+			Next();
+			return new NodeIterationStmt();
+		}
+		else 
+			throw ParserException("Iteration statement without condition");
+	}
 	return NULL;
 }
 

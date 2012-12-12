@@ -47,24 +47,17 @@ class Parser {
 public:
 	Parser(Scanner*);
 };
-/*
-enum ParserExceptionType {
-	SUCCESS,
-	ERROR
-};*/
 
 class ParserException {
 	string msg;
-	//ParserExceptionType type;
 
 public:
-	ParserException(/*ParserExceptionType _type,*/ string _msg) {
+	ParserException(string _msg) {
 		msg = _msg;
-		//type = _type;
 	}
 
 	string GetMessage() {
-		return /*(type == SUCCESS ? "Build success. " :*/ "Syntax error: "/*)*/ + msg;
+		return "Syntax error: " + msg;
 	}
 };
 
