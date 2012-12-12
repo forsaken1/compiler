@@ -101,35 +101,53 @@ Node* Parser::BinaryOperationExpr(int priority) {
 	return left;
 }
 
-Node* Parser::CastExpr() {
-	Node *left = NULL;
-
-	if(oper == "(") {
+Node* Parser::CastExpr() { //путаница между (TypeName) и ( Expression )
+	/*if(oper == "(") {
 		Next();
-		//считать TypeName
+		string _oper = oper;
+
+		if(typeName[oper]) {
+			Next();
+		}
 		if(oper == ")") {
 			Next();
-			return new NodeUnary("(TypeName)", CastExpr());//исправить с TypeName
+			return new NodeUnary(_oper, CastExpr());
 		}
-	}
-	left = UnaryExpr();
-
-	return left;
+	}*/
+	return UnaryExpr();
 }
 
 Node* Parser::UnaryExpr() {
-	Node *left = PostfixExpr();
-
-	if(left == NULL) {
+	if(oper == "sizeof") {
+		Next();
+		if(oper == "(") {
+			Next();
+			string type = oper;
+			if(typeName[oper]) {
+				Next();
+			}			//add exeption
+			if(oper == ")") {
+				Next();
+				return new NodeUnary("sizeof", new NodeConst(type));
+			}
+		}
+		else {
+			Next();
+			Node *link = UnaryExpr();
+			return new NodeUnary("sizeof", link);
+		}
+	}
+	if(oper == "++" || oper == "--") {
 		string _oper = oper;
 		Next();
-		if(_oper == "++" || _oper == "--" || _oper == "sizeof") {
-			return new NodeUnary(_oper, UnaryExpr());
-		}
-		if(unaryOperator[_oper])
-			return new NodeUnary(_oper, CastExpr());
+		return new NodeUnary(_oper, UnaryExpr());
 	}
-	return left;
+	if(unaryOperator[oper]) {
+		string _oper = oper;
+		Next();
+		return new NodeUnary(_oper, CastExpr());
+	}	
+	return PostfixExpr();
 }
 
 Node* Parser::PostfixExpr() {
@@ -426,4 +444,9 @@ void Parser::InitHashes() {
 	unaryOperator["-"] = true;
 	unaryOperator["~"] = true;
 	unaryOperator["!"] = true;
+
+	typeName["void"] = true;
+	typeName["char"] = true;
+	typeName["int"] = true;
+	typeName["float"] = true;
 }

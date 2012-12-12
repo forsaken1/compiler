@@ -9,7 +9,7 @@ class Parser {
 	Node *top;
 	Scanner *scanner;
 	string oper;
-	map<string, bool> assignmentOperator, unaryOperator;
+	map<string, bool> assignmentOperator, unaryOperator, typeName;
 	
 	void Parse();
 
