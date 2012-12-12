@@ -45,27 +45,12 @@ Node* Parser::Expression() {
 Node* Parser::AssignmentExpr() {
 	Node *left = ConditionalExpr();
 
-	if(left == NULL) {
-		left = UnaryExpr();
-		
-		if(assignmentOperator[oper]) {
-			string _oper = oper;
-			Next();
-			Node *right = AssignmentExpr();
-			return new NodeBinary(left, _oper, right);
-		}
-	}
-	/*if(oper == "++" || oper == "--" || oper == "sizeof") { //unary-expr
+	if(assignmentOperator[oper]) {
+		string _oper = oper;
 		Next();
-		if(assignmentOperator[oper]) {
-			Next();
-			Node *right = AssignmentExpr();
-			//return ;
-		}
+		Node *right = AssignmentExpr();
+		return new NodeBinary(left, _oper, right);
 	}
-	if(unaryOperator[oper]) { //cast-expr
-
-	}*/
 	return left;
 }
 
