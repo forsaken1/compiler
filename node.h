@@ -6,7 +6,7 @@ public:
 	virtual void Print() {}
 };
 
-//---Expression---
+//--- Expression ---
 
 class NodeConst: public Node {
 public:
@@ -94,7 +94,7 @@ class NodeFunc: public Node {
 
 };
 
-//---Statement---
+//--- Statement ---
 
 class NodeCompoundStmt: public Node {
 public:
@@ -123,6 +123,12 @@ public:
 
 class NodeFuncDefStmt: public Node {
 public:
+
+};
+
+//--- Declaration ---
+
+class NodeDeclaration: public Node {
 
 };
 
