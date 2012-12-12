@@ -214,6 +214,8 @@ Node* Parser::ExpressionStmt() {
 
 	if(oper == ";")
 		Next();
+	else
+		throw ParserException("Expression without ';'");
 
 	return link;
 }
