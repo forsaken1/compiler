@@ -22,7 +22,7 @@ void Parser::Next() {
 void Parser::Parse() {
 	try {
 		Next();
-		top = Expression();
+		top = Statement();
 		top->Print();
 	}
 	catch(ParserException &e) {
@@ -196,6 +196,11 @@ Node* Parser::FunctionDefinitionStmt() {
 	return NULL;
 }
 
+Node* Parser::StatementList() {
+
+	return NULL;
+}
+
 Node* Parser::CompoundStmt() {
 	Node *link = NULL;
 
@@ -356,34 +361,42 @@ Node* Parser::JumpStmt() {
 
 Node* Declaration() {
 
+	return NULL;
 }
 
 Node* DeclarationSpec() {
-
+	
+	return NULL;
 }
 
 Node* TypeSpec() {
-
+	
+	return NULL;
 }
 
 Node* InitDeclarationList() {
-
+	
+	return NULL;
 }
 
 Node* InitDeclarator() {
-
+	
+	return NULL;
 }
 
 Node* Declarator() {
-
+	
+	return NULL;
 }
 
 Node* DirectDeclarator() {
-
+	
+	return NULL;
 }
 
 Node* Pointer() {
-
+	
+	return NULL;
 }
 
 //--- Init Hashes ---

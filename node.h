@@ -103,7 +103,11 @@ public:
 
 class NodeExpressionStmt: public Node {
 public:
+	Node *expr;
 
+	NodeExpressionStmt(Node *_expr) {
+		
+	}
 };
 
 class NodeIterationStmt: public Node {

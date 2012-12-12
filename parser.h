@@ -61,6 +61,4 @@ public:
 	}
 };
 
-#include "parser.cpp"
-
 #endif PARSER_H

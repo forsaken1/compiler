@@ -73,6 +73,4 @@ public:
 	}
 };
 
-#include "scanner.cpp"
-
 #endif SCANNER_H
