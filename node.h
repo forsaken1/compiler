@@ -9,9 +9,9 @@ public:
 //--- Expression ---
 
 class NodeConst: public Node {
-public:
 	string constant;
 
+public:
 	NodeConst(string _constant) {
 		constant = _constant;
 	}
@@ -22,9 +22,9 @@ public:
 };
 
 class NodeVar: public Node {
-public:
 	string name;
 
+public:
 	NodeVar(string _name) {
 		name = _name;
 	}
@@ -35,9 +35,9 @@ public:
 };
 
 class NodeCall: public NodeVar {
-public:
 	Node *args;
 
+public:
 	NodeCall(string _name, Node *_args): NodeVar(_name) {
 		args = _args;
 	}
@@ -50,19 +50,19 @@ public:
 };
 
 class NodeUnary: public Node {
-public:
 	string opname;
 	Node *right;
 
+public:
 	NodeUnary(string _opname, Node *_right) {
 		opname = _opname;
 		right = _right;
 	}
 
 	void Print() {
-		cout << "[ " << opname << " ";
+		cout << "{ (" << opname << ") ";
 		right->Print();
-		cout << " ]";
+		cout << " }";
 	}
 };
 
@@ -71,33 +71,51 @@ public:
 	NodeUnaryPostfix(string _opname, Node *_right): NodeUnary(_opname, _right) {}
 
 	void Print() {
-		cout << "[ (" << opname << ") ";
+		cout << "{ ";
 		right->Print();
-		cout << " ]";
+		cout << " (" << opname << ") }";
+	}
+};
+
+class NodeStruct: public Node {
+	Node *structure, *elem;
+
+public:
+	NodeStruct(Node *_structure, Node *_elem) {
+		structure = _structure;
+		elem = _elem;
+	}
+
+	void Print() {
+		cout << "{ ";
+		structure->Print();
+		cout << " [ ";
+		elem->Print();
+		cout  << " ] }";
 	}
 };
 
 class NodeBinary: public NodeUnary {
-public:
 	Node *left;
 
+public:
 	NodeBinary(Node *_left, string _opname, Node *_right): NodeUnary(_opname, _right) {
 		left = _left;
 	}
 
 	void Print() {
-		cout << "[ ";
+		cout << "{ ";
 		left->Print();
 		cout << " " << opname << " ";
 		right->Print();
-		cout << " ]";
+		cout << " }";
 	}
 };
 
 class NodeTernary: public Node {
-public:
 	Node *condition, *cond_true, *cond_false;
 
+public:
 	NodeTernary(Node *_condition, Node *_cond_true, Node *_cond_false) {
 		condition = _condition;
 		cond_true = _cond_true;
@@ -105,13 +123,13 @@ public:
 	}
 
 	void Print() {
-		cout << "[ ";
+		cout << "{ ";
 		condition->Print();
 		cout << " ? ";
 		cond_true->Print();
 		cout << " : ";
 		cond_false->Print();
-		cout << " ]";
+		cout << " }";
 	}
 };
 
@@ -127,9 +145,9 @@ public:
 };
 
 class NodeExpressionStmt: public Node {
-public:
 	Node *expr;
 
+public:
 	NodeExpressionStmt(Node *_expr) {
 		expr = _expr;
 	}

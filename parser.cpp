@@ -103,7 +103,7 @@ Node* Parser::CastExpr() {
 		Next();
 		if(oper == ")") {
 			Next();
-			return new NodeUnaryPostfix(_oper, CastExpr());
+			return new NodeUnary(_oper, CastExpr());
 		}
 	}
 	return UnaryExpr();
@@ -145,7 +145,21 @@ Node* Parser::UnaryExpr() {
 Node* Parser::PostfixExpr() {
 	Node *left = PrimaryExpr();
 
-	
+	if(oper == "[") {
+		Next();
+		Node *link = Expression();
+
+		Next();
+		if(oper == "]") {
+			Next();
+			return new NodeStruct(left, link);
+		}
+	}
+	if(oper == "++" || oper == "--") {
+		string _oper = oper;
+		Next();
+		return new NodeUnaryPostfix(_oper, left);
+	}
 	return left;
 }
 
