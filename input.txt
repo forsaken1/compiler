@@ -1,1 +1,1 @@
-s -> f;
+if(e) t; else g;

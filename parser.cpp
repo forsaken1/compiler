@@ -117,7 +117,7 @@ Node* Parser::UnaryExpr() {
 			string type = oper;
 			if(typeName[oper]) {
 				Next();
-			}			//add exeption
+			}
 			if(oper == ")") {
 				Next();
 				return new NodeUnary("sizeof", new NodeConst(type));
@@ -238,8 +238,9 @@ Node* Parser::ExpressionStmt() {
 
 	if(oper == ";")
 		Next();
-	else
-		throw ParserException("Expression without ';'");
+	else 
+		if(link != NULL)
+			throw ParserException("Expression without ';'");
 
 	return link;
 }
@@ -258,8 +259,7 @@ Node* Parser::SelectionStmt() {
 		Next();
 		Node *expr = Expression();
 
-		Next();
-		if(oper != "(")
+		if(oper != ")")
 			throw ParserException("Selection statement without right bracket");
 		
 		Next();
@@ -268,9 +268,9 @@ Node* Parser::SelectionStmt() {
 		if(oper == "else") {
 			Next();
 			Node *ifFalse = Statement();
-			return new NodeSelectionStmt();
+			return new NodeSelectionStmt(expr, ifTrue, ifFalse);
 		}
-		return new NodeSelectionStmt(); //Разные конструкторы
+		return new NodeSelectionStmt(expr, ifTrue, NULL);
 	}
 	return NULL;
 }
@@ -312,7 +312,6 @@ Node* Parser::IterationStmt() {
 		Next();
 		Node *expr = Expression();
 
-		Next();
 		if(oper != ")")
 			throw ParserException("Iteration statement without right bracket");
 

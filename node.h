@@ -159,13 +159,34 @@ public:
 };
 
 class NodeIterationStmt: public Node {
+
 public:
 
 };
 
 class NodeSelectionStmt: public Node {
-public:
+	Node *expr, *trueStmt, *falseStmt;
 
+public:
+	NodeSelectionStmt(Node *_expr, Node *_trueStmt, Node *_falseStmt) {
+		expr = _expr;
+		trueStmt = _trueStmt;
+		falseStmt = _falseStmt;
+	}
+
+	void Print() {
+		cout << "if ( ";
+		expr->Print();
+		cout << " ) { ";
+		trueStmt->Print();
+		cout << " } ";
+
+		if(falseStmt != NULL) {
+			cout << "else { ";
+			falseStmt->Print();
+			cout << " }";
+		}
+	}
 };
 
 class NodeJumpStmt: public Node {
