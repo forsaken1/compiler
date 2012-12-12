@@ -33,9 +33,11 @@ void Parser::Parse() {
 Node* Parser::Expression() {
 	Node *left = AssignmentExpr();
 
-	if(currentToken->GetText() == ",") {
+	if(oper == ",") {
+		string _oper = oper;
 		Next();
 		Node *right = Expression();
+		return new NodeBinary(left, _oper, right);
 	}
 	return left;
 }
@@ -43,7 +45,17 @@ Node* Parser::Expression() {
 Node* Parser::AssignmentExpr() {
 	Node *left = ConditionalExpr();
 
-	if(oper == "++" || oper == "--" || oper == "sizeof") { //unary-expr
+	if(left == NULL) {
+		left = UnaryExpr();
+		
+		if(assignmentOperator[oper]) {
+			string _oper = oper;
+			Next();
+			Node *right = AssignmentExpr();
+			return new NodeBinary(left, _oper, right);
+		}
+	}
+	/*if(oper == "++" || oper == "--" || oper == "sizeof") { //unary-expr
 		Next();
 		if(assignmentOperator[oper]) {
 			Next();
@@ -53,7 +65,7 @@ Node* Parser::AssignmentExpr() {
 	}
 	if(unaryOperator[oper]) { //cast-expr
 
-	}
+	}*/
 	return left;
 }
 
@@ -86,9 +98,10 @@ Node* Parser::BinaryOperationExpr(int priority) {
 		case 9: condition = oper == "*"  || oper == "/" || oper == "%"; break;
 	}
 	if(condition) {
+		string _oper = oper;
 		Next();
 		Node *right = BinaryOperationExpr(priority);
-		return new NodeBinary(left, oper, right);
+		return new NodeBinary(left, _oper, right);
 	}
 	return left;
 }

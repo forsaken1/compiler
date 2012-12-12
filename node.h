@@ -60,7 +60,7 @@ public:
 	}
 
 	void Print() {
-		cout << "[ " << opname;
+		cout << "[ " << opname << " ";
 		right->Print();
 		cout << " ]";
 	}
@@ -77,7 +77,7 @@ public:
 	void Print() {
 		cout << "[ ";
 		left->Print();
-		cout << opname;
+		cout << " " << opname << " ";
 		right->Print();
 		cout << " ]";
 	}
