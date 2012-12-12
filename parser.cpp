@@ -319,7 +319,34 @@ Node* Parser::IterationStmt() {
 }
 
 Node* Parser::JumpStmt() {
+	if(oper == "goto") {
+		Next();
+		Node *ident = PrimaryExpr();
 
+		if(oper != ";")
+			throw ParserException("Jump statement without ';'");
+
+		Next();
+		return new NodeJumpStmt();
+	}
+	if(oper == "continue" || oper == "break") {
+		Next();
+		if(oper != ";")
+			throw ParserException("Jump statement without ';'");
+
+		Next();
+		return new NodeJumpStmt();
+	}
+	if(oper == "return") {
+		Node *expr = Expression();
+
+		Next();
+		if(oper != ";")
+			throw ParserException("Jump statement without ';'");
+
+		Next();
+		return new NodeJumpStmt();
+	}
 	return NULL;
 }
 
