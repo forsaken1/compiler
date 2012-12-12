@@ -17,7 +17,7 @@ public:
 	}
 
 	void Print() {
-		cout << "(" << constant << ")" << endl;
+		cout << "(" << constant << ")";
 	}
 };
 
@@ -30,7 +30,7 @@ public:
 	}
 
 	void Print() {
-		cout << "(" << name << ")" << endl;
+		cout << "(" << name << ")";
 	}
 };
 
@@ -43,7 +43,9 @@ public:
 	}
 
 	void Print() {
-
+		cout << "(";
+		args->Print();
+		cout << ")";
 	}
 };
 
@@ -58,7 +60,9 @@ public:
 	}
 
 	void Print() {
-
+		cout << "[ " << opname;
+		right->Print();
+		cout << " ]";
 	}
 };
 
@@ -71,7 +75,11 @@ public:
 	}
 
 	void Print() {
-
+		cout << "[ ";
+		left->Print();
+		cout << opname;
+		right->Print();
+		cout << " ]";
 	}
 };
 
@@ -86,7 +94,13 @@ public:
 	}
 
 	void Print() {
-
+		cout << "[ ";
+		condition->Print();
+		cout << " ? ";
+		cond_true->Print();
+		cout << " : ";
+		cond_false->Print();
+		cout << " ]";
 	}
 };
 
@@ -106,7 +120,11 @@ public:
 	Node *expr;
 
 	NodeExpressionStmt(Node *_expr) {
-		
+		expr = _expr;
+	}
+
+	void Print() {
+		expr->Print();
 	}
 };
 
