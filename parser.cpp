@@ -188,7 +188,7 @@ Node* Parser::Statement() {
 	if(link == NULL) link = IterationStmt();
 	if(link == NULL) link = JumpStmt();
 
-	return NULL;
+	return link;
 }
 
 Node* Parser::FunctionDefinitionStmt() {
@@ -197,19 +197,25 @@ Node* Parser::FunctionDefinitionStmt() {
 }
 
 Node* Parser::CompoundStmt() {
+	Node *link = NULL;
+
 	if(oper == "{") {
 		Next();
-		Node* link = StatementList();
+		link = StatementList();
 		
 		if(link == NULL) link = DeclarationStmt();
 		//Добавить StatementList();
 	}
-	return NULL;
+	return link;
 }
 
 Node* Parser::ExpressionStmt() {
+	Node *link = Expression();
 
-	return NULL;
+	if(oper == ";")
+		Next();
+
+	return link;
 }
 
 Node* Parser::DeclarationStmt() {
