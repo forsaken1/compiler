@@ -1,7 +1,10 @@
 #ifndef NODE_H
 #define NODE_H
 
-class Node {};
+class Node {
+public:
+	virtual void Print() {}
+};
 
 //---Expression---
 
@@ -12,6 +15,10 @@ public:
 	NodeConst(string _constant) {
 		constant = _constant;
 	}
+
+	void Print() {
+		cout << "(" << constant << ")" << endl;
+	}
 };
 
 class NodeVar: public Node {
@@ -21,6 +28,10 @@ public:
 	NodeVar(string _name) {
 		name = _name;
 	}
+
+	void Print() {
+		cout << "(" << name << ")" << endl;
+	}
 };
 
 class NodeCall: public NodeVar {
@@ -29,6 +40,10 @@ public:
 
 	NodeCall(string _name, Node *_args): NodeVar(_name) {
 		args = _args;
+	}
+
+	void Print() {
+
 	}
 };
 
@@ -41,6 +56,10 @@ public:
 		opname = _opname;
 		right = _right;
 	}
+
+	void Print() {
+
+	}
 };
 
 class NodeBinary: public NodeUnary {
@@ -49,6 +68,10 @@ public:
 
 	NodeBinary(Node *_left, string _opname, Node *_right): NodeUnary(_opname, _right) {
 		left = _left;
+	}
+
+	void Print() {
+
 	}
 };
 
@@ -60,6 +83,10 @@ public:
 		condition = _condition;
 		cond_true = _cond_true;
 		cond_false = _cond_false;
+	}
+
+	void Print() {
+
 	}
 };
 
