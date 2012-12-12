@@ -111,6 +111,15 @@ Node* Parser::CastExpr() {
 Node* Parser::UnaryExpr() {
 	Node *left = PostfixExpr();
 
+	if(left == NULL) {
+		string _oper = oper;
+		Next();
+		if(_oper == "++" || _oper == "--" || _oper == "sizeof") {
+			return new NodeUnary(_oper, UnaryExpr());
+		}
+		if(unaryOperator[_oper])
+			return new NodeUnary(_oper, CastExpr());
+	}
 	return left;
 }
 
@@ -149,7 +158,6 @@ Node* Parser::PrimaryExpr() {
 		return new NodeConst(lastToken->GetText());
 	}
 
-	Next();
 	Node *expr = NULL;
 
 	if(oper == "(") {
