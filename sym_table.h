@@ -1,6 +1,8 @@
 #ifndef SYM_TABLE_H
 #define SYM_TABLE_H
 
+#include <string>
+
 class Symbol {
 public:
 	string name;
@@ -16,9 +18,8 @@ class SymVar: public Symbol {
 public:
 	SymType *type;
 
-	SymVar(SymType *_type, string _name) {
+	SymVar(SymType *_type, string _name): Symbol(_name) {
 		type = _type;
-		name = _name;
 	}
 };
 
@@ -67,7 +68,7 @@ class SymTypeArray: public SymType {
 public:
 	SymType *elemType;
 	int length;
-}
+};
 
 class SymTypeRecord: public SymType {
 
@@ -84,7 +85,7 @@ class SymTable {
 	
 
 public:
-
+	Symbol* Find();
 };
 
 class SymTableStack: public SymTable {

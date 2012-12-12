@@ -50,7 +50,7 @@ Node* Parser::AssignmentExpr() {
 		if(assignmentOperator[oper]) {
 			Next();
 			Node *right = AssignmentExpr();
-			return ;
+			//return ;
 		}
 	}
 	if(unaryOperator[oper]) { //cast-expr
@@ -153,8 +153,9 @@ Node* Parser::PrimaryExpr() {
 	Node *expr = NULL;
 
 	if(currentToken->GetText() == "(") {
-		expr = Expression();
 		Next();
+		expr = Expression();
+
 		if(currentToken->GetText() == ")") {
 			Next();
 			return expr;
