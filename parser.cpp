@@ -149,7 +149,6 @@ Node* Parser::PostfixExpr() {
 		Next();
 		Node *link = Expression();
 
-		Next();
 		if(oper == "]") {
 			Next();
 			return new NodeStruct(left, link);
