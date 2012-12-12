@@ -4,13 +4,15 @@ Parser::Parser(Scanner *_scanner) {
 	scanner = _scanner;
 	currentToken = NULL;
 	lastToken = NULL;
+	top = NULL;
+	InitHashes();
 
 	Parse();
 }
 
 void Parser::Next() {
-	if(scanner->EoF())
-		throw ParserException("Syntax analisys success");
+	//if(scanner->EoF())
+		//throw ParserException(SUCCESS, "Syntax analisys success");
 
 	scanner->Next();
 	lastToken = currentToken;
@@ -22,7 +24,9 @@ void Parser::Next() {
 
 void Parser::Parse() {
 	try {
+		Next();
 		top = Expression();
+		top->Print();
 	}
 	catch(ParserException &e) {
 		cout << e.GetMessage() << endl;
@@ -42,11 +46,8 @@ Node* Parser::Expression() {
 Node* Parser::AssignmentExpr() {
 	Node *left = ConditionalExpr();
 
-	string oper = currentToken->GetText();
-
 	if(oper == "++" || oper == "--" || oper == "sizeof") { //unary-expr
 		Next();
-		oper = currentToken->GetText();
 		if(assignmentOperator[oper]) {
 			Next();
 			Node *right = AssignmentExpr();
@@ -73,7 +74,6 @@ Node* Parser::BinaryOperationExpr(int priority) {
 	else
 		left = BinaryOperationExpr(priority + 1);
 
-	string oper = currentToken->GetText();
 	bool condition = false;
 
 	switch(priority) {
@@ -117,19 +117,19 @@ Node* Parser::UnaryExpr() {
 Node* Parser::PostfixExpr() {
 	Node *left = PrimaryExpr();
 
-	if(currentToken->GetText() == "[") {
+	if(oper == "[") {
 
 	}
-	if(currentToken->GetText() == "(") {
+	if(oper == "(") {
 
 	}
-	if(currentToken->GetText() == ".") {
+	if(oper == ".") {
 
 	}
-	if(currentToken->GetText() == "->") {
+	if(oper == "->") {
 
 	}
-	if(currentToken->GetText() == "++" || currentToken->GetText() == "--") {
+	if(oper == "++" || oper == "--") {
 
 	}
 	return left;
@@ -152,11 +152,11 @@ Node* Parser::PrimaryExpr() {
 	Next();
 	Node *expr = NULL;
 
-	if(currentToken->GetText() == "(") {
+	if(oper == "(") {
 		Next();
 		expr = Expression();
 
-		if(currentToken->GetText() == ")") {
+		if(oper == ")") {
 			Next();
 			return expr;
 		}
