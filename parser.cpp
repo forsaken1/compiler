@@ -155,6 +155,10 @@ Node* Parser::PostfixExpr() {
 			return new NodeStruct(left, link);
 		}
 	}
+	if(oper == "." || oper == "->") {
+		Next();
+		return new NodeStruct(left, PrimaryExpr());
+	}
 	if(oper == "++" || oper == "--") {
 		string _oper = oper;
 		Next();
@@ -189,6 +193,7 @@ Node* Parser::PrimaryExpr() {
 		}
 		return expr;
 	}
+	return NULL;
 }
 
 //--- Parse Statement ----------

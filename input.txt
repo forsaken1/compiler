@@ -1,1 +1,1 @@
-(char)ident;
+i[0];

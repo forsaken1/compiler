@@ -50,6 +50,7 @@ public:
 };
 
 class NodeUnary: public Node {
+protected:
 	string opname;
 	Node *right;
 
