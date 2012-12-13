@@ -176,16 +176,16 @@ public:
 	}
 
 	void Print(int i, bool b) {
-		cout << "if ( ";
+		cout << "if";
+		DrawPath(i, b);
 		expr->Print(i + 1, true);
-		cout << " ) { ";
+
+		DrawPath(i, b);
 		trueStmt->Print(i + 1, true);
-		cout << " } ";
 
 		if(falseStmt != NULL) {
-			cout << "else { ";
-			falseStmt->Print(i + 1, true);
-			cout << " }";
+			DrawPath(i, b);
+			falseStmt->Print(i + 1, false);
 		}
 	}
 };
