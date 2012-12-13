@@ -246,7 +246,8 @@ Node* Parser::ExpressionStmt() {
 }
 
 Node* Parser::DeclarationStmt() {
-
+	Symbol *decl = Declaration();
+	//decl поместить в SymTable, если decl != null
 	return NULL;
 }
 
@@ -377,42 +378,71 @@ Node* Parser::JumpStmt() {
 
 //--- Parse Declaration ---
 
-Node* Declaration() {
+Symbol* Parser::Declaration() {
+	Symbol *decl = DeclarationSpec();
 
+	return decl;
+}
+
+Symbol* Parser::DeclarationSpec() {
+	Symbol *decl = TypeSpec();
+
+	if(oper != ";") {
+		Symbol *var = InitDeclarationList();
+	}
+	return decl;
+}
+
+Symbol* Parser::TypeSpec() {
+	if(typeName[oper]) {
+		Next();
+		string _oper = oper;
+
+		if(_oper == "int")
+			return new SymTypeInteger();
+
+		if(_oper == "float")
+			return new SymTypeFloat();
+
+		return new SymTypeScalar();
+	}
 	return NULL;
 }
 
-Node* DeclarationSpec() {
+Symbol* Parser::InitDeclarationList() {
+	Symbol *decl = InitDeclarator();
+	
+	return decl;
+}
+
+Symbol* Parser::InitDeclarator() {
+	Symbol *decl = Declarator();
+	
+	if(oper == "=") {
+		Next();
+		Node *initialiser = AssignmentExpr();
+		//making...
+	}
+	return decl;
+}
+
+Symbol* Parser::Declarator() {
+	Symbol *decl = DirectDeclarator();
+
+	if(currentToken->GetType() == IDENTIFIER) { //only scalar var.
+		string _oper = oper;
+		Next();
+		return new Symbol(_oper);
+	}
+	return decl;
+}
+
+Symbol* Parser::DirectDeclarator() {
 	
 	return NULL;
 }
 
-Node* TypeSpec() {
-	
-	return NULL;
-}
-
-Node* InitDeclarationList() {
-	
-	return NULL;
-}
-
-Node* InitDeclarator() {
-	
-	return NULL;
-}
-
-Node* Declarator() {
-	
-	return NULL;
-}
-
-Node* DirectDeclarator() {
-	
-	return NULL;
-}
-
-Node* Pointer() {
+Symbol* Parser::Pointer() {
 	
 	return NULL;
 }
