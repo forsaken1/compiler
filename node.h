@@ -108,26 +108,26 @@ public:
 		cout << "(" << opname << ")" << endl;
 
 		for(int j = 0; j < i; j++)
-			cout << "|    ";
+			cout << "|   ";
 
-		cout << endl;
+		cout << "|" << endl;
 
-		for(int j = 1; j < i; j++)
-			cout << "+    ";
+		for(int j = 0; j < i; j++)
+			cout << "+   ";
 
-		cout << "+----";
+		cout << "+---";
 		
 		left->Print(i + 1);
 
 		for(int j = 0; j < i; j++)
-			cout << "|    ";
+			cout << "|   ";
 		
-		cout << endl;
+		cout << "|" << endl;
 
-		for(int j = 1; j < i; j++)
-			cout << "+    ";
+		for(int j = 0; j < i; j++)
+			cout << "+   ";
 
-		cout << "+----";
+		cout << "+---";
 
 		right->Print(i + 1);
 	}
