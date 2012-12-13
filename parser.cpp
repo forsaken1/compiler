@@ -36,7 +36,11 @@ Node* Parser::Expression() {
 	if(oper == ",") {
 		string _oper = oper;
 		Next();
-		return new NodeBinary(left, _oper, Expression());
+		Node *right = Expression();
+		if(right == NULL)
+			throw ParserException("Enumeration without expression after ','");
+
+		return new NodeBinary(left, _oper, right);
 	}
 	return left;
 }
@@ -47,7 +51,11 @@ Node* Parser::AssignmentExpr() {
 	if(assignmentOperator[oper]) {
 		string _oper = oper;
 		Next();
-		return new NodeBinary(left, _oper, AssignmentExpr());
+		Node *right = AssignmentExpr();
+		if(right == NULL)
+			throw ParserException("Assignment expression without left operand");
+
+		return new NodeBinary(left, _oper, right);
 	}
 	return left;
 }
@@ -58,10 +66,16 @@ Node* Parser::ConditionalExpr() {
 	if(oper == "?") {
 		Next();
 		Node *cond_true = Expression();
+		if(cond_true == NULL)
+			throw ParserException("Ternary expression without true-condition");
 
 		if(oper == ":") {
 			Next();
-			return new NodeSelectionStmt(condition, cond_true, ConditionalExpr());
+			Node *cond_false = ConditionalExpr();
+			if(cond_false == NULL)
+				throw ParserException("Ternary expression without false-condition");
+
+			return new NodeSelectionStmt(condition, cond_true, cond_false);
 		}
 	}
 	return condition;
@@ -92,7 +106,11 @@ Node* Parser::BinaryOperationExpr(int priority) {
 	if(condition) {
 		string _oper = oper;
 		Next();
-		return new NodeBinary(left, _oper, BinaryOperationExpr(priority));
+		Node *right = BinaryOperationExpr(priority);
+		if(right == NULL)
+			throw ParserException("Binary expression without left operand");
+
+		return new NodeBinary(left, _oper, right);
 	}
 	return left;
 }
@@ -103,7 +121,11 @@ Node* Parser::CastExpr() {
 		Next();
 		if(oper == ")") {
 			Next();
-			return new NodeUnary(_oper, CastExpr());
+			Node *right = CastExpr();
+			if(right == NULL)
+				throw ParserException("Cast expression without left operand");
+
+			return new NodeUnary(_oper, right);
 		}
 	}
 	return UnaryExpr();

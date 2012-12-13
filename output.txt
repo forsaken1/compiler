@@ -1,9 +1,1 @@
-(+)
-|
-+---(a)
-|
-+---(+)
-    |
-    +---(b)
-    |
-    +---(c)
+Syntax error: Cast expression without left operand
