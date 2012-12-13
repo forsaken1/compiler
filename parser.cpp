@@ -61,7 +61,7 @@ Node* Parser::ConditionalExpr() {
 
 		if(oper == ":") {
 			Next();
-			return new NodeTernary(condition, cond_true, ConditionalExpr());
+			return new NodeSelectionStmt(condition, cond_true, ConditionalExpr());
 		}
 	}
 	return condition;

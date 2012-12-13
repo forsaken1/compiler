@@ -114,27 +114,6 @@ public:
 	}
 };
 
-class NodeTernary: public Node {
-	Node *condition, *cond_true, *cond_false;
-
-public:
-	NodeTernary(Node *_condition, Node *_cond_true, Node *_cond_false) {
-		condition = _condition;
-		cond_true = _cond_true;
-		cond_false = _cond_false;
-	}
-
-	void Print(int i, bool b) {
-		cout << "{ ";
-		condition->Print(i + 1, true);
-		cout << " ? ";
-		cond_true->Print(i + 1, true);
-		cout << " : ";
-		cond_false->Print(i + 1, false);
-		cout << " }";
-	}
-};
-
 class NodeFunc: public Node {
 
 };
@@ -176,12 +155,12 @@ public:
 	}
 
 	void Print(int i, bool b) {
-		cout << "if";
+		cout << "if" << endl;
 		DrawPath(i, b);
 		expr->Print(i + 1, true);
 
 		DrawPath(i, b);
-		trueStmt->Print(i + 1, true);
+		trueStmt->Print(i + 1, falseStmt == NULL ? false : true);
 
 		if(falseStmt != NULL) {
 			DrawPath(i, b);
