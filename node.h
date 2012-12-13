@@ -52,7 +52,7 @@ public:
 		args = _args;
 	}
 
-	void Print(int i, bool b) { //remake
+	void Print(int i, bool b) { 
 		cout << "(";
 		args->Print(i + 1, true);
 		cout << ")";
@@ -115,15 +115,38 @@ public:
 };
 
 class NodeFunc: public Node {
+	Symbol *returnValue;
+	Node *stmt;
+	string name;
 
+public:
+	NodeFunc(Symbol *_returnValue, string _name, Node *_stmt) {
+		returnValue = _returnValue;
+		stmt = _stmt;
+		name = _name;
+	}
+
+	void Print(int i, bool b) {
+
+	}
 };
 
 //--- Statement ---
 
+class NodeStmt: public Node {
+	Node *first, *second;
+
+public:
+	NodeStmt(Node *_first, Node *_second) {
+		first = _first;
+		second = _second;
+	}
+};
+/*
 class NodeCompoundStmt: public Node {
 public:
 
-};
+};*/
 
 class NodeExpressionStmt: public Node {
 	Node *expr;
@@ -138,10 +161,65 @@ public:
 	}
 };
 
-class NodeIterationStmt: public Node {
+class NodeIterationWhile: public Node {
+protected:
+	Node *cond, *stmt;
 
 public:
+	NodeIterationWhile(Node *_cond, Node *_stmt) {
+		cond = _cond;
+		stmt = _stmt;
+	}
 
+	void Print(int i, bool b) {
+		cout << "while" << endl;
+		DrawPath(i, b);
+		cond->Print(i + 1, true);
+
+		DrawPath(i, b);
+		stmt->Print(i + 1, false);
+	}
+};
+
+class NodeIterationDo: public NodeIterationWhile {
+
+public:
+	NodeIterationDo(Node *_cond, Node *_stmt): NodeIterationWhile(_cond, _stmt) {}
+
+	void Print(int i, bool b) {
+		cout << "do" << endl;
+		DrawPath(i, b);
+		cond->Print(i + 1, true);
+
+		DrawPath(i, b);
+		stmt->Print(i + 1, false);
+	}
+};
+
+class NodeIterationFor: public NodeIterationWhile {
+	Node *iter, *init;
+
+public:
+	NodeIterationFor(Node *_init, Node *_cond, Node *_iter, Node *_stmt): NodeIterationWhile(_cond, _stmt) {
+		iter = _iter;
+		init = _init;
+	}
+
+	void Print(int i, bool b) {
+		cout << "for" << endl;
+
+		DrawPath(i, b);
+		init->Print(i + 1, true);
+
+		DrawPath(i, b);
+		cond->Print(i + 1, true);
+
+		DrawPath(i, b);
+		iter->Print(i + 1, true);
+
+		DrawPath(i, b);
+		stmt->Print(i + 1, false);
+	}
 };
 
 class NodeSelectionStmt: public Node {
@@ -170,11 +248,6 @@ public:
 };
 
 class NodeJumpStmt: public Node {
-public:
-
-};
-
-class NodeFuncDefStmt: public Node {
 public:
 
 };
