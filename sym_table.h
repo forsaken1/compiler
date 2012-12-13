@@ -18,6 +18,10 @@ public:
 class SymType: public Symbol {
 public:
 	SymType() {}
+	
+	string GetName() {
+		return name;
+	}
 };
 
 class SymTypeScalar: public SymType {

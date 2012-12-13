@@ -253,19 +253,19 @@ Node* Parser::FunctionDefinitionStmt() {
 
 		if(funcName != NULL) {
 			if(oper != "(")
-				throw ParserException("");///////
+				throw ParserException("Function definition without left bracket");
 
 			Next();
 			Node* args = DeclarationList();
 
 			if(oper != ")")
-				throw ParserException("");////////
+				throw ParserException("Function definition without right bracket");
 
 			Next();
 			Node *stmt = CompoundStmt();
 
-			if(stmt == NULL)
-				throw ParserException("");//////
+			//if(stmt == NULL)
+			//	throw ParserException("Function definition without statement");
 
 			return new NodeFunc(type, funcName, args, stmt);
 		}
@@ -447,6 +447,10 @@ Node* Parser::DeclarationList() {
 	Node *decl = Declaration();
 
 	if(decl != NULL) {
+		if(oper != ",")
+			return decl;
+
+		Next();
 		Node *link = DeclarationList();
 		return new NodeStmt(decl, link);
 	}
@@ -456,6 +460,9 @@ Node* Parser::DeclarationList() {
 Node* Parser::Declaration() {
 	Symbol *decl = TypeSpec();
 
+	if(decl != NULL) {
+		return Declarator();
+	}
 	return NULL;
 }
 

@@ -129,6 +129,9 @@ public:
 	}
 
 	void Print(int i, bool b) {
+		cout << returnValue->GetName() << " function ";
+		name->Print(i + 1, true);
+		DrawPath(i, b);
 
 	}
 };
