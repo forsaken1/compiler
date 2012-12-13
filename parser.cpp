@@ -154,12 +154,20 @@ Node* Parser::UnaryExpr() {
 	if(oper == "++" || oper == "--") {
 		string _oper = oper;
 		Next();
-		return new NodeUnary(_oper, UnaryExpr());
+		Node *right = UnaryExpr();
+		if(right == NULL)
+			throw ParserException("No left operand");
+
+		return new NodeUnary(_oper, right);
 	}
 	if(unaryOperator[oper]) {
 		string _oper = oper;
 		Next();
-		return new NodeUnary(_oper, CastExpr());
+		Node *right = CastExpr();
+		if(right == NULL)
+			throw ParserException("No left operand");
+
+		return new NodeUnary(_oper, right);
 	}	
 	return PostfixExpr();
 }
@@ -175,10 +183,15 @@ Node* Parser::PostfixExpr() {
 			Next();
 			return new NodeStruct(left, link);
 		}
+		else throw ParserException("No left bracket");
 	}
 	if(oper == "." || oper == "->") {
 		Next();
-		return new NodeStruct(left, PrimaryExpr());
+		Node *right = PrimaryExpr();
+		if(right == NULL)
+			throw ParserException("No left field");
+
+		return new NodeStruct(left, right);
 	}
 	if(oper == "++" || oper == "--") {
 		string _oper = oper;

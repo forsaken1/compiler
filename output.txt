@@ -1,1 +1,1 @@
-Syntax error: Cast expression without left operand
+Syntax error: No left field
