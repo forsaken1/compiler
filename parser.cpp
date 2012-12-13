@@ -23,7 +23,7 @@ void Parser::Parse() {
 	try {
 		Next();
 		top = Statement();
-		top->Print();
+		top->Print(1);
 	}
 	catch(ParserException &e) {
 		cout << e.GetMessage() << endl;

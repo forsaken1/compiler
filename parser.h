@@ -1,9 +1,9 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include "sym_table.h"
 #include "scanner.h"
 #include "node.h"
+#include "sym_table.h"
 
 class Parser {
 	Token *currentToken, *lastToken;

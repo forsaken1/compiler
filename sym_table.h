@@ -6,9 +6,52 @@ protected:
 	string name;
 
 public:
+	Symbol() {}
+
 	Symbol(string _name) {
 		name = _name;
 	}
+};
+
+//--- SymType ---
+
+class SymType: public Symbol {
+public:
+	SymType() {}
+};
+
+class SymTypeScalar: public SymType {
+public:
+	SymTypeScalar() {}
+};
+
+class SymTypeFloat: public SymTypeScalar {
+public:
+	SymTypeFloat() {}
+};
+
+class SymTypeInteger: public SymTypeScalar {
+public:
+	SymTypeInteger() {}
+};
+
+class SymTypeArray: public SymType {
+	SymType *elemType;
+	int length;
+
+public:
+	
+};
+
+class SymTypeRecord: public SymType {
+
+};
+
+class SymTypePointer: public SymType {
+	SymType *refType;
+
+public:
+
 };
 
 //--- SymVar ---
@@ -41,43 +84,6 @@ class SymVarGlobal: public SymVar {
 //--- SymFunction ---
 
 class SymFunc: public Symbol {
-public:
-
-};
-
-//--- SymType ---
-
-class SymType: public Symbol {
-
-};
-
-class SymTypeScalar: public SymType {
-
-};
-
-class SymTypeFloat: public SymTypeScalar {
-
-};
-
-class SymTypeInteger: public SymTypeScalar {
-
-};
-
-class SymTypeArray: public SymType {
-	SymType *elemType;
-	int length;
-
-public:
-	
-};
-
-class SymTypeRecord: public SymType {
-
-};
-
-class SymTypePointer: public SymType {
-	SymType *refType;
-
 public:
 
 };

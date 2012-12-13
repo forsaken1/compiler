@@ -3,7 +3,7 @@
 
 class Node {
 public:
-	virtual void Print() {}
+	virtual void Print(int i) {}
 };
 
 //--- Expression ---
@@ -16,8 +16,8 @@ public:
 		constant = _constant;
 	}
 
-	void Print() {
-		cout << "(" << constant << ")";
+	void Print(int i) {
+		cout << "(" << constant << ")" << endl;
 	}
 };
 
@@ -29,8 +29,8 @@ public:
 		name = _name;
 	}
 
-	void Print() {
-		cout << "(" << name << ")";
+	void Print(int i) {
+		cout << "(" << name << ")" << endl;
 	}
 };
 
@@ -42,9 +42,9 @@ public:
 		args = _args;
 	}
 
-	void Print() {
+	void Print(int i) {
 		cout << "(";
-		args->Print();
+		args->Print(i + 1);
 		cout << ")";
 	}
 };
@@ -60,9 +60,9 @@ public:
 		right = _right;
 	}
 
-	void Print() {
+	void Print(int i) {
 		cout << "{ (" << opname << ") ";
-		right->Print();
+		right->Print(i + 1);
 		cout << " }";
 	}
 };
@@ -71,9 +71,9 @@ class NodeUnaryPostfix: public NodeUnary {
 public:
 	NodeUnaryPostfix(string _opname, Node *_right): NodeUnary(_opname, _right) {}
 
-	void Print() {
+	void Print(int i) {
 		cout << "{ ";
-		right->Print();
+		right->Print(i + 1);
 		cout << " (" << opname << ") }";
 	}
 };
@@ -87,11 +87,11 @@ public:
 		elem = _elem;
 	}
 
-	void Print() {
+	void Print(int i) {
 		cout << "{ ";
-		structure->Print();
+		structure->Print(i + 1);
 		cout << " [ ";
-		elem->Print();
+		elem->Print(i + 1);
 		cout  << " ] }";
 	}
 };
@@ -104,12 +104,32 @@ public:
 		left = _left;
 	}
 
-	void Print() {
-		cout << "{ ";
-		left->Print();
-		cout << " " << opname << " ";
-		right->Print();
-		cout << " }";
+	void Print(int i) {
+		cout << "(" << opname << ")" << endl;
+
+		for(int j = 0; j < i; j++)
+			cout << "|    ";
+
+		cout << endl;
+
+		for(int j = 1; j < i; j++)
+			cout << "+    ";
+
+		cout << "+----";
+		
+		left->Print(i + 1);
+
+		for(int j = 0; j < i; j++)
+			cout << "|    ";
+		
+		cout << endl;
+
+		for(int j = 1; j < i; j++)
+			cout << "+    ";
+
+		cout << "+----";
+
+		right->Print(i + 1);
 	}
 };
 
@@ -123,13 +143,13 @@ public:
 		cond_false = _cond_false;
 	}
 
-	void Print() {
+	void Print(int i) {
 		cout << "{ ";
-		condition->Print();
+		condition->Print(i + 1);
 		cout << " ? ";
-		cond_true->Print();
+		cond_true->Print(i + 1);
 		cout << " : ";
-		cond_false->Print();
+		cond_false->Print(i + 1);
 		cout << " }";
 	}
 };
@@ -153,8 +173,8 @@ public:
 		expr = _expr;
 	}
 
-	void Print() {
-		expr->Print();
+	void Print(int i) {
+		expr->Print(i + 1);
 	}
 };
 
@@ -174,16 +194,16 @@ public:
 		falseStmt = _falseStmt;
 	}
 
-	void Print() {
+	void Print(int i) {
 		cout << "if ( ";
-		expr->Print();
+		expr->Print(i + 1);
 		cout << " ) { ";
-		trueStmt->Print();
+		trueStmt->Print(i + 1);
 		cout << " } ";
 
 		if(falseStmt != NULL) {
 			cout << "else { ";
-			falseStmt->Print();
+			falseStmt->Print(i + 1);
 			cout << " }";
 		}
 	}
@@ -202,7 +222,6 @@ public:
 //--- Declaration ---
 
 class NodeDeclaration: public Node {
-	
 
 public:
 
