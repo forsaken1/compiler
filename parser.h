@@ -3,7 +3,6 @@
 
 #include "scanner.h"
 #include "node.h"
-#include "sym_table.h"
 
 class Parser {
 	Token *currentToken, *lastToken;

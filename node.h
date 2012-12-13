@@ -1,6 +1,8 @@
 #ifndef NODE_H
 #define NODE_H
 
+#include "sym_table.h"
+
 class Node {
 protected:
 	void DrawPath(int i, bool b) {
@@ -208,14 +210,20 @@ public:
 	void Print(int i, bool b) {
 		cout << "for" << endl;
 
-		DrawPath(i, b);
-		init->Print(i + 1, true);
+		if(init != NULL) {
+			DrawPath(i, b);
+			init->Print(i + 1, true);
+		}
 
-		DrawPath(i, b);
-		cond->Print(i + 1, true);
+		if(cond != NULL) {
+			DrawPath(i, b);
+			cond->Print(i + 1, true);
+		}
 
-		DrawPath(i, b);
-		iter->Print(i + 1, true);
+		if(iter != NULL) {
+			DrawPath(i, b);
+			iter->Print(i + 1, true);
+		}
 
 		DrawPath(i, b);
 		stmt->Print(i + 1, false);
@@ -248,8 +256,16 @@ public:
 };
 
 class NodeJumpStmt: public Node {
-public:
+	string name;
 
+public:
+	NodeJumpStmt(string _name) {
+		name = _name;
+	}
+
+	void Print(int i, bool b) {
+		cout << "(" << name << ")" << endl;
+	}
 };
 
 //--- Declaration ---

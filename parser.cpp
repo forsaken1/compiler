@@ -353,10 +353,10 @@ Node* Parser::IterationStmt() {
 		Next();
 		Node *stmt = Statement();
 
-		return new NodeIterationFor(forInit, forCond, forIter, stmt); //Доделать конструктор
+		return new NodeIterationFor(forInit, forCond, forIter, stmt);
 	}
 	if(oper == "while") {
-		Node();
+		Next();
 		if(oper != "(")
 			throw ParserException("Iteration statement without left bracket");
 
@@ -372,6 +372,7 @@ Node* Parser::IterationStmt() {
 		return new NodeIterationWhile(expr, stmt);
 	}
 	if(oper == "do") {
+		Next();
 		Node *stmt = Statement();
 		
 		if(oper == "while") {
@@ -403,15 +404,16 @@ Node* Parser::JumpStmt() {
 			throw ParserException("Jump statement without ';'");
 
 		Next();
-		return new NodeJumpStmt();
+		return new NodeJumpStmt("goto");
 	}
 	if(oper == "continue" || oper == "break") {
+		string _oper = oper;
 		Next();
 		if(oper != ";")
 			throw ParserException("Jump statement without ';'");
 
 		Next();
-		return new NodeJumpStmt();
+		return new NodeJumpStmt(_oper);
 	}
 	if(oper == "return") {
 		Node *expr = Expression();
@@ -421,7 +423,7 @@ Node* Parser::JumpStmt() {
 			throw ParserException("Jump statement without ';'");
 
 		Next();
-		return new NodeJumpStmt();
+		return new NodeJumpStmt("return");
 	}
 	return NULL;
 }
@@ -439,23 +441,23 @@ Symbol* Parser::TypeSpec() {
 		Next();
 		string _oper = oper;
 
-		//if(_oper == "int")
-			//return new SymTypeInteger();
+		if(_oper == "int")
+			return new SymTypeInteger();
 
-		//if(_oper == "float")
-			//return new SymTypeFloat();
+		if(_oper == "float")
+			return new SymTypeFloat();
 
-		//return new SymTypeScalar();
+		return new SymTypeScalar();
 	}
 	return NULL;
 }
 
 Node* Parser::InitDeclarationList() {
-	Node *decl = InitDeclarator();
+	//Node *decl = InitDeclarator();
 	
-	return decl;
+	return NULL;
 }
-
+/*
 Node* Parser::InitDeclarator() {
 	Node *decl = Declarator();
 	
@@ -465,7 +467,7 @@ Node* Parser::InitDeclarator() {
 		//making...
 	}
 	return decl;
-}
+}*/
 
 Node* Parser::Declarator() {
 	Node *decl = DirectDeclarator();
