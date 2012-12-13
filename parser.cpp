@@ -246,7 +246,17 @@ Node* Parser::Statement() {
 }
 
 Node* Parser::FunctionDefinitionStmt() {
+	Symbol *type = TypeSpec();
 
+	if(type != NULL) {
+		Node *funcName = Declarator();
+
+		if(funcName != NULL) {
+			Node *stmt = CompoundStmt();
+
+			return new NodeFunc(type, "", stmt);
+		}
+	}
 	return NULL;
 }
 
@@ -261,13 +271,13 @@ Node* Parser::StatementList() {
 }
 
 Node* Parser::CompoundStmt() {
-	Node *link = NULL;
-
 	if(oper == "{") {
 		Next();
-		link = StatementList();
+		Node *link = StatementList();
 		
-		if(link == NULL) link = DeclarationStmt();
+		if(link == NULL) {
+			link = DeclarationStmt();
+		}
 		//Добавить StatementList();
 	}
 	return NULL;
@@ -286,7 +296,7 @@ Node* Parser::ExpressionStmt() {
 }
 
 Node* Parser::DeclarationStmt() {
-	Symbol *decl = Declaration();
+	Node *decl = Declaration();
 	//decl поместить в SymTable, если decl != null
 	return NULL;
 }
@@ -343,7 +353,7 @@ Node* Parser::IterationStmt() {
 		Next();
 		Node *stmt = Statement();
 
-		return new NodeIterationStmt(); //Доделать конструктор
+		return new NodeIterationFor(forInit, forCond, forIter, stmt); //Доделать конструктор
 	}
 	if(oper == "while") {
 		Node();
@@ -359,7 +369,7 @@ Node* Parser::IterationStmt() {
 		Next();
 		Node *stmt = Statement();
 
-		return new NodeIterationStmt();
+		return new NodeIterationWhile(expr, stmt);
 	}
 	if(oper == "do") {
 		Node *stmt = Statement();
@@ -376,7 +386,7 @@ Node* Parser::IterationStmt() {
 				throw ParserException("Iteration statement without left bracket");
 
 			Next();
-			return new NodeIterationStmt();
+			return new NodeIterationDo(expr, stmt);
 		}
 		else 
 			throw ParserException("Iteration statement without condition");
@@ -418,19 +428,10 @@ Node* Parser::JumpStmt() {
 
 //--- Parse Declaration ---
 
-Symbol* Parser::Declaration() {
-	Symbol *decl = DeclarationSpec();
-
-	return decl;
-}
-
-Symbol* Parser::DeclarationSpec() {
+Node* Parser::Declaration() {
 	Symbol *decl = TypeSpec();
 
-	if(oper != ";") {
-		Symbol *var = InitDeclarationList();
-	}
-	return decl;
+	return NULL;
 }
 
 Symbol* Parser::TypeSpec() {
@@ -438,25 +439,25 @@ Symbol* Parser::TypeSpec() {
 		Next();
 		string _oper = oper;
 
-		if(_oper == "int")
-			return new SymTypeInteger();
+		//if(_oper == "int")
+			//return new SymTypeInteger();
 
-		if(_oper == "float")
-			return new SymTypeFloat();
+		//if(_oper == "float")
+			//return new SymTypeFloat();
 
-		return new SymTypeScalar();
+		//return new SymTypeScalar();
 	}
 	return NULL;
 }
 
-Symbol* Parser::InitDeclarationList() {
-	Symbol *decl = InitDeclarator();
+Node* Parser::InitDeclarationList() {
+	Node *decl = InitDeclarator();
 	
 	return decl;
 }
 
-Symbol* Parser::InitDeclarator() {
-	Symbol *decl = Declarator();
+Node* Parser::InitDeclarator() {
+	Node *decl = Declarator();
 	
 	if(oper == "=") {
 		Next();
@@ -466,23 +467,23 @@ Symbol* Parser::InitDeclarator() {
 	return decl;
 }
 
-Symbol* Parser::Declarator() {
-	Symbol *decl = DirectDeclarator();
+Node* Parser::Declarator() {
+	Node *decl = DirectDeclarator();
 
 	if(currentToken->GetType() == IDENTIFIER) { //only scalar var.
 		string _oper = oper;
 		Next();
-		return new Symbol(_oper);
+		//return new Symbol(_oper);
 	}
 	return decl;
 }
 
-Symbol* Parser::DirectDeclarator() {
+Node* Parser::DirectDeclarator() {
 	
 	return NULL;
 }
 
-Symbol* Parser::Pointer() {
+Node* Parser::Pointer() {
 	
 	return NULL;
 }
