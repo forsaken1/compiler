@@ -118,14 +118,14 @@ public:
 
 class NodeFunc: public Node {
 	Symbol *returnValue;
-	Node *stmt;
-	string name;
+	Node *stmt, *args, *name;
 
 public:
-	NodeFunc(Symbol *_returnValue, string _name, Node *_stmt) {
+	NodeFunc(Symbol *_returnValue, Node *_name, Node *_args, Node *_stmt) {
 		returnValue = _returnValue;
 		stmt = _stmt;
 		name = _name;
+		args = _args;
 	}
 
 	void Print(int i, bool b) {

@@ -33,6 +33,7 @@ class Parser {
 	Node* JumpStmt();
 
 	Node* Declaration();
+	Node* DeclarationList();
 	Node* InitDeclarationList();
 	Node* Declarator();
 	Node* DirectDeclarator();

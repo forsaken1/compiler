@@ -252,9 +252,22 @@ Node* Parser::FunctionDefinitionStmt() {
 		Node *funcName = Declarator();
 
 		if(funcName != NULL) {
+			if(oper != "(")
+				throw ParserException("");///////
+
+			Next();
+			Node* args = DeclarationList();
+
+			if(oper != ")")
+				throw ParserException("");////////
+
+			Next();
 			Node *stmt = CompoundStmt();
 
-			return new NodeFunc(type, "", stmt);
+			if(stmt == NULL)
+				throw ParserException("");//////
+
+			return new NodeFunc(type, funcName, args, stmt);
 		}
 	}
 	return NULL;
@@ -296,7 +309,7 @@ Node* Parser::ExpressionStmt() {
 }
 
 Node* Parser::DeclarationStmt() {
-	Node *decl = Declaration();
+	Node *decl = DeclarationList();
 	//decl поместить в SymTable, если decl != null
 	return NULL;
 }
@@ -430,6 +443,16 @@ Node* Parser::JumpStmt() {
 
 //--- Parse Declaration ---
 
+Node* Parser::DeclarationList() {
+	Node *decl = Declaration();
+
+	if(decl != NULL) {
+		Node *link = DeclarationList();
+		return new NodeStmt(decl, link);
+	}
+	return NULL;
+}
+
 Node* Parser::Declaration() {
 	Symbol *decl = TypeSpec();
 
@@ -438,8 +461,8 @@ Node* Parser::Declaration() {
 
 Symbol* Parser::TypeSpec() {
 	if(typeName[oper]) {
-		Next();
 		string _oper = oper;
+		Next();
 
 		if(_oper == "int")
 			return new SymTypeInteger();
@@ -472,21 +495,20 @@ Node* Parser::InitDeclarator() {
 Node* Parser::Declarator() {
 	Node *decl = DirectDeclarator();
 
-	if(currentToken->GetType() == IDENTIFIER) { //only scalar var.
-		string _oper = oper;
-		Next();
-		//return new Symbol(_oper);
-	}
 	return decl;
 }
 
 Node* Parser::DirectDeclarator() {
-	
+	if(currentToken->GetType() == IDENTIFIER) {
+		string _oper = oper;
+		Next();
+		return new NodeVar(_oper);
+	}
 	return NULL;
 }
 
 Node* Parser::Pointer() {
-	
+	//from declarator
 	return NULL;
 }
 
