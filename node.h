@@ -2,8 +2,18 @@
 #define NODE_H
 
 class Node {
+protected:
+	void DrawPath(int i, bool b) {
+		string str = b ? "|   " : "    ";
+		
+		for(int j = 0; j < i; j++) cout << str;
+		cout << "|" << endl;
+		for(int j = 0; j < i; j++) cout << str;
+		cout << "+---";
+	}
+
 public:
-	virtual void Print(int i) {}
+	virtual void Print(int i, bool b) {}
 };
 
 //--- Expression ---
@@ -16,7 +26,7 @@ public:
 		constant = _constant;
 	}
 
-	void Print(int i) {
+	void Print(int i, bool b) {
 		cout << "(" << constant << ")" << endl;
 	}
 };
@@ -29,7 +39,7 @@ public:
 		name = _name;
 	}
 
-	void Print(int i) {
+	void Print(int i, bool b) {
 		cout << "(" << name << ")" << endl;
 	}
 };
@@ -42,9 +52,9 @@ public:
 		args = _args;
 	}
 
-	void Print(int i) {
+	void Print(int i, bool b) { //remake
 		cout << "(";
-		args->Print(i + 1);
+		args->Print(i + 1, true);
 		cout << ")";
 	}
 };
@@ -60,21 +70,11 @@ public:
 		right = _right;
 	}
 
-	void Print(int i) {
-		cout << "{ (" << opname << ") ";
-		right->Print(i + 1);
-		cout << " }";
-	}
-};
+	void Print(int i, bool b) {
+		cout << "(" << opname << ")" << endl;
 
-class NodeUnaryPostfix: public NodeUnary {
-public:
-	NodeUnaryPostfix(string _opname, Node *_right): NodeUnary(_opname, _right) {}
-
-	void Print(int i) {
-		cout << "{ ";
-		right->Print(i + 1);
-		cout << " (" << opname << ") }";
+		DrawPath(i, b);
+		right->Print(i + 1, false);
 	}
 };
 
@@ -87,12 +87,11 @@ public:
 		elem = _elem;
 	}
 
-	void Print(int i) {
-		cout << "{ ";
-		structure->Print(i + 1);
-		cout << " [ ";
-		elem->Print(i + 1);
-		cout  << " ] }";
+	void Print(int i, bool b) {
+		structure->Print(i + 1, true);
+		
+		DrawPath(i, b);
+		elem->Print(i + 1, false);
 	}
 };
 
@@ -104,32 +103,14 @@ public:
 		left = _left;
 	}
 
-	void Print(int i) {
+	void Print(int i, bool b) {
 		cout << "(" << opname << ")" << endl;
 
-		for(int j = 0; j < i; j++)
-			cout << "|   ";
+		DrawPath(i, b);
+		left->Print(i + 1, true);
 
-		cout << "|" << endl;
-
-		for(int j = 0; j < i; j++)
-			cout << "+   ";
-
-		cout << "+---";
-		
-		left->Print(i + 1);
-
-		for(int j = 0; j < i; j++)
-			cout << "|   ";
-		
-		cout << "|" << endl;
-
-		for(int j = 0; j < i; j++)
-			cout << "+   ";
-
-		cout << "+---";
-
-		right->Print(i + 1);
+		DrawPath(i, b);
+		right->Print(i + 1, false);
 	}
 };
 
@@ -143,13 +124,13 @@ public:
 		cond_false = _cond_false;
 	}
 
-	void Print(int i) {
+	void Print(int i, bool b) {
 		cout << "{ ";
-		condition->Print(i + 1);
+		condition->Print(i + 1, true);
 		cout << " ? ";
-		cond_true->Print(i + 1);
+		cond_true->Print(i + 1, true);
 		cout << " : ";
-		cond_false->Print(i + 1);
+		cond_false->Print(i + 1, false);
 		cout << " }";
 	}
 };
@@ -173,8 +154,8 @@ public:
 		expr = _expr;
 	}
 
-	void Print(int i) {
-		expr->Print(i + 1);
+	void Print(int i, bool b) {
+		expr->Print(i + 1, true);
 	}
 };
 
@@ -194,16 +175,16 @@ public:
 		falseStmt = _falseStmt;
 	}
 
-	void Print(int i) {
+	void Print(int i, bool b) {
 		cout << "if ( ";
-		expr->Print(i + 1);
+		expr->Print(i + 1, true);
 		cout << " ) { ";
-		trueStmt->Print(i + 1);
+		trueStmt->Print(i + 1, true);
 		cout << " } ";
 
 		if(falseStmt != NULL) {
 			cout << "else { ";
-			falseStmt->Print(i + 1);
+			falseStmt->Print(i + 1, true);
 			cout << " }";
 		}
 	}

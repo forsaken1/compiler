@@ -31,8 +31,8 @@ string IntToStr(int n) {
 
 void MakeFiles(int from, int to) {
 	for(int i = from; i <= to; i++) {
-		string str  = string("tests2/") + IntToStr(i) + string(".in");
-		string str1 = string("tests2/") + IntToStr(i) + string(".out");
+		string str  = string("tests/") + IntToStr(i) + string(".in");
+		string str1 = string("tests/") + IntToStr(i) + string(".out");
 		const char* s = str.c_str();
 		const char* s1 = str1.c_str();
 		ofstream fo(s, ios::out);
@@ -46,8 +46,8 @@ int main() {
 	/*int FROM = 1;
 	int TO	 = 60;
 	for(int i = FROM; i <= TO; i++) { 
-		string str  = string("tests/") + IntToStr(i) + string(".in");
-		string str1 = string("tests/") + IntToStr(i) + string(".out");
+		string str  = string("tests/scanner/") + IntToStr(i) + string(".in");
+		string str1 = string("tests/scanner/") + IntToStr(i) + string(".out");
 
 		const char* s = str.c_str();
 		const char* s1 = str1.c_str();
@@ -57,10 +57,10 @@ int main() {
 		test(i, CompareFiles("output.txt", s1));
 	}*/
 	int FROM = 1;
-	int TO	 = 10;
+	int TO	 = 14;
 	for(int i = FROM; i <= TO; i++) { 
-		string str  = string("tests2/") + IntToStr(i) + string(".in");
-		string str1 = string("tests2/") + IntToStr(i) + string(".out");
+		string str  = string("tests/parser/") + IntToStr(i) + string(".in");
+		string str1 = string("tests/parser/") + IntToStr(i) + string(".out");
 
 		const char* s = str.c_str();
 		const char* s1 = str1.c_str();

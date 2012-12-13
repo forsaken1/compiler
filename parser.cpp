@@ -161,7 +161,7 @@ Node* Parser::PostfixExpr() {
 	if(oper == "++" || oper == "--") {
 		string _oper = oper;
 		Next();
-		return new NodeUnaryPostfix(_oper, left);
+		return new NodeUnary(_oper, left);
 	}
 	return left;
 }
