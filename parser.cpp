@@ -251,7 +251,12 @@ Node* Parser::FunctionDefinitionStmt() {
 }
 
 Node* Parser::StatementList() {
+	Node *first = Statement();
 
+	if(first != NULL) {
+		Node *second = StatementList();
+		return new NodeStmt(first, second);
+	}
 	return NULL;
 }
 
@@ -265,7 +270,7 @@ Node* Parser::CompoundStmt() {
 		if(link == NULL) link = DeclarationStmt();
 		//Добавить StatementList();
 	}
-	return link;
+	return NULL;
 }
 
 Node* Parser::ExpressionStmt() {
