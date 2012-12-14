@@ -1,1 +1,1 @@
-int function (f)
+Syntax error: Iteration statement without separator in condition

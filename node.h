@@ -157,10 +157,10 @@ public:
 
 	void Print(int i, bool b) {
 		if(first != NULL)
-			first->Print(i, true);
+			first->Print(i + 1, true);
 
-		if(second != NULL)
-			second->Print(i, false);
+		if(second != NULL) 
+			second->Print(i + 1, false);
 	}
 };
 

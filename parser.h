@@ -34,7 +34,8 @@ class Parser {
 
 	Node* Declaration();
 	Node* DeclarationList();
-	Node* InitDeclarationList();
+	Node* InitDeclarator();
+	Node* InitDeclaratorList();
 	Node* Declarator();
 	Node* DirectDeclarator();
 	Node* Pointer();

@@ -283,7 +283,7 @@ Node* Parser::StatementList() {
 Node* Parser::CompoundStmt() {
 	if(oper == "{") {
 		Next();
-		Node *decl = DeclarationStmt();
+		Node *decl = DeclarationList();
 		Node *stmt = StatementList();
 
 		if(oper != "}")
@@ -483,12 +483,12 @@ Symbol* Parser::TypeSpec() {
 	return NULL;
 }
 
-Node* Parser::InitDeclarationList() {
-	//Node *decl = InitDeclarator();
+Node* Parser::InitDeclaratorList() {
+	Node *decl = InitDeclarator();
 	
 	return NULL;
 }
-/*
+
 Node* Parser::InitDeclarator() {
 	Node *decl = Declarator();
 	
@@ -498,7 +498,7 @@ Node* Parser::InitDeclarator() {
 		//making...
 	}
 	return decl;
-}*/
+}
 
 Node* Parser::Declarator() {
 	Node *decl = DirectDeclarator();
