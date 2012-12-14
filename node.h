@@ -131,8 +131,16 @@ public:
 	void Print(int i, bool b) {
 		cout << returnValue->GetName() << " function ";
 		name->Print(i + 1, true);
-		DrawPath(i, b);
 
+		if(args != NULL) {
+			DrawPath(i, b);
+			args->Print(i + 1, stmt == NULL ? false : true);
+		}
+
+		if(stmt != NULL) {
+			DrawPath(i, b);
+			stmt->Print(i + 1, false);
+		}
 	}
 };
 
@@ -146,12 +154,15 @@ public:
 		first = _first;
 		second = _second;
 	}
-};
-/*
-class NodeCompoundStmt: public Node {
-public:
 
-};*/
+	void Print(int i, bool b) {
+		if(first != NULL)
+			first->Print(i, true);
+
+		if(second != NULL)
+			second->Print(i, false);
+	}
+};
 
 class NodeExpressionStmt: public Node {
 	Node *expr;

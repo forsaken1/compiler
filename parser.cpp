@@ -264,9 +264,6 @@ Node* Parser::FunctionDefinitionStmt() {
 			Next();
 			Node *stmt = CompoundStmt();
 
-			//if(stmt == NULL)
-			//	throw ParserException("Function definition without statement");
-
 			return new NodeFunc(type, funcName, args, stmt);
 		}
 	}
@@ -286,12 +283,16 @@ Node* Parser::StatementList() {
 Node* Parser::CompoundStmt() {
 	if(oper == "{") {
 		Next();
-		Node *link = StatementList();
+		Node *decl = DeclarationStmt();
+		Node *stmt = StatementList();
+
+		if(oper != "}")
+			throw ParserException("Compound statement without close bracket");
+
+		if(decl == NULL && stmt == NULL)
+			return NULL;
 		
-		if(link == NULL) {
-			link = DeclarationStmt();
-		}
-		//Добавить StatementList();
+		return new NodeStmt(decl, stmt);
 	}
 	return NULL;
 }
@@ -310,8 +311,8 @@ Node* Parser::ExpressionStmt() {
 
 Node* Parser::DeclarationStmt() {
 	Node *decl = DeclarationList();
-	//decl поместить в SymTable, если decl != null
-	return NULL;
+
+	return decl;
 }
 
 Node* Parser::SelectionStmt() {

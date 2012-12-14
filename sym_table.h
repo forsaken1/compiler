@@ -11,6 +11,10 @@ public:
 	Symbol(string _name) {
 		name = _name;
 	}
+	
+	virtual string GetName() {
+		return name;
+	}
 };
 
 //--- SymType ---
@@ -18,10 +22,6 @@ public:
 class SymType: public Symbol {
 public:
 	SymType() {}
-	
-	string GetName() {
-		return name;
-	}
 };
 
 class SymTypeScalar: public SymType {
@@ -31,12 +31,16 @@ public:
 
 class SymTypeFloat: public SymTypeScalar {
 public:
-	SymTypeFloat() {}
+	SymTypeFloat() {
+		name = "float";
+	}
 };
 
 class SymTypeInteger: public SymTypeScalar {
 public:
-	SymTypeInteger() {}
+	SymTypeInteger() {
+		name = "int";
+	}
 };
 
 class SymTypeArray: public SymType {
