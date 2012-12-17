@@ -158,11 +158,13 @@ public:
 	}
 
 	void Print(int i, bool b) {
-		if(first != NULL) {
-			first->Print(i, second == NULL ? false : true);
+		cout << "(stmt)" << endl;
+		DrawPath(i, b);
+		first->Print(i + 1, second == NULL ? false : true);
+		if(second != NULL) {
+			DrawPath(i, b);
+			second->Print(i + 1, false);
 		}
-		if(second != NULL) 
-			second->Print(i, false);
 	}
 };
 
@@ -285,7 +287,7 @@ public:
 		cout << "(" << name << ")" << endl;
 		if(expr != NULL) {
 			DrawPath(i, b);
-			expr->Print(i, b);
+			expr->Print(i + 1, b);
 		}
 	}
 };

@@ -42,6 +42,11 @@ int main(int argc, char *argv[]) {
 					Parser parser(&scanner);
 					cout << endl << "Syntax analysis is completed." << endl;
 				}
+				if(argv[1][0] == 'C' || argv[1][0] == 'c') {
+					//Scanner scanner(argv[2]);
+					//Parser parser(&scanner);
+					cout << endl << "Compilation is completed." << endl;
+				}
 			}
 			else
 				cout << "Error: File is not found" << endl;

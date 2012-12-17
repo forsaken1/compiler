@@ -470,7 +470,7 @@ Node* Parser::Declaration() {
 }
 
 Symbol* Parser::TypeSpec() {
-	if(typeName[oper]) {
+	if(typeName[oper]) { //таблица символов..
 		string _oper = oper;
 		Next();
 

@@ -99,10 +99,20 @@ public:
 //--- SymTable ---
 
 class SymTable {
-	
+	map<string, Symbol*> table;
 
 public:
-	Symbol* Find();
+	bool At(string name) {
+		return table[name] == NULL ? false : true;
+	}
+
+	Symbol* Find(string name) {
+		return table[name];
+	}
+
+	void Add(string name, Symbol *symb) {
+		table[name] = symb;
+	}
 };
 
 class SymTableStack: public SymTable {
