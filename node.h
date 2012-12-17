@@ -156,11 +156,11 @@ public:
 	}
 
 	void Print(int i, bool b) {
-		if(first != NULL)
-			first->Print(i + 1, true);
-
+		if(first != NULL) {
+			first->Print(i, second == NULL ? false : true);
+		}
 		if(second != NULL) 
-			second->Print(i + 1, false);
+			second->Print(i, false);
 	}
 };
 
@@ -271,14 +271,20 @@ public:
 
 class NodeJumpStmt: public Node {
 	string name;
+	Node *expr;
 
 public:
-	NodeJumpStmt(string _name) {
+	NodeJumpStmt(string _name, Node *_expr) {
 		name = _name;
+		expr = _expr;
 	}
 
 	void Print(int i, bool b) {
 		cout << "(" << name << ")" << endl;
+		if(expr != NULL) {
+			DrawPath(i, b);
+			expr->Print(i, b);
+		}
 	}
 };
 

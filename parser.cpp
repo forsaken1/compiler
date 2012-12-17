@@ -77,6 +77,8 @@ Node* Parser::ConditionalExpr() {
 
 			return new NodeSelectionStmt(condition, cond_true, cond_false);
 		}
+		else
+			throw ParserException("Ternary expression without false-condition");
 	}
 	return condition;
 }
@@ -418,7 +420,7 @@ Node* Parser::JumpStmt() {
 			throw ParserException("Jump statement without ';'");
 
 		Next();
-		return new NodeJumpStmt("goto");
+		return new NodeJumpStmt("goto", ident);
 	}
 	if(oper == "continue" || oper == "break") {
 		string _oper = oper;
@@ -427,17 +429,17 @@ Node* Parser::JumpStmt() {
 			throw ParserException("Jump statement without ';'");
 
 		Next();
-		return new NodeJumpStmt(_oper);
+		return new NodeJumpStmt(_oper, NULL);
 	}
 	if(oper == "return") {
+		Next();
 		Node *expr = Expression();
 
-		Next();
 		if(oper != ";")
 			throw ParserException("Jump statement without ';'");
 
 		Next();
-		return new NodeJumpStmt("return");
+		return new NodeJumpStmt("return", expr);
 	}
 	return NULL;
 }
@@ -453,7 +455,7 @@ Node* Parser::DeclarationList() {
 
 		Next();
 		Node *link = DeclarationList();
-		return new NodeStmt(decl, link);
+		return new NodeBinary(decl, ",", link);
 	}
 	return NULL;
 }
