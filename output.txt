@@ -1,4 +1,1 @@
-int function (f)
-|
-+---{stmt}
-    |
+Syntax error: Iteration statement without separator in condition

@@ -251,12 +251,27 @@ Node* Parser::FunctionDefinitionStmt() {
 	Symbol *type = TypeSpec();
 
 	if(type != NULL) {
-		Node *funcName = Declarator();
+		Node *name = Declarator();
 
-		if(funcName != NULL) {
-			if(oper != "(")
-				throw ParserException("Function definition without left bracket");
-
+		if(name != NULL) {
+			if(oper != "(") {
+				if(oper == ";") {
+					Next();
+					return name;
+				}
+				if(oper == "=") {
+					Next();
+					Node *init = AssignmentExpr();
+					if(oper == ",") {
+						Next();
+						return new NodeBinary(new NodeBinary(name, "=", init), ",", InitDeclaratorList());
+					}
+				}
+				if(oper == ",") {
+					Next();
+					return new NodeBinary(name, ",", InitDeclaratorList());
+				}
+			}
 			Next();
 			Node* args = DeclarationList();
 
@@ -266,7 +281,7 @@ Node* Parser::FunctionDefinitionStmt() {
 			Next();
 			Node *stmt = CompoundStmt();
 
-			return new NodeFunc(type, funcName, args, stmt);
+			return new NodeFunc(type, name, args, stmt);
 		}
 	}
 	return NULL;
@@ -455,21 +470,24 @@ Node* Parser::DeclarationList() {
 	Node *decl = Declaration();
 
 	if(decl != NULL) {
-		if(oper != ",")
-			return decl;
+		//if(oper != ",")
+			//return decl;
 
-		Next();
+		//Next();
 		Node *link = DeclarationList();
+		if(link == NULL) {
+			return decl;
+		}
 		return new NodeBinary(decl, ",", link);
 	}
 	return NULL;
 }
 
 Node* Parser::Declaration() {
-	Symbol *decl = TypeSpec();
+	Symbol *type = TypeSpec();
 
-	if(decl != NULL) {
-		return Declarator();
+	if(type != NULL) {
+		return InitDeclaratorList();
 	}
 	return NULL;
 }
@@ -491,18 +509,31 @@ Symbol* Parser::TypeSpec() {
 }
 
 Node* Parser::InitDeclaratorList() {
-	Node *decl = InitDeclarator();
-	
+	Node *first = InitDeclarator();
+
+	if(first != NULL) {
+		if(oper != ",")
+			return first;
+
+		Next();
+		Node *second = InitDeclaratorList();
+		if(second == NULL) {
+			return first;
+		}
+		return new NodeBinary(first, ",", second);
+	}
 	return NULL;
 }
 
 Node* Parser::InitDeclarator() {
 	Node *decl = Declarator();
 	
-	if(oper == "=") {
+	if(decl != NULL) {
+		if(oper != "=")
+			return decl;
+
 		Next();
-		Node *initialiser = AssignmentExpr();
-		//making...
+		return new NodeBinary(decl, "=", AssignmentExpr()); //init..
 	}
 	return decl;
 }

@@ -1,3 +1,5 @@
 int function (f)
 |
-+---(expr)
++---{stmt}
+    |
+    +---(expr)

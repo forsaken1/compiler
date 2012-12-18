@@ -161,8 +161,10 @@ public:
 
 	void Print(int i, bool b) {
 		cout << name << endl;
-		DrawPath(i, b);
-		first->Print(i + 1, second == NULL ? false : true);
+		if(first != NULL) {
+			DrawPath(i, b);
+			first->Print(i + 1, second == NULL ? false : true);
+		}
 		if(second != NULL) {
 			DrawPath(i, b);
 			second->Print(i + 1, false);
