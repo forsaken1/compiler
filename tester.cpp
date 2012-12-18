@@ -57,7 +57,7 @@ int main() {
 		test(i, CompareFiles("output.txt", s1));
 	}*/
 	int FROM = 1;
-	int TO	 = 57;
+	int TO	 = 63;
 	for(int i = FROM; i <= TO; i++) { 
 		string str  = string("tests/parser/") + IntToStr(i) + string(".in");
 		string str1 = string("tests/parser/") + IntToStr(i) + string(".out");

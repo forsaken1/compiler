@@ -261,11 +261,13 @@ Node* Parser::FunctionDefinitionStmt() {
 				}
 				if(oper == "=") {
 					Next();
-					Node *init = AssignmentExpr();
+					Node *node = new NodeBinary(name, "=", AssignmentExpr());
 					if(oper == ",") {
 						Next();
-						return new NodeBinary(new NodeBinary(name, "=", init), ",", InitDeclaratorList());
+						return new NodeBinary(node, ",", InitDeclaratorList());
 					}
+					else
+						return node;
 				}
 				if(oper == ",") {
 					Next();
