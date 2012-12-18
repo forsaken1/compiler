@@ -1,1 +1,7 @@
-int f() { expr; }
+int f() { 
+	int a = 0, b, c;
+	while(a > b) {
+		a++;
+	}
+	return 0;
+}
