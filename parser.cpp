@@ -472,11 +472,8 @@ Node* Parser::DeclarationList() {
 	Node *decl = Declaration();
 
 	if(decl != NULL) {
-		//if(oper != ",")
-			//return decl;
-
-		//Next();
 		Node *link = DeclarationList();
+
 		if(link == NULL) {
 			return decl;
 		}
@@ -535,12 +532,13 @@ Node* Parser::InitDeclarator() {
 			return decl;
 
 		Next();
-		return new NodeBinary(decl, "=", AssignmentExpr()); //init..
+		return new NodeBinary(decl, "=", AssignmentExpr());
 	}
 	return decl;
 }
 
 Node* Parser::Declarator() {
+	Node *pointer = Pointer();
 	Node *decl = DirectDeclarator();
 
 	return decl;
@@ -556,7 +554,10 @@ Node* Parser::DirectDeclarator() {
 }
 
 Node* Parser::Pointer() {
-	//from declarator
+	if(oper == "*") {
+		Next();
+		return Pointer();
+	}
 	return NULL;
 }
 
