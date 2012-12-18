@@ -578,6 +578,14 @@ Node* Parser::DirectDeclarator() {
 	if(currentToken->GetType() == IDENTIFIER) {
 		string _oper = oper;
 		Next();
+		if(oper == "[") {
+			Next();
+			Node *link = PrimaryExpr();
+			if(oper != "]")
+				throw ParserException("Array declaration without ']'");
+
+			Next();
+		}
 		return new NodeVar(_oper);
 	}
 	return NULL;
