@@ -8,6 +8,7 @@ class Parser {
 	Token *currentToken, *lastToken;
 	Node *top;
 	Scanner *scanner;
+	SymTable *global;
 	string oper;
 	map<string, bool> assignmentOperator, unaryOperator, typeName;
 	
@@ -42,10 +43,22 @@ class Parser {
 	Node* InitialiserList();
 	Node* Pointer();
 
+	Node* StructOrUnionSpec();
+	Node* StructOrUnion();
+	Node* StructDeclarationList();
+	Node* StructDeclaration();
+	Node* SpecList();
+	Node* StructDeclaratorList();
+	Node* StructDeclarator();
+	Node* EnumSpec();
+	Node* EnumeratorList();
+	Node* Enumerator();
+	Node* EnumerationConst();
+
 	Symbol* TypeSpec();
 	
 	void Next();
-	void InitHashes();
+	void InitTables();
 
 public:
 	Parser(Scanner*);

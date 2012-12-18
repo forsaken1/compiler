@@ -102,6 +102,8 @@ class SymTable {
 	map<string, Symbol*> table;
 
 public:
+	SymTable() {}
+
 	bool At(string name) {
 		return table[name] == NULL ? false : true;
 	}

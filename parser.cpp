@@ -5,13 +5,15 @@ Parser::Parser(Scanner *_scanner) {
 	currentToken = NULL;
 	lastToken = NULL;
 	top = NULL;
-	InitHashes();
+	global = new SymTable();
+	InitTables();
 
 	Parse();
 }
 
 void Parser::Next() {
 	scanner->Next();
+	delete lastToken;
 	lastToken = currentToken;
 	currentToken = scanner->GetToken();
 	oper = currentToken->GetText();
@@ -492,17 +494,10 @@ Node* Parser::Declaration() {
 }
 
 Symbol* Parser::TypeSpec() {
-	if(typeName[oper]) { //таблица символов..
+	if(global->At(oper)) {
 		string _oper = oper;
 		Next();
-
-		if(_oper == "int")
-			return new SymTypeInteger();
-
-		if(_oper == "float")
-			return new SymTypeFloat();
-
-		return new SymTypeScalar();
+		return global->Find(_oper);
 	}
 	return NULL;
 }
@@ -599,9 +594,65 @@ Node* Parser::Pointer() {
 	return NULL;
 }
 
+//--- Struct, Union, Enum Declaration ---
+Node* StructOrUnionSpec() {
+
+	return NULL;
+}
+
+Node* StructOrUnion() {
+	
+	return NULL;
+}
+
+Node* StructDeclarationList() {
+	
+	return NULL;
+}
+
+Node* StructDeclaration() {
+	
+	return NULL;
+}
+
+Node* SpecList() {
+	
+	return NULL;
+}
+
+Node* StructDeclaratorList() {
+	
+	return NULL;
+}
+
+Node* StructDeclarator() {
+	
+	return NULL;
+}
+
+Node* EnumSpec() {
+	
+	return NULL;
+}
+
+Node* EnumeratorList() {
+	
+	return NULL;
+}
+
+Node* Enumerator() {
+	
+	return NULL;
+}
+
+Node* EnumerationConst() {
+	
+	return NULL;
+}
+
 //--- Init Hashes ---
 
-void Parser::InitHashes() {
+void Parser::InitTables() {
 	assignmentOperator["="] = true;
 	assignmentOperator["*="] = true;
 	assignmentOperator["/="] = true;
@@ -623,4 +674,9 @@ void Parser::InitHashes() {
 	typeName["char"] = true;
 	typeName["int"] = true;
 	typeName["float"] = true;
+
+	global->Add("void", new SymType());
+	global->Add("char", new SymTypeScalar());
+	global->Add("int",  new SymTypeInteger());
+	global->Add("float", new SymTypeFloat());
 }
