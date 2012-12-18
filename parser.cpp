@@ -261,7 +261,7 @@ Node* Parser::FunctionDefinitionStmt() {
 				}
 				if(oper == "=") {
 					Next();
-					Node *node = new NodeBinary(name, "=", AssignmentExpr());
+					Node *node = new NodeBinary(name, "=", Initialiser());
 					if(oper == ",") {
 						Next();
 						return new NodeBinary(node, ",", InitDeclaratorList());
@@ -532,9 +532,39 @@ Node* Parser::InitDeclarator() {
 			return decl;
 
 		Next();
-		return new NodeBinary(decl, "=", AssignmentExpr());
+		return new NodeBinary(decl, "=", Initialiser());
 	}
 	return decl;
+}
+
+Node* Parser::Initialiser() {
+	if(oper == "{") {
+		Next();
+		Node *init = InitialiserList();
+		
+		if(oper != "}")
+			throw ParserException("Initialiser list without '}'");
+		
+		Next();
+		return init;
+	}
+	else {
+		return AssignmentExpr();
+	}
+}
+
+Node* Parser::InitialiserList() {
+	Node *init = Initialiser();
+
+	if(init != NULL) {
+		if(oper == ",") {
+			Next();
+			return new NodeBinary(init, ",", InitialiserList());
+		}
+		else 
+			return init;
+	}
+	return NULL;
 }
 
 Node* Parser::Declarator() {

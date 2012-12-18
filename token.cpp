@@ -8,8 +8,8 @@ Token::Token(int _line, int _pos, TokenType _t, string _type, string _text) {
 	t = _t;
 }
 
-void Token::Print(ofstream& outputStream) {
-	outputStream << line << '\t' << pos << '\t' << type << "\t\t" << text << endl;
+void Token::Print() {
+	cout << line << '\t' << pos << '\t' << type << "\t\t" << text << endl;
 }
 
 TokenType Token::GetType() {

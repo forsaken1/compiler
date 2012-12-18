@@ -38,6 +38,8 @@ class Parser {
 	Node* InitDeclaratorList();
 	Node* Declarator();
 	Node* DirectDeclarator();
+	Node* Initialiser();
+	Node* InitialiserList();
 	Node* Pointer();
 
 	Symbol* TypeSpec();

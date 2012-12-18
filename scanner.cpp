@@ -23,13 +23,11 @@ bool Scanner::EoF() {
 }
 
 void Scanner::Start() {
-	outputStream.open("output.txt", ios::out);
 	while(Next()) {
-		currentToken->Print(outputStream);
+		currentToken->Print();
 		delete currentToken; //for debug
 	}
 	inputStream.close();
-	outputStream.close();
 }
 
 bool Scanner::Next() {
@@ -65,7 +63,7 @@ bool Scanner::Next() {
 		return true;
 	}
 	catch(ScannerException &e) {
-		outputStream << e.GetMessage() << endl;
+		cout << e.GetMessage() << endl;
 		return false;
 	}
 }

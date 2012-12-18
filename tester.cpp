@@ -43,7 +43,8 @@ void MakeFiles(int from, int to) {
 }
 
 int main() {
-	/*int FROM = 1;
+	/*
+	int FROM = 1;
 	int TO	 = 60;
 	for(int i = FROM; i <= TO; i++) { 
 		string str  = string("tests/scanner/") + IntToStr(i) + string(".in");
@@ -51,11 +52,15 @@ int main() {
 
 		const char* s = str.c_str();
 		const char* s1 = str1.c_str();
-
+		
+		freopen("output.txt", "w", stdout);
 		Scanner scanner(s);
 		scanner.Start();
+		freopen("CON", "w", stdout);
 		test(i, CompareFiles("output.txt", s1));
-	}*/
+	}
+	*/
+	///*
 	int FROM = 1;
 	int TO	 = 70;
 	for(int i = FROM; i <= TO; i++) { 
@@ -71,6 +76,7 @@ int main() {
 		freopen("CON", "w", stdout);
 		test(i, CompareFiles("output.txt", s1));
 	}
+	//*/
 	system("PAUSE");
 	return 0;
 }

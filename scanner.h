@@ -10,7 +10,6 @@ class Scanner {
 	Token* currentToken;
 	string currentString;
 	ifstream inputStream;
-	ofstream outputStream;
 	unsigned int currentPos, currentLine;
 	const char* fileName;
 	bool lastString;

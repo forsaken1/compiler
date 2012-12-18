@@ -33,7 +33,7 @@ public:
 	string GetText();
 	int GetPos();
 	int GetLine();
-	virtual void Print(ofstream&);
+	virtual void Print();
 };
 
 //---Integer---

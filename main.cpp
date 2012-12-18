@@ -10,6 +10,7 @@ void GetHelp() {
 	cout << "Compilator C. Author: Krilov Alexey, C8303A" << endl;
 	cout << "L <filename> - lexical analysis" << endl;
 	cout << "S <filename> - syntax analysis" << endl;
+	cout << "C <filename> - compilation" << endl;
 	cout << "H - help" << endl << endl;
 }
 
