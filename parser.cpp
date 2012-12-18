@@ -277,7 +277,10 @@ Node* Parser::StatementList() {
 
 	if(first != NULL) {
 		Node *second = StatementList();
-		return new NodeStmt(first, second);
+		if(second == NULL)
+			return first;
+
+		return new NodeStmt("(stmt)", first, second);
 	}
 	return NULL;
 }
@@ -290,11 +293,13 @@ Node* Parser::CompoundStmt() {
 
 		if(oper != "}")
 			throw ParserException("Compound statement without close bracket");
+		else
+			Next();
 
 		if(decl == NULL && stmt == NULL)
 			return NULL;
 		
-		return new NodeStmt(decl, stmt);
+		return new NodeStmt("{stmt}", decl, stmt);
 	}
 	return NULL;
 }

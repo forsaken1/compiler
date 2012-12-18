@@ -150,15 +150,17 @@ public:
 
 class NodeStmt: public Node {
 	Node *first, *second;
+	string name;
 
 public:
-	NodeStmt(Node *_first, Node *_second) {
+	NodeStmt(string _name, Node *_first, Node *_second) {
+		name = _name;
 		first = _first;
 		second = _second;
 	}
 
 	void Print(int i, bool b) {
-		cout << "(stmt)" << endl;
+		cout << name << endl;
 		DrawPath(i, b);
 		first->Print(i + 1, second == NULL ? false : true);
 		if(second != NULL) {

@@ -1,1 +1,4 @@
-Syntax error: Iteration statement without separator in condition
+int function (f)
+|
++---{stmt}
+    |
