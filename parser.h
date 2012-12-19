@@ -44,7 +44,6 @@ class Parser {
 	Node* Pointer();
 
 	Node* StructOrUnionSpec();
-	Node* StructOrUnion();
 	Node* StructDeclarationList();
 	Node* StructDeclaration();
 	Node* SpecList();

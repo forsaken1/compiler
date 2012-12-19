@@ -488,7 +488,7 @@ Node* Parser::Declaration() {
 	Symbol *type = TypeSpec();
 
 	if(type != NULL) {
-		return InitDeclaratorList();
+		return InitDeclaratorList(type);
 	}
 	return NULL;
 }
@@ -502,15 +502,15 @@ Symbol* Parser::TypeSpec() {
 	return NULL;
 }
 
-Node* Parser::InitDeclaratorList() {
-	Node *first = InitDeclarator();
+Node* Parser::InitDeclaratorList(Symbol *type) {
+	Node *first = InitDeclarator(type);
 
 	if(first != NULL) {
 		if(oper != ",")
 			return first;
 
 		Next();
-		Node *second = InitDeclaratorList();
+		Node *second = InitDeclaratorList(type);
 		if(second == NULL) {
 			return first;
 		}
@@ -519,8 +519,8 @@ Node* Parser::InitDeclaratorList() {
 	return NULL;
 }
 
-Node* Parser::InitDeclarator() {
-	Node *decl = Declarator();
+Node* Parser::InitDeclarator(Symbol *type) {
+	Node *decl = Declarator(type);
 	
 	if(decl != NULL) {
 		if(oper != "=")
@@ -562,25 +562,26 @@ Node* Parser::InitialiserList() {
 	return NULL;
 }
 
-Node* Parser::Declarator() {
+Node* Parser::Declarator(Symbol *type) {
 	Node *pointer = Pointer();
-	Node *decl = DirectDeclarator();
+	Node *decl = DirectDeclarator(type);
 
 	return decl;
 }
 
-Node* Parser::DirectDeclarator() {
+Node* Parser::DirectDeclarator(Symbol *type) {
 	if(currentToken->GetType() == IDENTIFIER) {
 		string _oper = oper;
 		Next();
 		if(oper == "[") {
 			Next();
-			Node *link = PrimaryExpr();
+			Node *link = ConditionalExpr();
 			if(oper != "]")
 				throw ParserException("Array declaration without ']'");
 
 			Next();
 		}
+		global->Add(_oper, type);//symtable add
 		return new NodeVar(_oper);
 	}
 	return NULL;
@@ -595,57 +596,71 @@ Node* Parser::Pointer() {
 }
 
 //--- Struct, Union, Enum Declaration ---
-Node* StructOrUnionSpec() {
 
+Node* Parser::StructOrUnionSpec() {
+	if(oper == "struct" || oper == "union") {
+		if(currentToken->GetType() == IDENTIFIER) {
+			string ident = oper;
+			Next();
+		}
+		if(oper == "{") {
+			Node *decl = StructDeclarationList();
+			///return
+		}
+	}
 	return NULL;
 }
 
-Node* StructOrUnion() {
+Node* Parser::StructDeclarationList() {
+	Node *first = StructDeclaration();
+
+	if(first != NULL) {
+		Node *second = StructDeclarationList();
+
+		if(second == NULL)
+			;//
+		else
+			;//
+	}
+	return NULL;
+}
+
+Node* Parser::StructDeclaration() {
 	
 	return NULL;
 }
 
-Node* StructDeclarationList() {
+Node* Parser::SpecList() {
 	
 	return NULL;
 }
 
-Node* StructDeclaration() {
+Node* Parser::StructDeclaratorList() {
 	
 	return NULL;
 }
 
-Node* SpecList() {
+Node* Parser::StructDeclarator() {
 	
 	return NULL;
 }
 
-Node* StructDeclaratorList() {
+Node* Parser::EnumSpec() {
 	
 	return NULL;
 }
 
-Node* StructDeclarator() {
+Node* Parser::EnumeratorList() {
 	
 	return NULL;
 }
 
-Node* EnumSpec() {
+Node* Parser::Enumerator() {
 	
 	return NULL;
 }
 
-Node* EnumeratorList() {
-	
-	return NULL;
-}
-
-Node* Enumerator() {
-	
-	return NULL;
-}
-
-Node* EnumerationConst() {
+Node* Parser::EnumerationConst() {
 	
 	return NULL;
 }
