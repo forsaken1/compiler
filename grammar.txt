@@ -127,10 +127,8 @@ declaration
 declaration-specifiers
     storage-class-specifier
     type-specifier
-    type-qualifier
     storage-class-specifier declaration-specifiers
     type-specifier          declaration-specifiers
-    type-qualifier          declaration-specifiers
 
 init-declarator-list
     init-declarator
@@ -140,31 +138,17 @@ init-declarator
     declarator
     declarator = initializer
 
-storage-class-specifier
-    typedef
-    extern
-    static
-    auto
-    register
-
 type-specifier
     void
     char
     int
     float
-    double
-    struct-or-union-specifier
-    enum-specifier
-    typedef-name
+    struct-specifier
 
-struct-or-union-specifier
-    struct-or-union { struct-declaration-list }
-    struct-or-union identifier { struct-declaration-list }
-    struct-or-union identifier
-
-struct-or-union
-    struct
-    union
+struct-specifier
+    struct { struct-declaration-list }
+    struct identifier { struct-declaration-list }
+    struct identifier
 
 struct-declaration-list
     struct-declaration
@@ -175,9 +159,7 @@ struct-declaration
 
 specifier-qualifier-list
     type-specifier
-    type-qualifier
     type-specifier specifier-qualifier-list 
-    type-qualifier specifier-qualifier-list 
 
 struct-declarator-list
     struct-declarator
@@ -185,28 +167,8 @@ struct-declarator-list
 
 struct-declarator
     declarator
-     constant-expression
+    constant-expression
     declarator  constant-expression
-
-enum-specifier
-    enum { enumerator-list }
-    enum identifier { enumerator-list }
-    enum identifier
-
-enumerator-list
-    enumerator
-    enumerator-list , enumerator
-
-enumerator
-    enumeration-constant
-    enumeration-constant = constant-expression
-
-enumeration-constant
-    identifier
-
-type-qualifier
-    const
-    volatile
 
 declarator
     direct-declarator
@@ -224,12 +186,6 @@ direct-declarator
 pointer
      *
      * pointer
-     * type-qualifier-list
-     * type-qualifier-list pointer
-
-type-qualifier-list
-    type-qualifier
-    type-qualifier-list type-qualifier
 
 parameter-type-list
     parameter-list
@@ -267,9 +223,6 @@ direct-abstract-declarator
     direct-abstract-declarator [ constant-expression ]
     direct-abstract-declarator ( )
     direct-abstract-declarator ( parameter-type-list )
-
-typedef-name
-    identifier
 
 initializer
     assignment-expression

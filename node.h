@@ -18,6 +18,7 @@ protected:
 
 public:
 	virtual void Print(int i, bool b) {}
+	Symbol* GetType() {}
 };
 
 //--- Expression ---
@@ -46,6 +47,10 @@ public:
 	void Print(int i, bool b) {
 		cout << "(" << name << ")" << endl;
 	}
+
+	Symbol* GetType() {
+		//return 
+	}
 };
 
 class NodeCall: public NodeVar {
@@ -61,6 +66,8 @@ public:
 		args->Print(i + 1, true);
 		cout << ")";
 	}
+
+	Symbol* GetType() {}
 };
 
 class NodeUnary: public Node {
@@ -80,6 +87,8 @@ public:
 		DrawPath(i, b);
 		right->Print(i + 1, false);
 	}
+
+	Symbol* GetType() {}
 };
 
 class NodeStruct: public Node {
@@ -116,6 +125,13 @@ public:
 		DrawPath(i, b);
 		right->Print(i + 1, false);
 	}
+
+	Symbol* GetType() {
+		if(left->GetType() == left->GetType())
+			return 
+
+		return NULL;
+	}
 };
 
 class NodeFunc: public Node {
@@ -144,6 +160,8 @@ public:
 			stmt->Print(i + 1, false);
 		}
 	}
+
+	Symbol* GetType() {}
 };
 
 //--- Statement ---

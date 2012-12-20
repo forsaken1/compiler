@@ -35,10 +35,10 @@ class Parser {
 
 	Node* Declaration();
 	Node* DeclarationList();
-	Node* InitDeclarator();
-	Node* InitDeclaratorList();
-	Node* Declarator();
-	Node* DirectDeclarator();
+	Node* InitDeclarator(Symbol*);
+	Node* InitDeclaratorList(Symbol*);
+	Node* Declarator(Symbol*);
+	Node* DirectDeclarator(Symbol*);
 	Node* Initialiser();
 	Node* InitialiserList();
 	Node* Pointer();
