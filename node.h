@@ -18,7 +18,7 @@ protected:
 
 public:
 	virtual void Print(int i, bool b) {}
-	Symbol* GetType() {}
+	Symbol* GetType(SymTable *symTable) { return NULL; }
 };
 
 //--- Expression ---
@@ -48,8 +48,8 @@ public:
 		cout << "(" << name << ")" << endl;
 	}
 
-	Symbol* GetType() {
-		//return 
+	Symbol* GetType(SymTable *symTable) {
+		return symTable->Find(name);
 	}
 };
 
@@ -71,7 +71,6 @@ public:
 };
 
 class NodeUnary: public Node {
-protected:
 	string opname;
 	Node *right;
 
@@ -88,7 +87,9 @@ public:
 		right->Print(i + 1, false);
 	}
 
-	Symbol* GetType() {}
+	Symbol* GetType(SymTable *symTable) {
+		return right->GetType(symTable);
+	}
 };
 
 class NodeStruct: public Node {
@@ -108,12 +109,16 @@ public:
 	}
 };
 
-class NodeBinary: public NodeUnary {
+class NodeBinary: public Node {
+	string opname;
+	Node *right;
 	Node *left;
 
 public:
-	NodeBinary(Node *_left, string _opname, Node *_right): NodeUnary(_opname, _right) {
+	NodeBinary(Node *_left, string _opname, Node *_right) {
 		left = _left;
+		opname = _opname;
+		right = _right;
 	}
 
 	void Print(int i, bool b) {
@@ -126,9 +131,9 @@ public:
 		right->Print(i + 1, false);
 	}
 
-	Symbol* GetType() {
-		if(left->GetType() == left->GetType())
-			return 
+	Symbol* GetType(SymTable *symTable) {
+		if(left->GetType(symTable) == right->GetType(symTable))
+			return left->GetType(symTable);
 
 		return NULL;
 	}
@@ -161,7 +166,9 @@ public:
 		}
 	}
 
-	Symbol* GetType() {}
+	Symbol* GetType() {
+		return returnValue;
+	}
 };
 
 //--- Statement ---

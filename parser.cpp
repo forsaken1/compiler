@@ -5,7 +5,8 @@ Parser::Parser(Scanner *_scanner) {
 	currentToken = NULL;
 	lastToken = NULL;
 	top = NULL;
-	global = new SymTable();
+	globalVar = new SymTable();
+	globalType = new SymTable();
 	InitTables();
 
 	Parse();
@@ -56,6 +57,9 @@ Node* Parser::AssignmentExpr() {
 		Node *right = AssignmentExpr();
 		if(right == NULL)
 			throw ParserException("Assignment expression without left operand");
+
+		if(left->GetType(globalVar) != right->GetType(globalVar))
+			throw ParserException("Operand types do not match");
 
 		return new NodeBinary(left, _oper, right);
 	}
@@ -253,7 +257,7 @@ Node* Parser::FunctionDefinitionStmt() {
 	Symbol *type = TypeSpec();
 
 	if(type != NULL) {
-		Node *name = Declarator();
+		Node *name = Declarator(type);
 
 		if(name != NULL) {
 			if(oper != "(") {
@@ -266,18 +270,18 @@ Node* Parser::FunctionDefinitionStmt() {
 					Node *node = new NodeBinary(name, "=", Initialiser());
 					if(oper == ",") {
 						Next();
-						return new NodeBinary(node, ",", InitDeclaratorList());
+						return new NodeBinary(node, ",", InitDeclaratorList(type));
 					}
 					else
 						return node;
 				}
 				if(oper == ",") {
 					Next();
-					return new NodeBinary(name, ",", InitDeclaratorList());
+					return new NodeBinary(name, ",", InitDeclaratorList(type));
 				}
 			}
 			Next();
-			Node* args = DeclarationList();
+			Node* args = FunctionArgumentList();
 
 			if(oper != ")")
 				throw ParserException("Function definition without right bracket");
@@ -287,6 +291,34 @@ Node* Parser::FunctionDefinitionStmt() {
 
 			return new NodeFunc(type, name, args, stmt);
 		}
+	}
+	return NULL;
+}
+
+Node* Parser::FunctionArgumentList() {
+	Node *args = FunctionArgument();
+
+	if(args != NULL) {
+		if(oper != ",")
+			return args;
+
+		Next();
+		Node *link = FunctionArgumentList();
+
+		return new NodeBinary(args, ",", link);
+	}
+	return NULL;
+}
+
+Node* Parser::FunctionArgument() {
+	Symbol *type = TypeSpec();
+
+	if(type != NULL) {
+		Node *init = InitDeclarator(type);
+		if(init == NULL)
+			throw ParserException("Function argument list without arguments");
+
+		return init;
 	}
 	return NULL;
 }
@@ -479,7 +511,7 @@ Node* Parser::DeclarationList() {
 		if(link == NULL) {
 			return decl;
 		}
-		return new NodeBinary(decl, ",", link);
+		return new NodeStmt("<decl>", decl, link);
 	}
 	return NULL;
 }
@@ -488,16 +520,22 @@ Node* Parser::Declaration() {
 	Symbol *type = TypeSpec();
 
 	if(type != NULL) {
-		return InitDeclaratorList(type);
+		Node *init = InitDeclaratorList(type);
+		if(oper != ";")
+			throw ParserException("Init declarator list without ';'");
+		else
+			Next();
+
+		return init;
 	}
 	return NULL;
 }
 
 Symbol* Parser::TypeSpec() {
-	if(global->At(oper)) {
+	if(globalType->At(oper)) {
 		string _oper = oper;
 		Next();
-		return global->Find(_oper);
+		return globalType->Find(_oper);
 	}
 	return NULL;
 }
@@ -527,9 +565,13 @@ Node* Parser::InitDeclarator(Symbol *type) {
 			return decl;
 
 		Next();
-		return new NodeBinary(decl, "=", Initialiser());
+		Node *init = Initialiser();
+		if(init == NULL)
+			throw ParserException("Init declarator without initialiser");
+
+		return new NodeBinary(decl, "=", init);
 	}
-	return decl;
+	return NULL;
 }
 
 Node* Parser::Initialiser() {
@@ -546,6 +588,7 @@ Node* Parser::Initialiser() {
 	else {
 		return AssignmentExpr();
 	}
+	return NULL;
 }
 
 Node* Parser::InitialiserList() {
@@ -581,7 +624,7 @@ Node* Parser::DirectDeclarator(Symbol *type) {
 
 			Next();
 		}
-		global->Add(_oper, type);//symtable add
+		globalVar->Add(_oper, type);//symtable add
 		return new NodeVar(_oper);
 	}
 	return NULL;
@@ -595,10 +638,10 @@ Node* Parser::Pointer() {
 	return NULL;
 }
 
-//--- Struct, Union, Enum Declaration ---
+//--- Struct Declaration ---
 
-Node* Parser::StructOrUnionSpec() {
-	if(oper == "struct" || oper == "union") {
+Node* Parser::StructSpec() {
+	if(oper == "struct") {
 		if(currentToken->GetType() == IDENTIFIER) {
 			string ident = oper;
 			Next();
@@ -645,26 +688,6 @@ Node* Parser::StructDeclarator() {
 	return NULL;
 }
 
-Node* Parser::EnumSpec() {
-	
-	return NULL;
-}
-
-Node* Parser::EnumeratorList() {
-	
-	return NULL;
-}
-
-Node* Parser::Enumerator() {
-	
-	return NULL;
-}
-
-Node* Parser::EnumerationConst() {
-	
-	return NULL;
-}
-
 //--- Init Hashes ---
 
 void Parser::InitTables() {
@@ -690,8 +713,8 @@ void Parser::InitTables() {
 	typeName["int"] = true;
 	typeName["float"] = true;
 
-	global->Add("void", new SymType());
-	global->Add("char", new SymTypeScalar());
-	global->Add("int",  new SymTypeInteger());
-	global->Add("float", new SymTypeFloat());
+	globalType->Add("void", new SymType());
+	globalType->Add("char", new SymTypeScalar());
+	globalType->Add("int",  new SymTypeInteger());
+	globalType->Add("float", new SymTypeFloat());
 }
