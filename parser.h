@@ -48,9 +48,8 @@ class Parser {
 	Node* StructSpec();
 	Node* StructDeclarationList();
 	Node* StructDeclaration();
-	Node* SpecList();
-	Node* StructDeclaratorList();
-	Node* StructDeclarator();
+	Node* StructDeclaratorList(Symbol*);
+	Node* StructDeclarator(Symbol*);
 
 	Symbol* TypeSpec();
 	
@@ -63,14 +62,16 @@ public:
 
 class ParserException {
 	string msg;
+	Token *tk;
 
 public:
-	ParserException(string _msg) {
+	ParserException(Token *_tk, string _msg) {
 		msg = _msg;
+		tk = _tk;
 	}
 
 	string GetMessage() {
-		return "Syntax error: " + msg;
+		return "Syntax error: " + msg /* + " on line " + string(1, tk->GetLine() + '0') + " in position " + string(1, tk->GetPos() + '0')*/;
 	}
 };
 

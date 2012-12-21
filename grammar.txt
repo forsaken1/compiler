@@ -155,11 +155,7 @@ struct-declaration-list
     struct-declaration-list struct-declaration
 
 struct-declaration
-    specifier-qualifier-list struct-declarator-list ;
-
-specifier-qualifier-list
-    type-specifier
-    type-specifier specifier-qualifier-list 
+    type-specifier struct-declarator-list ;
 
 struct-declarator-list
     struct-declarator

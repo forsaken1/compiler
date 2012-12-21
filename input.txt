@@ -1,4 +1,1 @@
-{
-    int i;
-    float f;
-}
+struct str { int i; float f; } s;

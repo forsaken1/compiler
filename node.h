@@ -91,24 +91,25 @@ public:
 		return right->GetType(symTable);
 	}
 };
-/*
+
 class NodeStruct: public Node {
-	Node *structure, *elem;
+	Node *elem;
+	string name;
 
 public:
-	NodeStruct(Node *_structure, Node *_elem) {
-		structure = _structure;
+	NodeStruct(string _name, Node *_elem) {
+		name = _name;
 		elem = _elem;
 	}
 
 	void Print(int i, bool b) {
-		structure->Print(i + 1, true);
+		cout << "struct (" << name << ")" << endl;
 		
 		DrawPath(i, b);
 		elem->Print(i + 1, false);
 	}
 };
-*/
+
 class NodeBinary: public Node {
 	string opname;
 	Node *right;

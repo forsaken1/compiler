@@ -41,7 +41,7 @@ Node* Parser::Expression() {
 		Next();
 		Node *right = Expression();
 		if(right == NULL)
-			throw ParserException("Enumeration without expression after ','");
+			throw ParserException(currentToken, "Enumeration without expression after ','");
 
 		return new NodeBinary(left, _oper, right);
 	}
@@ -56,10 +56,10 @@ Node* Parser::AssignmentExpr() {
 		Next();
 		Node *right = AssignmentExpr();
 		if(right == NULL)
-			throw ParserException("Assignment expression without left operand");
+			throw ParserException(currentToken, "Assignment expression without left operand");
 
 		if(left->GetType(globalVar) != right->GetType(globalVar))
-			throw ParserException("Operand types do not match");
+			throw ParserException(currentToken, "Operand types do not match");
 
 		return new NodeBinary(left, _oper, right);
 	}
@@ -73,18 +73,18 @@ Node* Parser::ConditionalExpr() {
 		Next();
 		Node *cond_true = Expression();
 		if(cond_true == NULL)
-			throw ParserException("Ternary expression without true-condition");
+			throw ParserException(currentToken, "Ternary expression without true-condition");
 
 		if(oper == ":") {
 			Next();
 			Node *cond_false = ConditionalExpr();
 			if(cond_false == NULL)
-				throw ParserException("Ternary expression without false-condition");
+				throw ParserException(currentToken, "Ternary expression without false-condition");
 
 			return new NodeSelectionStmt(condition, cond_true, cond_false);
 		}
 		else
-			throw ParserException("Ternary expression without false-condition");
+			throw ParserException(currentToken, "Ternary expression without false-condition");
 	}
 	return condition;
 }
@@ -116,7 +116,7 @@ Node* Parser::BinaryOperationExpr(int priority) {
 		Next();
 		Node *right = BinaryOperationExpr(priority);
 		if(right == NULL)
-			throw ParserException("Binary expression without left operand");
+			throw ParserException(currentToken, "Binary expression without left operand");
 
 		return new NodeBinary(left, _oper, right);
 	}
@@ -131,10 +131,12 @@ Node* Parser::CastExpr() {
 			Next();
 			Node *right = CastExpr();
 			if(right == NULL)
-				throw ParserException("Cast expression without left operand");
+				throw ParserException(currentToken, "Cast expression without left operand");
 
 			return new NodeUnary(_oper, right);
 		}
+		else
+			throw ParserException(currentToken, "Cast expression without ')'");
 	}
 	return UnaryExpr();
 }
@@ -164,7 +166,7 @@ Node* Parser::UnaryExpr() {
 		Next();
 		Node *right = UnaryExpr();
 		if(right == NULL)
-			throw ParserException("No left operand");
+			throw ParserException(currentToken, "No left operand");
 
 		return new NodeUnary(_oper, right);
 	}
@@ -173,7 +175,7 @@ Node* Parser::UnaryExpr() {
 		Next();
 		Node *right = CastExpr();
 		if(right == NULL)
-			throw ParserException("No left operand");
+			throw ParserException(currentToken, "No left operand");
 
 		return new NodeUnary(_oper, right);
 	}	
@@ -191,14 +193,14 @@ Node* Parser::PostfixExpr() {
 			Next();
 			return new NodeBinary(left, "[]",  link);
 		}
-		else throw ParserException("No left bracket");
+		else throw ParserException(currentToken, "No ']'");
 	}
 	if(oper == "." || oper == "->") {
 		string _oper = oper;
 		Next();
 		Node *right = PrimaryExpr();
 		if(right == NULL)
-			throw ParserException("No left field");
+			throw ParserException(currentToken, "No left field");
 
 		return new NodeBinary(left, _oper, right);
 	}
@@ -285,7 +287,7 @@ Node* Parser::FunctionDefinitionStmt() {
 			Node* args = FunctionArgumentList();
 
 			if(oper != ")")
-				throw ParserException("Function definition without right bracket");
+				throw ParserException(currentToken, "Function definition without ')'");
 
 			Next();
 			Node *stmt = CompoundStmt();
@@ -317,7 +319,7 @@ Node* Parser::FunctionArgument() {
 	if(type != NULL) {
 		Node *init = InitDeclarator(type);
 		if(init == NULL)
-			throw ParserException("Function argument list without arguments");
+			throw ParserException(currentToken, "Function argument list without arguments");
 
 		return init;
 	}
@@ -344,7 +346,7 @@ Node* Parser::CompoundStmt() {
 		Node *stmt = StatementList();
 
 		if(oper != "}")
-			throw ParserException("Compound statement without close bracket");
+			throw ParserException(currentToken, "Compound statement without '}'");
 		else
 			Next();
 
@@ -363,7 +365,7 @@ Node* Parser::ExpressionStmt() {
 		Next();
 	else 
 		if(link != NULL)
-			throw ParserException("Expression without ';'");
+			throw ParserException(currentToken, "Expression without ';'");
 
 	return link;
 }
@@ -378,13 +380,13 @@ Node* Parser::SelectionStmt() {
 	if(oper == "if") {
 		Next();
 		if(oper != "(")
-			throw ParserException("Selection statement without left bracket");
+			throw ParserException(currentToken, "Selection statement without '('");
 		
 		Next();
 		Node *expr = Expression();
 
 		if(oper != ")")
-			throw ParserException("Selection statement without right bracket");
+			throw ParserException(currentToken, "Selection statement without ')'");
 		
 		Next();
 		Node *ifTrue = Statement();
@@ -403,25 +405,25 @@ Node* Parser::IterationStmt() {
 	if(oper == "for") {
 		Next();
 		if(oper != "(")
-			throw ParserException("Iteration statement without left bracket");
+			throw ParserException(currentToken, "Iteration statement without '('");
 
 		Next();
 		Node *forInit = Expression();
 
 		if(oper != ";")
-			throw ParserException("Iteration statement without separator in condition");
+			throw ParserException(currentToken, "Iteration statement without separator in condition");
 
 		Next();
 		Node *forCond = Expression();
 
 		if(oper != ";")
-			throw ParserException("Iteration statement without separator in condition");
+			throw ParserException(currentToken, "Iteration statement without separator in condition");
 
 		Next();
 		Node *forIter = Expression();
 
 		if(oper != ")")
-			throw ParserException("Iteration statement without right bracket");
+			throw ParserException(currentToken, "Iteration statement without ')'");
 
 		Next();
 		Node *stmt = Statement();
@@ -431,13 +433,13 @@ Node* Parser::IterationStmt() {
 	if(oper == "while") {
 		Next();
 		if(oper != "(")
-			throw ParserException("Iteration statement without left bracket");
+			throw ParserException(currentToken, "Iteration statement without '('");
 
 		Next();
 		Node *expr = Expression();
 
 		if(oper != ")")
-			throw ParserException("Iteration statement without right bracket");
+			throw ParserException(currentToken, "Iteration statement without ')'");
 
 		Next();
 		Node *stmt = Statement();
@@ -451,19 +453,19 @@ Node* Parser::IterationStmt() {
 		if(oper == "while") {
 			Next();
 			if(oper != "(")
-				throw ParserException("Iteration statement without right bracket");
+				throw ParserException(currentToken, "Iteration statement without '('");
 
 			Next();
 			Node *expr = Expression();
 
 			if(oper != ")")
-				throw ParserException("Iteration statement without left bracket");
+				throw ParserException(currentToken, "Iteration statement without ')'");
 
 			Next();
 			return new NodeIterationDo(expr, stmt);
 		}
 		else 
-			throw ParserException("Iteration statement without condition");
+			throw ParserException(currentToken, "Iteration statement without condition");
 	}
 	return NULL;
 }
@@ -474,7 +476,7 @@ Node* Parser::JumpStmt() {
 		Node *ident = PrimaryExpr();
 
 		if(oper != ";")
-			throw ParserException("Jump statement without ';'");
+			throw ParserException(currentToken, "Jump statement without ';'");
 
 		Next();
 		return new NodeJumpStmt("goto", ident);
@@ -483,7 +485,7 @@ Node* Parser::JumpStmt() {
 		string _oper = oper;
 		Next();
 		if(oper != ";")
-			throw ParserException("Jump statement without ';'");
+			throw ParserException(currentToken, "Jump statement without ';'");
 
 		Next();
 		return new NodeJumpStmt(_oper, NULL);
@@ -493,7 +495,7 @@ Node* Parser::JumpStmt() {
 		Node *expr = Expression();
 
 		if(oper != ";")
-			throw ParserException("Jump statement without ';'");
+			throw ParserException(currentToken, "Jump statement without ';'");
 
 		Next();
 		return new NodeJumpStmt("return", expr);
@@ -523,7 +525,7 @@ Node* Parser::Declaration() {
 	if(type != NULL) {
 		Node *init = InitDeclaratorList(type);
 		if(oper != ";")
-			throw ParserException("Init declarator list without ';'");
+			throw ParserException(currentToken, "Init declarator list without ';'");
 		else
 			Next();
 
@@ -533,7 +535,9 @@ Node* Parser::Declaration() {
 }
 
 Symbol* Parser::TypeSpec() {
-	if(globalType->At(oper)) {
+	Node *str = StructSpec();
+
+	if(str == NULL && globalType->At(oper)) {
 		string _oper = oper;
 		Next();
 		return globalType->Find(_oper);
@@ -568,7 +572,7 @@ Node* Parser::InitDeclarator(Symbol *type) {
 		Next();
 		Node *init = Initialiser();
 		if(init == NULL)
-			throw ParserException("Init declarator without initialiser");
+			throw ParserException(currentToken, "Init declarator without initialiser");
 
 		return new NodeBinary(decl, "=", init);
 	}
@@ -581,7 +585,7 @@ Node* Parser::Initialiser() {
 		Node *init = InitialiserList();
 		
 		if(oper != "}")
-			throw ParserException("Initialiser list without '}'");
+			throw ParserException(currentToken, "Initialiser list without '}'");
 		
 		Next();
 		return init;
@@ -621,11 +625,11 @@ Node* Parser::DirectDeclarator(Symbol *type) {
 			Next();
 			Node *link = ConditionalExpr();
 			if(oper != "]")
-				throw ParserException("Array declaration without ']'");
+				throw ParserException(currentToken, "Array declaration without ']'");
 
 			Next();
 		}
-		globalVar->Add(_oper, type);//symtable add
+		globalVar->Add(_oper, type);  //symtable add
 		return new NodeVar(_oper);
 	}
 	return NULL;
@@ -643,14 +647,27 @@ Node* Parser::Pointer() {
 
 Node* Parser::StructSpec() {
 	if(oper == "struct") {
+		string ident = "";
+		Next();
+
 		if(currentToken->GetType() == IDENTIFIER) {
-			string ident = oper;
+			ident = oper;
 			Next();
 		}
 		if(oper == "{") {
+			Next();
 			Node *decl = StructDeclarationList();
-			///return
+
+			if(decl == NULL)
+				throw ParserException(currentToken, "Struct without field list");
+
+			if(oper != "}")
+				throw ParserException(currentToken, "Struct without '}'");
+
+			Next();
+			return new NodeStruct(ident, decl);
 		}
+		return new NodeStruct(ident, NULL);
 	}
 	return NULL;
 }
@@ -662,31 +679,49 @@ Node* Parser::StructDeclarationList() {
 		Node *second = StructDeclarationList();
 
 		if(second == NULL)
-			;//
+			return first;
 		else
-			;//
+			return new NodeStmt("<field>", first, second);
 	}
 	return NULL;
 }
 
 Node* Parser::StructDeclaration() {
-	
+	Symbol *type = TypeSpec();
+
+	if(type != NULL) {
+		Node *decl = StructDeclaratorList(type);
+		
+		if(oper == ";")
+			Next();
+		else
+			throw ParserException(currentToken, "Struct declaration without ';'");
+
+		return decl;
+	}
 	return NULL;
 }
 
-Node* Parser::SpecList() {
-	
+Node* Parser::StructDeclaratorList(Symbol *type) {
+	Node *decl = StructDeclarator(type);
+
+	if(decl != NULL) {
+		if(oper == ",") {
+			Next();
+			return new NodeStmt("<field>", decl, StructDeclarationList());
+		}
+		return decl;
+	}
 	return NULL;
 }
 
-Node* Parser::StructDeclaratorList() {
-	
-	return NULL;
-}
+Node* Parser::StructDeclarator(Symbol *type) {
+	Node *decl = Declarator(type); 
 
-Node* Parser::StructDeclarator() {
-	
-	return NULL;
+	if(decl == NULL)
+		return ConditionalExpr();
+
+	return decl;
 }
 
 //--- Init Hashes ---

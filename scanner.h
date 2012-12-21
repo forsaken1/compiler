@@ -2,6 +2,7 @@
 #define SCANNER_H
 
 #include <map>
+#include <fstream>
 #include "token.h"
 
 class Scanner {
