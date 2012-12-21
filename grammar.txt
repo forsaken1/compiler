@@ -176,53 +176,12 @@ declarator
 
 direct-declarator
     identifier
-    ( declarator )
     direct-declarator [ ]
     direct-declarator [ constant-expression ]
-    direct-declarator ( )
-    direct-declarator ( parameter-type-list )
-    direct-declarator ( identifier-list )
 
 pointer
      *
      * pointer
-
-parameter-type-list
-    parameter-list
-    parameter-list , ...
-
-parameter-list
-    parameter-declaration
-    parameter-list , parameter-declaration
-
-parameter-declaration
-    declaration-specifiers declarator
-    declaration-specifiers
-    declaration-specifiers abstract-declarator
-
-identifier-list
-    identifier
-    identifier-list , identifier
-
-type-name
-    specifier-qualifier-list
-    specifier-qualifier-list abstract-declarator
-
-abstract-declarator
-    pointer
-    direct-abstract-declarator
-    pointer direct-abstract-declarator
-
-direct-abstract-declarator
-    ( abstract-declarator )
-    [ ]
-    [ constant-expression ]
-    ( )
-    ( parameter-type-list )
-    direct-abstract-declarator [ ]
-    direct-abstract-declarator [ constant-expression ]
-    direct-abstract-declarator ( )
-    direct-abstract-declarator ( parameter-type-list )
 
 initializer
     assignment-expression
@@ -244,11 +203,6 @@ statement
     selection-statement
     iteration-statement
     jump-statement
-
-labeled-statement
-    identifier : statement
-    case constant-expression : statement
-    default : statement
 
 compound-statement
     { }
@@ -291,15 +245,7 @@ jump-statement
     break ;
     return ;
     return expression ;
-
-translation-unit
-    external-declaration
-    translation-unit external-declaration
-
-external-declaration
-    function-definition
-    declaration
-
+	
 function-definition
                            declarator                  compound-statement
     declaration-specifiers declarator                  compound-statement

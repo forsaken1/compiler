@@ -375,7 +375,7 @@ Node* Parser::DeclarationStmt() {
 }
 
 Node* Parser::SelectionStmt() {
-	if(oper == "if" || oper == "switch") {
+	if(oper == "if") {
 		Next();
 		if(oper != "(")
 			throw ParserException("Selection statement without left bracket");
