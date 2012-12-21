@@ -12,7 +12,6 @@ class Scanner {
 	string currentString;
 	ifstream inputStream;
 	unsigned int currentPos, currentLine;
-	const char* fileName;
 	bool lastString;
 
 	void NextLine();
@@ -57,7 +56,6 @@ public:
 	Token* GetToken();
 	void Start();
 	bool Next();
-	bool EoF();
 };
 
 class ScannerException {

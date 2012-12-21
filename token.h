@@ -15,7 +15,8 @@ enum TokenType {
 	CONST_STRING,
 	ESCAPE_SEQUENCE,
 	SEPARATOR,
-	OPERATOR
+	OPERATOR,
+	END_OF_FILE
 };
 
 class Token {
@@ -25,44 +26,37 @@ protected:
 	TokenType t;
 
 public:
-	Token(int, int, TokenType, string, string);
+	Token(int _line, int _pos, TokenType _t, string _type, string _text) {
+		pos = _pos;
+		line = _line;
+		type = _type;
+		text = _text;
+		t = _t;
+	}
 	
-	TokenType GetType();
-	string GetTypeName();
-	string GetText();
-	int GetPos();
-	int GetLine();
-	virtual void Print();
-};
+	TokenType GetType() {
+		return t;
+	}
 
-//---Integer---
-class TokenInteger: public Token {
-	int value;
+	string GetTypeName() {
+		return type;
+	}
 
-public:
-	TokenInteger(int, int, TokenType, string, string);
-	
-	int GetValue();
-};
+	string GetText() {
+		return text;
+	}
 
-//---Real---
-class TokenReal: public Token {
-	double value;
+	int GetPos() {
+		return pos;
+	}
 
-public:
-	TokenReal(int, int, TokenType, string, string);
+	int GetLine() {
+		return line;
+	}
 
-	double GetValue();
-};
-
-//---String---
-class TokenString: public Token {
-	string value;
-
-public:
-	TokenString(int, int, TokenType, string, string);
-	
-	string GetValue();
+	virtual void Print() {
+		cout << line << '\t' << pos << '\t' << type << "\t\t" << text << endl;
+	}
 };
 
 #endif TOKEN_H

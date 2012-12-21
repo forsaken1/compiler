@@ -43,7 +43,7 @@ void MakeFiles(int from, int to) {
 }
 
 int main() {
-	/*
+	///*
 	int FROM = 1;
 	int TO	 = 60;
 	for(int i = FROM; i <= TO; i++) { 
@@ -59,8 +59,8 @@ int main() {
 		freopen("CON", "w", stdout);
 		test(i, CompareFiles("output.txt", s1));
 	}
-	*/
-	///*
+	//*/
+	/*
 	int FROM = 1;
 	int TO	 = 79;
 	for(int i = FROM; i <= TO; i++) { 
@@ -76,7 +76,7 @@ int main() {
 		freopen("CON", "w", stdout);
 		test(i, CompareFiles("output.txt", s1));
 	}
-	//*/
+	*/
 	system("PAUSE");
 	return 0;
 }

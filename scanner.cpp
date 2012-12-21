@@ -1,11 +1,10 @@
 #include "scanner.h"
 
-Scanner::Scanner(const char* _fileName) {
+Scanner::Scanner(const char* fileName) {
 	currentToken = NULL;
 	currentString = "";
 	currentPos = 0;
 	currentLine = 1;
-	fileName = _fileName;
 
 	lastString = false;
 	inputStream.open(fileName, ios::in);
@@ -18,10 +17,6 @@ Scanner::Scanner(const char* _fileName) {
 	InitEscapeSequencesTable();
 }
 
-bool Scanner::EoF() {
-	return lastString;
-}
-
 void Scanner::Start() {
 	while(Next()) {
 		currentToken->Print();
@@ -32,9 +27,13 @@ void Scanner::Start() {
 
 bool Scanner::Next() {
 	try {
+		//if(currentToken != NULL)
+			//delete currentToken;
+
 		char currentChar;
 		do {
 			if(lastString) {
+				currentToken = new Token(currentLine, currentPos, END_OF_FILE, "EOF", "");
 				return false;
 			}
 			currentChar = GetChar();
@@ -303,40 +302,21 @@ void Scanner::InitOperationsTable() {
 }
 
 void Scanner::InitKeyWordsTable() {
-	keyWord["asm"] = true;
-	keyWord["auto"] = true;
 	keyWord["break"] = true;
-	keyWord["case"] = true;
 	keyWord["char"] = true;
-	keyWord["const"] = true;
 	keyWord["continue"] = true;
-	keyWord["default"] = true;
 	keyWord["do"] = true;
-	keyWord["double"] = true;
 	keyWord["else"] = true;
-	keyWord["enum"] = true;
-	keyWord["extern"] = true;
 	keyWord["false"] = true;
 	keyWord["float"] = true;
 	keyWord["for"] = true;
 	keyWord["goto"] = true;
 	keyWord["if"] = true;
-	keyWord["inline"] = true;
 	keyWord["int"] = true;
-	keyWord["long"] = true;
-	keyWord["register"] = true;
 	keyWord["return"] = true;
-	keyWord["short"] = true;
-	keyWord["signed"] = true;
 	keyWord["sizeof"] = true;
-	keyWord["static"] = true;
 	keyWord["struct"] = true;
-	keyWord["switch"] = true;
 	keyWord["true"] = true;
-	keyWord["typedef"] = true;
-	keyWord["union"] = true;
-	keyWord["unsigned"] = true;
 	keyWord["void"] = true;
-	keyWord["volatile"] = true;
 	keyWord["while"] = true;
 }
