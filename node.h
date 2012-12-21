@@ -19,6 +19,7 @@ protected:
 public:
 	virtual void Print(int i, bool b) {}
 	Symbol* GetType(SymTable *symTable) { return NULL; }
+	string GetName() {}
 };
 
 //--- Expression ---
@@ -102,11 +103,17 @@ public:
 		elem = _elem;
 	}
 
+	string GetName() {
+		return name;
+	}
+
 	void Print(int i, bool b) {
 		cout << "struct (" << name << ")" << endl;
 		
-		DrawPath(i, b);
-		elem->Print(i + 1, false);
+		if(elem != NULL) {
+			DrawPath(i, b);
+			elem->Print(i + 1, false);
+		}
 	}
 };
 
