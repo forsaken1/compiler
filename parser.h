@@ -27,7 +27,6 @@ class Parser {
 	Node* StatementList();
 	Node* CompoundStmt();
 	Node* ExpressionStmt();
-	Node* DeclarationStmt();
 	Node* SelectionStmt();
 	Node* IterationStmt();
 	Node* FunctionDefinitionStmt();

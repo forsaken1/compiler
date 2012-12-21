@@ -16,11 +16,11 @@ void GetHelp() {
 int main(int argc, char *argv[]) {
 	switch(argc) {
 		case 1: {
-			GetHelp();
-			/*Scanner scanner("input.txt");
+			//GetHelp();
+			Scanner scanner("input.txt");
 			Parser parser(&scanner); //for debug
 			cout << endl;
-			system("PAUSE");*/
+			system("PAUSE");
 			break;
 		}
 		case 2: {

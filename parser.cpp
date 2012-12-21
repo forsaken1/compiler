@@ -200,7 +200,7 @@ Node* Parser::PostfixExpr() {
 		Next();
 		Node *right = PrimaryExpr();
 		if(right == NULL)
-			throw ParserException(currentToken, "No left field");
+			throw ParserException(currentToken, "No field");
 
 		return new NodeBinary(left, _oper, right);
 	}
@@ -248,7 +248,7 @@ Node* Parser::Statement() {
 
 	if(link == NULL) link = CompoundStmt();
 	if(link == NULL) link = ExpressionStmt();
-	if(link == NULL) link = DeclarationStmt();
+	if(link == NULL) link = DeclarationList();
 	if(link == NULL) link = SelectionStmt();
 	if(link == NULL) link = IterationStmt();
 	if(link == NULL) link = JumpStmt();
@@ -349,9 +349,6 @@ Node* Parser::CompoundStmt() {
 			throw ParserException(currentToken, "Compound statement without '}'");
 		else
 			Next();
-
-		if(decl == NULL && stmt == NULL)
-			return NULL;
 		
 		return new NodeStmt("{stmt}", decl, stmt);
 	}
@@ -361,19 +358,16 @@ Node* Parser::CompoundStmt() {
 Node* Parser::ExpressionStmt() {
 	Node *link = Expression();
 
-	if(oper == ";")
+	if(oper == ";") {
 		Next();
+		if(link == NULL)
+			return new NodeStmt("(stmt)", NULL, NULL);
+	}
 	else 
 		if(link != NULL)
 			throw ParserException(currentToken, "Expression without ';'");
 
 	return link;
-}
-
-Node* Parser::DeclarationStmt() {
-	Node *decl = DeclarationList();
-
-	return decl;
 }
 
 Node* Parser::SelectionStmt() {
@@ -437,6 +431,9 @@ Node* Parser::IterationStmt() {
 
 		Next();
 		Node *expr = Expression();
+
+		if(expr == NULL)
+			throw ParserException(currentToken, "Iteration statement without expression");
 
 		if(oper != ")")
 			throw ParserException(currentToken, "Iteration statement without ')'");

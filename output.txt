@@ -1,1 +1,1 @@
-(s)
+Syntax error: Unexpected end of file

@@ -118,7 +118,46 @@ public:
 };
 
 class SymTableStack: public SymTable {
+	class SymNode {
+		SymNode *next;
+		SymTable *table;
 
+	public:
+		SymNode(SymNode *_next, SymTable *_table) {
+			next = _next;
+			table = _table;
+		}
+
+		SymTable* GetTable() {
+			return table;
+		}
+
+		SymNode* GetNext() {
+			return next;
+		}
+	};
+
+	SymNode *top;
+
+public:
+	SymTableStack() {
+		top = NULL;
+	}
+
+	void Add(SymTable *st) {
+		SymNode *sn = new SymNode(top, st);
+		top = sn;
+	}
+
+	SymTable* GetTopTable() {
+		return top->GetTable();
+	}
+
+	void DeleteTop() {
+		SymNode *sn = top;
+		top = sn->GetNext();
+		delete sn;
+	}
 };
 
 #endif SYM_TABLE_H

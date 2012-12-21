@@ -230,6 +230,7 @@ public:
 
 	void Print(int i, bool b) {
 		cout << "while" << endl;
+
 		DrawPath(i, b);
 		cond->Print(i + 1, true);
 
