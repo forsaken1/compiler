@@ -537,6 +537,9 @@ Node* Parser::Declaration() {
 Symbol* Parser::TypeSpec() {
 	Node *str = StructSpec();
 
+	if(str != NULL) {
+		//globalType->Add(str->GetName(), new SymTypeRecord(str)); //добавление в SymTable
+	}
 	if(str == NULL && globalType->At(oper)) {
 		string _oper = oper;
 		Next();

@@ -16,11 +16,11 @@ void GetHelp() {
 int main(int argc, char *argv[]) {
 	switch(argc) {
 		case 1: {
-			//GetHelp();
-			Scanner scanner("input.txt");
-			Parser parser(&scanner);
+			GetHelp();
+			/*Scanner scanner("input.txt");
+			Parser parser(&scanner); //for debug
 			cout << endl;
-			system("PAUSE");
+			system("PAUSE");*/
 			break;
 		}
 		case 2: {
@@ -43,8 +43,7 @@ int main(int argc, char *argv[]) {
 					cout << endl << "Syntax analysis is completed." << endl;
 				}
 				if(argv[1][0] == 'C' || argv[1][0] == 'c') {
-					//Scanner scanner(argv[2]);
-					//Parser parser(&scanner);
+					//тут будет CodeGen
 					cout << endl << "Compilation is completed." << endl;
 				}
 			}
