@@ -189,17 +189,18 @@ Node* Parser::PostfixExpr() {
 
 		if(oper == "]") {
 			Next();
-			return new NodeStruct(left, link);
+			return new NodeBinary(left, "[]",  link);
 		}
 		else throw ParserException("No left bracket");
 	}
 	if(oper == "." || oper == "->") {
+		string _oper = oper;
 		Next();
 		Node *right = PrimaryExpr();
 		if(right == NULL)
 			throw ParserException("No left field");
 
-		return new NodeStruct(left, right);
+		return new NodeBinary(left, _oper, right);
 	}
 	if(oper == "++" || oper == "--") {
 		string _oper = oper;

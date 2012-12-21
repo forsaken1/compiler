@@ -91,7 +91,7 @@ public:
 		return right->GetType(symTable);
 	}
 };
-
+/*
 class NodeStruct: public Node {
 	Node *structure, *elem;
 
@@ -108,7 +108,7 @@ public:
 		elem->Print(i + 1, false);
 	}
 };
-
+*/
 class NodeBinary: public Node {
 	string opname;
 	Node *right;
