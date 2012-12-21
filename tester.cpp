@@ -62,7 +62,7 @@ int main() {
 	*/
 	///*
 	int FROM = 1;
-	int TO	 = 71;
+	int TO	 = 75;
 	for(int i = FROM; i <= TO; i++) { 
 		string str  = string("tests/parser/") + IntToStr(i) + string(".in");
 		string str1 = string("tests/parser/") + IntToStr(i) + string(".out");
