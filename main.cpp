@@ -1,4 +1,5 @@
 #include "parser.h"
+#include "codegen.h"
 #include <io.h>
 
 bool FileExists(const char *fname) {
@@ -17,8 +18,8 @@ int main(int argc, char *argv[]) {
 	switch(argc) {
 		case 1: {
 			//GetHelp();
-			Scanner scanner("input.txt");
-			Parser parser(&scanner); //for debug
+			Scanner scanner("input.txt"); //for debug
+			Parser parser(&scanner); 
 			cout << endl;
 			system("PAUSE");
 			break;
@@ -44,6 +45,9 @@ int main(int argc, char *argv[]) {
 				}
 				if(argv[1][0] == 'C' || argv[1][0] == 'c') {
 					//тут будет CodeGen
+					Scanner scanner(argv[2]);
+					Parser parser(&scanner);
+					//CodeGen codegen(
 					cout << endl << "Compilation is completed." << endl;
 				}
 			}

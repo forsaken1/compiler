@@ -8,7 +8,8 @@ class Parser {
 	Token *currentToken, *lastToken;
 	Node *top;
 	Scanner *scanner;
-	SymTable *globalVar, *globalType;
+	SymTable *globalType;
+	SymTableStack *symStack;
 	string oper;
 	map<string, bool> assignmentOperator, unaryOperator, typeName;
 	
@@ -24,6 +25,7 @@ class Parser {
 	Node* PrimaryExpr();
 
 	Node* Statement();
+	Node* PrintStmt();
 	Node* StatementList();
 	Node* CompoundStmt();
 	Node* ExpressionStmt();

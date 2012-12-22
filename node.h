@@ -20,6 +20,7 @@ public:
 	virtual void Print(int i, bool b) {}
 	Symbol* GetType(SymTable *symTable) { return NULL; }
 	string GetName() {}
+	void Generate() {}
 };
 
 //--- Expression ---
@@ -176,6 +177,21 @@ public:
 
 	Symbol* GetType() {
 		return returnValue;
+	}
+};
+
+class NodePrint: public Node {
+	Node *expr;
+
+public:
+	NodePrint(Node *_expr) {
+		expr = _expr;
+	}
+
+	void Print(int i, bool b) {
+		cout << "print" << endl;
+		DrawPath(i, b);
+		expr->Print(i + 1, false);
 	}
 };
 

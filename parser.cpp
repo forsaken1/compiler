@@ -5,7 +5,7 @@ Parser::Parser(Scanner *_scanner) {
 	currentToken = NULL;
 	lastToken = NULL;
 	top = NULL;
-	globalVar = new SymTable();
+	symStack = new SymTableStack();
 	globalType = new SymTable();
 	InitTables();
 
@@ -13,6 +13,9 @@ Parser::Parser(Scanner *_scanner) {
 }
 
 void Parser::Next() {
+	//if(currentToken != NULL && currentToken->GetType() == END_OF_FILE)
+		//throw ParserException(currentToken, "Unexpected end of file");
+
 	scanner->Next();
 	delete lastToken;
 	lastToken = currentToken;
@@ -58,8 +61,8 @@ Node* Parser::AssignmentExpr() {
 		if(right == NULL)
 			throw ParserException(currentToken, "Assignment expression without left operand");
 
-		if(left->GetType(globalVar) != right->GetType(globalVar))
-			throw ParserException(currentToken, "Operand types do not match");
+		//if(left->GetType(globalVar) != right->GetType(globalVar))
+			//throw ParserException(currentToken, "Operand types do not match");
 
 		return new NodeBinary(left, _oper, right);
 	}
@@ -252,8 +255,36 @@ Node* Parser::Statement() {
 	if(link == NULL) link = SelectionStmt();
 	if(link == NULL) link = IterationStmt();
 	if(link == NULL) link = JumpStmt();
+	if(link == NULL) link = PrintStmt();
 
 	return link;
+}
+
+Node* Parser::PrintStmt() {
+	if(oper == "print") {
+		Next();
+		if(oper != "(")
+			throw ParserException(currentToken, "Print statement without '('");
+
+		Next();
+		Node *expr = Expression();
+
+		if(expr == NULL)
+			throw ParserException(currentToken, "Print statement without expression");
+
+		if(oper != ")")
+			throw ParserException(currentToken, "Print statement without ')'");
+
+		Next();
+
+		if(oper != ";")
+			throw ParserException(currentToken, "Print statement without ';'");
+
+		Next();
+
+		return new NodePrint(expr);
+	}
+	return NULL;
 }
 
 Node* Parser::FunctionDefinitionStmt() {
@@ -629,7 +660,7 @@ Node* Parser::DirectDeclarator(Symbol *type) {
 
 			Next();
 		}
-		globalVar->Add(_oper, type);  //symtable add
+		//globalVar->Add(_oper, type);  //symtable add
 		return new NodeVar(_oper);
 	}
 	return NULL;

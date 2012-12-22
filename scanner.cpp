@@ -27,9 +27,6 @@ void Scanner::Start() {
 
 bool Scanner::Next() {
 	try {
-		//if(currentToken != NULL)
-			//delete currentToken;
-
 		char currentChar;
 		do {
 			if(lastString) {
@@ -106,6 +103,7 @@ string Scanner::GetInvalidToken(int pos) {
 	for(int i = pos - 1; i < (int)currentString.length(); i++) {
 		if(IsSpace(currentString[i]) || IsTabulationSymbol(currentString[i]))
 			break;
+
 		str += currentString[i];
 	}
 	return str;
@@ -117,10 +115,13 @@ Token* Scanner::GetNumber(char currentChar) {
 	s += currentChar;
 
 	while( (currentChar = GetChar()) != '\0' && !IsSpace(currentChar)) {
-		if(dot && IsDot(currentChar))	throw ScannerException("Too many dots in real number: \"" + GetInvalidToken(pos) + "\"");
+		if(dot && IsDot(currentChar)) 
+			throw ScannerException("Too many dots in real number: \"" + GetInvalidToken(pos) + "\"");
 
 		if(E) {
-			if(IsE(currentChar))		throw ScannerException("Too many symbol \"E\" in real number: \"" + GetInvalidToken(pos) + "\"");
+			if(IsE(currentChar)) 
+				throw ScannerException("Too many symbol \"E\" in real number: \"" + GetInvalidToken(pos) + "\"");
+
 			if(IsNumber(currentChar) || currentChar == '-' || currentChar == '+') {
 				s += currentChar;
 				continue;
@@ -135,12 +136,15 @@ Token* Scanner::GetNumber(char currentChar) {
 			s += currentChar;
 		}
 		else {
-			if(IsLetter(currentChar))	throw ScannerException("Invalid identificator: \"" + GetInvalidToken(pos) + "\"");
+			if(IsLetter(currentChar)) 
+				throw ScannerException("Invalid identificator: \"" + GetInvalidToken(pos) + "\"");
+
 			BackToPreviousChar();
 			break;
 		}
 	}
-	if(IsE(s[s.length() - 1]) || IsDot(s[s.length() - 1])) throw ScannerException("Invalid real number: \"" + s + "\"");
+	if(IsE(s[s.length() - 1]) || IsDot(s[s.length() - 1])) 
+		throw ScannerException("Invalid real number: \"" + s + "\"");
 
 	return new Token(line, pos, dot || E ? CONST_REAL : CONST_INTEGER, dot || E ? "REAL" : "INT", s);
 }
@@ -319,4 +323,5 @@ void Scanner::InitKeyWordsTable() {
 	keyWord["true"] = true;
 	keyWord["void"] = true;
 	keyWord["while"] = true;
+	keyWord["print"] = true;
 }

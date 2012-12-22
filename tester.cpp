@@ -17,9 +17,10 @@ bool CompareFiles(const char *fileOut, const char *fileTestOut) {
 	return true;
 }
 
-void test(int i, bool exp) { 
+bool test(int i, bool exp) { 
 	if(exp) cout << "Test " << i << " successful" << endl;
 	else	cout << "Test " << i << " error" << endl;
+	return exp;
 }
 
 string IntToStr(int n) {
@@ -43,7 +44,8 @@ void MakeFiles(int from, int to) {
 }
 
 int main() {
-	///*
+	int ALL_TESTS_SUCCESSFUL = 0;
+	/*
 	int FROM = 1;
 	int TO	 = 60;
 	for(int i = FROM; i <= TO; i++) { 
@@ -57,13 +59,14 @@ int main() {
 		Scanner scanner(s);
 		scanner.Start();
 		freopen("CON", "w", stdout);
-		test(i, CompareFiles("output.txt", s1));
+		if( !test(i, CompareFiles("output.txt", s1)) )
+			ALL_TESTS_SUCCESSFUL++;
 	}
-	//*/
-	/*
-	int FROM = 1;
-	int TO	 = 79;
-	for(int i = FROM; i <= TO; i++) { 
+	*/
+	///*
+	int _FROM = 1;
+	int _TO   = 83;
+	for(int i = _FROM; i <= _TO; i++) { 
 		string str  = string("tests/parser/") + IntToStr(i) + string(".in");
 		string str1 = string("tests/parser/") + IntToStr(i) + string(".out");
 
@@ -74,9 +77,17 @@ int main() {
 		Scanner scanner(s);
 		Parser parser(&scanner);
 		freopen("CON", "w", stdout);
-		test(i, CompareFiles("output.txt", s1));
+		if( !test(i, CompareFiles("output.txt", s1)) )
+			ALL_TESTS_SUCCESSFUL++;
 	}
-	*/
+	//*/
+	if(ALL_TESTS_SUCCESSFUL == 0)
+		cout << endl << "All test successful =)";
+	else
+		cout << endl << "Several test error =(";
+
+	cout << endl << endl;
+
 	system("PAUSE");
 	return 0;
 }

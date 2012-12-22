@@ -118,6 +118,7 @@ public:
 };
 
 class SymTableStack: public SymTable {
+
 	class SymNode {
 		SymNode *next;
 		SymTable *table;
@@ -144,19 +145,19 @@ public:
 		top = NULL;
 	}
 
-	void Add(SymTable *st) {
+	void Push(SymTable *st) {
 		SymNode *sn = new SymNode(top, st);
 		top = sn;
 	}
 
-	SymTable* GetTopTable() {
-		return top->GetTable();
-	}
-
-	void DeleteTop() {
+	void Pop() {
 		SymNode *sn = top;
 		top = sn->GetNext();
 		delete sn;
+	}
+	
+	SymTable* GetTopTable() {
+		return top->GetTable();
 	}
 };
 

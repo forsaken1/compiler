@@ -67,7 +67,7 @@ public:
 	}
 
 	string GetMessage() {
-		return "Error: " + msg;
+		return "Error: " + msg; /////!!!!!
 	}
 };
 
