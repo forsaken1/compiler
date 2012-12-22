@@ -10,6 +10,8 @@ primary-expression
 
 postfix-expression
     primary-expression
+	postfix_expression '(' ')'
+	postfix_expression '(' argument_expression_list ')'
     postfix-expression [ expression ]
     postfix-expression . identifier
     postfix-expression -> identifier

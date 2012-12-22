@@ -23,6 +23,7 @@ class Parser {
 	Node* UnaryExpr();
 	Node* PostfixExpr();
 	Node* PrimaryExpr();
+	Node* ArgumentExprList();
 
 	Node* Statement();
 	Node* PrintStmt();

@@ -188,6 +188,19 @@ Node* Parser::UnaryExpr() {
 Node* Parser::PostfixExpr() {
 	Node *left = PrimaryExpr();
 
+	if(oper == "(") {
+		Next();
+		Node *args = ArgumentExprList();
+
+		if(oper != ")")
+			throw ParserException(currentToken, "Postfix expression without ')'");
+
+		Next();
+		if(args == NULL)
+			return new NodeUnary("()", left);
+
+		return new NodeBinary(left, "()", args);
+	}
 	if(oper == "[") {
 		Next();
 		Node *link = Expression();
@@ -211,6 +224,17 @@ Node* Parser::PostfixExpr() {
 		string _oper = oper;
 		Next();
 		return new NodeUnary(_oper, left);
+	}
+	return left;
+}
+
+Node* Parser::ArgumentExprList() {
+	Node *left = AssignmentExpr();
+
+	if(oper == ",") {
+		Next();
+		Node *right = ArgumentExprList();
+		return new NodeBinary(left, ",", right);
 	}
 	return left;
 }
