@@ -127,7 +127,7 @@ Node* Parser::BinaryOperationExpr(int priority) {
 }
 
 Node* Parser::CastExpr() {
-	if(typeName[oper] && lastToken->GetText() == "(") {
+	if(/*typeName[oper]*/ globalType->At(oper) && lastToken->GetText() == "(") {
 		string _oper = oper;
 		Next();
 		if(oper == ")") {
@@ -150,7 +150,7 @@ Node* Parser::UnaryExpr() {
 		if(oper == "(") {
 			Next();
 			string type = oper;
-			if(typeName[oper]) {
+			if(/*typeName[oper]*/ globalType->At(oper)) {
 				Next();
 			}
 			if(oper == ")") {
@@ -799,10 +799,10 @@ void Parser::InitTables() {
 	unaryOperator["~"] = true;
 	unaryOperator["!"] = true;
 
-	typeName["void"] = true;
+	/*typeName["void"] = true;
 	typeName["char"] = true;
 	typeName["int"] = true;
-	typeName["float"] = true;
+	typeName["float"] = true;*/
 
 	globalType->Add("void", new SymType());
 	globalType->Add("char", new SymTypeScalar());

@@ -49,7 +49,7 @@ void MakeFiles(string dir, int from, int to) {
 
 int main() {
 	int ALL_TESTS_SUCCESSFUL = 0;
-	/*
+	///*
 	int FROM = 1;
 	int TO	 = 60;
 	for(int i = FROM; i <= TO; i++) { 
@@ -66,9 +66,8 @@ int main() {
 		if( !test(i, CompareFiles("output.txt", s1)) )
 			ALL_TESTS_SUCCESSFUL++;
 	}
-	*/
+	//*/
 	///*
-	//MakeFiles("parser", 100, 110);
 	int _FROM = 1;
 	int _TO   = 86;
 	for(int i = _FROM; i <= _TO; i++) { 
@@ -85,7 +84,42 @@ int main() {
 		if( !test(i, CompareFiles("output.txt", s1)) )
 			ALL_TESTS_SUCCESSFUL++;
 	}
-	//*/
+	/*
+	int _FROM_ = 1;
+	int _TO_   = 10;
+	for(int i = _FROM_; i <= _TO_; i++) { 
+		string str  = string("tests/symantic/") + IntToStr(i) + string(".in");
+		string str1 = string("tests/symantic/") + IntToStr(i) + string(".out");
+
+		const char* s = str.c_str();
+		const char* s1 = str1.c_str();
+		
+		freopen("output.txt", "w", stdout);
+		Scanner scanner(s);
+		Parser parser(&scanner);
+		freopen("CON", "w", stdout);
+		if( !test(i, CompareFiles("output.txt", s1)) )
+			ALL_TESTS_SUCCESSFUL++;
+	}
+	*/
+	/*
+	int __FROM_ = 1;
+	int __TO_   = 10;
+	for(int i = __FROM_; i <= __TO_; i++) { 
+		string str  = string("tests/generation/") + IntToStr(i) + string(".in");
+		string str1 = string("tests/generation/") + IntToStr(i) + string(".out");
+
+		const char* s = str.c_str();
+		const char* s1 = str1.c_str();
+		
+		freopen("output.txt", "w", stdout);
+		Scanner scanner(s);
+		Parser parser(&scanner);
+		freopen("CON", "w", stdout);
+		if( !test(i, CompareFiles("output.txt", s1)) )
+			ALL_TESTS_SUCCESSFUL++;
+	}
+	*/
 	if(ALL_TESTS_SUCCESSFUL == 0)
 		cout << endl << "All test successful =)";
 	else

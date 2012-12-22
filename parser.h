@@ -11,7 +11,7 @@ class Parser {
 	SymTable *globalType;
 	SymTableStack *symStack;
 	string oper;
-	map<string, bool> assignmentOperator, unaryOperator, typeName;
+	map<string, bool> assignmentOperator, unaryOperator/*, typeName*/;
 	
 	void Parse();
 
