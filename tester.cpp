@@ -68,9 +68,9 @@ int main() {
 	}
 	*/
 	///*
-	//MakeFiles("parser", 91, 99);
+	//MakeFiles("parser", 100, 110);
 	int _FROM = 1;
-	int _TO   = 84;
+	int _TO   = 86;
 	for(int i = _FROM; i <= _TO; i++) { 
 		string str  = string("tests/parser/") + IntToStr(i) + string(".in");
 		string str1 = string("tests/parser/") + IntToStr(i) + string(".out");

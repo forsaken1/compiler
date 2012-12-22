@@ -311,7 +311,6 @@ void Scanner::InitKeyWordsTable() {
 	keyWord["continue"] = true;
 	keyWord["do"] = true;
 	keyWord["else"] = true;
-	keyWord["false"] = true;
 	keyWord["float"] = true;
 	keyWord["for"] = true;
 	keyWord["goto"] = true;
@@ -320,7 +319,6 @@ void Scanner::InitKeyWordsTable() {
 	keyWord["return"] = true;
 	keyWord["sizeof"] = true;
 	keyWord["struct"] = true;
-	keyWord["true"] = true;
 	keyWord["void"] = true;
 	keyWord["while"] = true;
 	keyWord["print"] = true;
