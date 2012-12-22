@@ -1,1 +1,1 @@
-Syntax error: Print statement without ';'
+Syntax error: Jump statement without ';'

@@ -24,6 +24,10 @@ bool test(int i, bool exp) {
 }
 
 string IntToStr(int n) {
+	if(n > 99) {
+		int m = n % 100;
+		return string(1, n / 100 + 48) + string(1, m / 10 + 48) + string(1, m % 10 + 48);
+	}
 	if(n < 10) 
 		return string(1, n + 48);
 	else 
@@ -64,8 +68,9 @@ int main() {
 	}
 	*/
 	///*
+	//MakeFiles("parser", 91, 99);
 	int _FROM = 1;
-	int _TO   = 83;
+	int _TO   = 84;
 	for(int i = _FROM; i <= _TO; i++) { 
 		string str  = string("tests/parser/") + IntToStr(i) + string(".in");
 		string str1 = string("tests/parser/") + IntToStr(i) + string(".out");
