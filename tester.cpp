@@ -30,10 +30,10 @@ string IntToStr(int n) {
 		return string(1, n / 10 + 48) + string(1, n % 10 + 48);
 }
 
-void MakeFiles(int from, int to) {
+void MakeFiles(string dir, int from, int to) {
 	for(int i = from; i <= to; i++) {
-		string str  = string("tests/parser/") + IntToStr(i) + string(".in");
-		string str1 = string("tests/parser/") + IntToStr(i) + string(".out");
+		string str  = string("tests/" + dir + "/") + IntToStr(i) + string(".in");
+		string str1 = string("tests/" + dir + "/") + IntToStr(i) + string(".out");
 		const char* s = str.c_str();
 		const char* s1 = str1.c_str();
 		ofstream fo(s, ios::out);
