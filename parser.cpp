@@ -270,6 +270,28 @@ Node* Parser::PrimaryExpr() {
 
 //--- Parse Statement ----------
 
+Node* Parser::Program() {
+	Node* first = ExternalDecl();
+
+	if(first != NULL) {
+		Node* second = Program();
+		if(second == NULL)
+			return first;
+
+		return new NodeStmt("<external>", first, second);
+	}
+	return NULL;
+}
+
+Node* Parser::ExternalDecl() {
+	Node* def = FunctionDefinitionStmt();
+	
+	if(def == NULL) {
+		return Statement();
+	}
+	return def;
+}
+
 Node* Parser::Statement() {
 	Node *link = FunctionDefinitionStmt();
 
@@ -305,7 +327,6 @@ Node* Parser::PrintStmt() {
 			throw ParserException(currentToken, "Print statement without ';'");
 
 		Next();
-
 		return new NodePrint(expr);
 	}
 	return NULL;
@@ -326,6 +347,9 @@ Node* Parser::FunctionDefinitionStmt() {
 				if(oper == "=") {
 					Next();
 					Node *node = new NodeBinary(name, "=", Initialiser());
+					if(oper == ";") {
+						Next();
+					}
 					if(oper == ",") {
 						Next();
 						return new NodeBinary(node, ",", InitDeclaratorList(type));
@@ -346,6 +370,9 @@ Node* Parser::FunctionDefinitionStmt() {
 
 			Next();
 			Node *stmt = CompoundStmt();
+
+			if(stmt == NULL)
+				throw ParserException(currentToken, "Function definition without statement");
 
 			return new NodeFunc(type, name, args, stmt);
 		}
@@ -396,6 +423,8 @@ Node* Parser::StatementList() {
 
 Node* Parser::CompoundStmt() {
 	if(oper == "{") {
+		symStack->Push(new SymTable());
+
 		Next();
 		Node *decl = DeclarationList();
 		Node *stmt = StatementList();
@@ -433,6 +462,9 @@ Node* Parser::SelectionStmt() {
 		
 		Next();
 		Node *expr = Expression();
+
+		if(expr == NULL)
+			throw ParserException(currentToken, "Selection statement without condition");
 
 		if(oper != ")")
 			throw ParserException(currentToken, "Selection statement without ')'");
@@ -510,6 +542,9 @@ Node* Parser::IterationStmt() {
 			Next();
 			Node *expr = Expression();
 
+			if(expr == NULL)
+				throw ParserException(currentToken, "Iteration statement without expression");
+
 			if(oper != ")")
 				throw ParserException(currentToken, "Iteration statement without ')'");
 
@@ -526,6 +561,9 @@ Node* Parser::JumpStmt() {
 	if(oper == "goto") {
 		Next();
 		Node *ident = PrimaryExpr();
+
+		if(ident == NULL)
+			throw ParserException(currentToken, "Jump statement without label");
 
 		if(oper != ";")
 			throw ParserException(currentToken, "Jump statement without ';'");
@@ -590,7 +628,7 @@ Symbol* Parser::TypeSpec() {
 	Node *str = StructSpec();
 
 	if(str != NULL) {
-		//globalType->Add(str->GetName(), new SymTypeRecord(str)); //добавление в SymTable
+		//добавление struct в SymTable
 	}
 	if(str == NULL && globalType->At(oper)) {
 		string _oper = oper;
@@ -684,7 +722,7 @@ Node* Parser::DirectDeclarator(Symbol *type) {
 
 			Next();
 		}
-		//globalVar->Add(_oper, type);  //symtable add
+		//symStack->GetTopTable()->Add(_oper, type);  //symtable add
 		return new NodeVar(_oper);
 	}
 	return NULL;

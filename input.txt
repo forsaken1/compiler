@@ -1,1 +1,1 @@
-do while(true);
+int i, j = 0;
