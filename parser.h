@@ -24,7 +24,9 @@ class Parser {
 	Node* PostfixExpr();
 	Node* PrimaryExpr();
 	Node* ArgumentExprList();
-
+	
+	Node* Program();
+	Node* ExternalDecl();
 	Node* Statement();
 	Node* PrintStmt();
 	Node* StatementList();
