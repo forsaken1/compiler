@@ -11,7 +11,7 @@ class Parser {
 	SymTableStack *symStack;
 	string oper;
 	map<string, bool> assignmentOperator, unaryOperator;
-	bool simple; // for testing
+	bool print, simple; // for testing
 	
 	void Parse();
 
@@ -61,7 +61,9 @@ class Parser {
 	void InitTables();
 
 public:
-	Parser(Scanner*, bool);
+	Parser(Scanner*, bool, bool);
+	Node* GetTop();
+	SymTableStack* GetSymStack();
 };
 
 //--- Exceptions ---

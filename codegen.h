@@ -23,7 +23,6 @@ public:
 	CodeGen();
 
 	void AddCommand();
-
 };
 
 #endif CODEGEN_H

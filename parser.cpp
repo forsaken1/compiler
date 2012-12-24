@@ -1,15 +1,24 @@
 #include "parser.h"
 
-Parser::Parser(Scanner *_scanner, bool _simple) {
+Parser::Parser(Scanner *_scanner, bool _simple, bool _print) {
 	scanner = _scanner;
 	currentToken = NULL;
 	lastToken = NULL;
 	top = NULL;
 	simple = _simple;
+	print = _print;
 	symStack = new SymTableStack();
 	InitTables();
 
 	Parse();
+}
+
+Node* Parser::GetTop() {
+	return top;
+}
+
+SymTableStack* Parser::GetSymStack() {
+	return symStack;
 }
 
 void Parser::Next() {
@@ -29,7 +38,9 @@ void Parser::Parse() {
 			top = Statement();
 		else
 			top = Program();
-		top->Print(0, true);
+		
+		if(print) 
+			top->Print(0, true);
 	}
 	catch(Exception &e) {
 		cout << e.GetMessage() << endl;
@@ -427,7 +438,7 @@ Node* Parser::StatementList() {
 
 Node* Parser::CompoundStmt() {
 	if(oper == "{") {
-		symStack->Push(new SymTable());
+		//symStack->Push(new SymTable()); //дописать поиск в SymStack!!!!!
 
 		Next();
 		Node *decl = DeclarationList();

@@ -47,6 +47,7 @@ input.txt
 output.txt
 [Dd]ebug/
 [Rr]elease/
+result/
 *_i.c
 *_p.c
 *.exe

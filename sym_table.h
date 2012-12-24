@@ -170,6 +170,7 @@ class SymTableStack {
 
 public:
 	SymTableStack() {
+		top = NULL;
 		Push(new SymTable());
 	}
 
@@ -186,6 +187,14 @@ public:
 	
 	SymTable* GetTopTable() {
 		return top->GetTable();
+	}
+
+	void Print() {
+		SymNode *sn = top;
+		while(sn != NULL) {
+			
+			sn = sn->GetNext();
+		}
 	}
 };
 

@@ -1,5 +1,4 @@
-#include "parser.h"
-#include "codegen.h"
+#include "generator.h"
 #include <io.h>
 
 bool FileExists(const char *fname) {
@@ -19,9 +18,10 @@ int main(int argc, char *argv[]) {
 		case 1: {
 			//GetHelp();
 			Scanner scanner("input.txt"); //for debug
-			Parser parser(&scanner, false); 
-			cout << endl;
-			system("PAUSE");
+			Parser parser(&scanner, false, false);
+			Generator gen(&parser);
+			//cout << endl;
+			//system("PAUSE");
 			break;
 		}
 		case 2: {
@@ -40,12 +40,12 @@ int main(int argc, char *argv[]) {
 				}
 				if(argv[1][0] == 'S' || argv[1][0] == 's') {
 					Scanner scanner(argv[2]);
-					Parser parser(&scanner, true);
+					Parser parser(&scanner, false, false);
 					cout << endl << "Syntax analysis is completed." << endl;
 				}
 				if(argv[1][0] == 'C' || argv[1][0] == 'c') {
-					//тут будет CodeGen
-					
+					Scanner scanner(argv[2]);
+					Parser parser(&scanner, false, false);
 					cout << endl << "Compilation is completed." << endl;
 				}
 			}
