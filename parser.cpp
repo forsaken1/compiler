@@ -251,6 +251,7 @@ Node* Parser::PrimaryExpr() {
 	   currentToken->GetType() == CONST_REAL ||
 	   currentToken->GetType() == CONST_CHAR ||
 	   currentToken->GetType() == CONST_STRING) {
+		//symStack->GetTopTable()->Add(
 		Next();
 		return new NodeConst(lastToken->GetText());
 	}
@@ -727,7 +728,7 @@ Node* Parser::DirectDeclarator(Symbol *type) {
 
 			Next();
 		}
-		//symStack->GetTopTable()->Add(_oper, type);  //symtable add
+		symStack->GetTopTable()->Add(new SymVar(type, _oper));  //symtable add
 		return new NodeVar(_oper);
 	}
 	return NULL;
@@ -842,13 +843,8 @@ void Parser::InitTables() {
 	unaryOperator["~"] = true;
 	unaryOperator["!"] = true;
 
-	/*typeName["void"] = true;
-	typeName["char"] = true;
-	typeName["int"] = true;
-	typeName["float"] = true;*/
-
-	globalType->Add("void", new SymType());
-	globalType->Add("char", new SymTypeScalar());
-	globalType->Add("int",  new SymTypeInteger());
-	globalType->Add("float", new SymTypeFloat());
+	globalType->Add(new SymTypeVoid());
+	globalType->Add(new SymTypeChar());
+	globalType->Add(new SymTypeInteger());
+	globalType->Add(new SymTypeFloat());
 }

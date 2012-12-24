@@ -19,44 +19,48 @@ public:
 
 //--- SymType ---
 
-class SymType: public Symbol {
+class SymTypeVoid: public Symbol {
 public:
-	SymType() {}
+	SymTypeVoid() {
+		name = "void";
+	}
 };
 
-class SymTypeScalar: public SymType {
+class SymTypeChar: public Symbol {
 public:
-	SymTypeScalar() {}
+	SymTypeChar() {
+		name = "char";
+	}
 };
 
-class SymTypeFloat: public SymTypeScalar {
+class SymTypeFloat: public Symbol {
 public:
 	SymTypeFloat() {
 		name = "float";
 	}
 };
 
-class SymTypeInteger: public SymTypeScalar {
+class SymTypeInteger: public Symbol {
 public:
 	SymTypeInteger() {
 		name = "int";
 	}
 };
 
-class SymTypeArray: public SymType {
-	SymType *elemType;
+class SymTypeArray: public Symbol {
+	Symbol *elemType;
 	int length;
 
 public:
 	
 };
 
-class SymTypeRecord: public SymType {
+class SymTypeRecord: public Symbol {
 
 };
 
-class SymTypePointer: public SymType {
-	SymType *refType;
+class SymTypePointer: public Symbol {
+	Symbol *refType;
 
 public:
 
@@ -65,10 +69,10 @@ public:
 //--- SymVar ---
 
 class SymVar: public Symbol {
-	SymType *type;
+	Symbol *type;
 
 public:
-	SymVar(SymType *_type, string _name): Symbol(_name) {
+	SymVar(Symbol *_type, string _name): Symbol(_name) {
 		type = _type;
 	}
 };
@@ -112,12 +116,12 @@ public:
 		return table[name];
 	}
 
-	void Add(string name, Symbol *symb) {
-		table[name] = symb;
+	void Add(Symbol *symb) {
+		table[symb->GetName()] = symb;
 	}
 };
 
-class SymTableStack: public SymTable {
+class SymTableStack {
 
 	class SymNode {
 		SymNode *next;
