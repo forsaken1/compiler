@@ -108,6 +108,18 @@ class SymTable {
 public:
 	SymTable() {}
 
+	map<string, Symbol*> GetTableVar() {
+		return var;
+	}
+
+	map<string, Symbol*> GetTableConst() {
+		return c;
+	}
+
+	map<string, Symbol*> GetTableType() {
+		return type;
+	}
+
 	bool VarAt(string name) {
 		return var[name] == NULL ? false : true;
 	}
@@ -192,7 +204,10 @@ public:
 	void Print() {
 		SymNode *sn = top;
 		while(sn != NULL) {
-			
+			/*for(map<string, Symbol*>::iterator it = sn->GetTable()->GetTableConst().begin(); 
+			it != sn->GetTable()->GetTableConst().end(); it++) {
+				cout << "\t" << "c_" +  << "\t\tdb\t" << (*it).first << endl;
+			}*/
 			sn = sn->GetNext();
 		}
 	}

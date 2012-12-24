@@ -2,6 +2,7 @@
 #define NODE_H
 
 #include "sym_table.h"
+#include "codegen.h"
 
 class Node {
 protected:
@@ -36,6 +37,10 @@ public:
 	void Print(int i, bool b) {
 		cout << "(" << constant << ")" << endl;
 	}
+
+	void Generate() {
+		cout << constant;
+	}
 };
 
 class NodeVar: public Node {
@@ -52,6 +57,10 @@ public:
 
 	Symbol* GetType(SymTable *symTable) {
 		return symTable->FindType(name);
+	}
+
+	void Generate() {
+
 	}
 };
 
@@ -180,6 +189,8 @@ public:
 	}
 };
 
+//--- Statement ---
+
 class NodePrint: public Node {
 	Node *expr;
 
@@ -193,9 +204,12 @@ public:
 		DrawPath(i, b);
 		expr->Print(i + 1, false);
 	}
-};
 
-//--- Statement ---
+	void Generate() {
+		expr->Generate();
+
+	}
+};
 
 class NodeStmt: public Node {
 	Node *first, *second;
@@ -218,19 +232,6 @@ public:
 			DrawPath(i, b);
 			second->Print(i + 1, false);
 		}
-	}
-};
-
-class NodeExpressionStmt: public Node {
-	Node *expr;
-
-public:
-	NodeExpressionStmt(Node *_expr) {
-		expr = _expr;
-	}
-
-	void Print(int i, bool b) {
-		expr->Print(i + 1, true);
 	}
 };
 
@@ -344,14 +345,6 @@ public:
 			expr->Print(i + 1, b);
 		}
 	}
-};
-
-//--- Declaration ---
-
-class NodeDeclaration: public Node {
-
-public:
-
 };
 
 #endif NODE_H

@@ -260,7 +260,7 @@ Node* Parser::PrimaryExpr() {
 	   currentToken->GetType() == CONST_REAL ||
 	   currentToken->GetType() == CONST_CHAR ||
 	   currentToken->GetType() == CONST_STRING) {
-		symStack->GetTopTable()->AddConst(new Symbol(oper));
+		//symStack->GetTopTable()->AddConst(new Symbol(oper));
 		Next();
 		return new NodeConst(lastToken->GetText());
 	}

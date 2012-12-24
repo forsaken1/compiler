@@ -79,7 +79,7 @@ int main() {
 		
 		freopen("output.txt", "w", stdout);
 		Scanner scanner(s);
-		Parser parser(&scanner, true);
+		Parser parser(&scanner, true, true);
 		freopen("CON", "w", stdout);
 		if( !test(i, CompareFiles("output.txt", s1)) )
 			ALL_TESTS_SUCCESSFUL++;

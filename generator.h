@@ -20,11 +20,12 @@ public:
 
 		cout << endl << ".code" << endl << "start:" << endl;
 		pr->GetTop()->Generate();
+		cout << endl << "\tinkey" << endl << "\texit" << endl;
 		cout << endl << "end start" << endl;
 
 		fclose(stdout);
 
-		//system("result/make.bat");
+		system("result/make.bat");
 	}
 };
 
