@@ -7,8 +7,6 @@ Parser::Parser(Scanner *_scanner, bool _simple) {
 	top = NULL;
 	simple = _simple;
 	symStack = new SymTableStack();
-	symStack->Push(new SymTable());
-	globalType = new SymTable();
 	InitTables();
 
 	Parse();
@@ -126,7 +124,7 @@ Node* Parser::BinaryOperationExpr(int priority) {
 }
 
 Node* Parser::CastExpr() {
-	if(globalType->At(oper) && lastToken->GetText() == "(") {
+	if(symStack->GetTopTable()->TypeAt(oper) && lastToken->GetText() == "(") {
 		string _oper = oper;
 		Next();
 		if(oper == ")") {
@@ -149,7 +147,7 @@ Node* Parser::UnaryExpr() {
 		if(oper == "(") {
 			Next();
 			string type = oper;
-			if(globalType->At(oper)) {
+			if(symStack->GetTopTable()->TypeAt(oper)) {
 				Next();
 			}
 			if(oper == ")") {
@@ -240,7 +238,7 @@ Node* Parser::ArgumentExprList() {
 
 Node* Parser::PrimaryExpr() {
 	if(currentToken->GetType() == IDENTIFIER) {
-		if( !simple && !symStack->GetTopTable()->At(oper) )
+		if( !simple && !symStack->GetTopTable()->VarAt(oper) )
 			throw SemanticException(currentToken, "Undeclared identifier");
 
 		Next();
@@ -251,7 +249,7 @@ Node* Parser::PrimaryExpr() {
 	   currentToken->GetType() == CONST_REAL ||
 	   currentToken->GetType() == CONST_CHAR ||
 	   currentToken->GetType() == CONST_STRING) {
-		//symStack->GetTopTable()->Add(
+		symStack->GetTopTable()->AddConst(new Symbol(oper));
 		Next();
 		return new NodeConst(lastToken->GetText());
 	}
@@ -636,10 +634,10 @@ Symbol* Parser::TypeSpec() {
 	if(str != NULL) {
 		//добавление struct в SymTable
 	}
-	if(str == NULL && globalType->At(oper)) {
+	if(str == NULL && symStack->GetTopTable()->TypeAt(oper)) {
 		string _oper = oper;
 		Next();
-		return globalType->Find(_oper);
+		return symStack->GetTopTable()->FindType(_oper);
 	}
 	return NULL;
 }
@@ -728,7 +726,7 @@ Node* Parser::DirectDeclarator(Symbol *type) {
 
 			Next();
 		}
-		symStack->GetTopTable()->Add(new SymVar(type, _oper));  //symtable add
+		symStack->GetTopTable()->AddVar(new SymVar(type, _oper));  //symtable add
 		return new NodeVar(_oper);
 	}
 	return NULL;
@@ -843,8 +841,8 @@ void Parser::InitTables() {
 	unaryOperator["~"] = true;
 	unaryOperator["!"] = true;
 
-	globalType->Add(new SymTypeVoid());
-	globalType->Add(new SymTypeChar());
-	globalType->Add(new SymTypeInteger());
-	globalType->Add(new SymTypeFloat());
+	symStack->GetTopTable()->AddType(new SymTypeVoid());
+	symStack->GetTopTable()->AddType(new SymTypeChar());
+	symStack->GetTopTable()->AddType(new SymTypeInteger());
+	symStack->GetTopTable()->AddType(new SymTypeFloat());
 }

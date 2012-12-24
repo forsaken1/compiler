@@ -51,7 +51,7 @@ public:
 	}
 
 	Symbol* GetType(SymTable *symTable) {
-		return symTable->Find(name);
+		return symTable->FindType(name);
 	}
 };
 

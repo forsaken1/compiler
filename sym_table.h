@@ -103,21 +103,45 @@ public:
 //--- SymTable ---
 
 class SymTable {
-	map<string, Symbol*> table;
+	map<string, Symbol*> var, c, type;
 
 public:
 	SymTable() {}
 
-	bool At(string name) {
-		return table[name] == NULL ? false : true;
+	bool VarAt(string name) {
+		return var[name] == NULL ? false : true;
 	}
 
-	Symbol* Find(string name) {
-		return table[name];
+	bool ConstAt(string name) {
+		return c[name] == NULL ? false : true;
 	}
 
-	void Add(Symbol *symb) {
-		table[symb->GetName()] = symb;
+	bool TypeAt(string name) {
+		return type[name] == NULL ? false : true;
+	}
+
+	Symbol* FindVar(string name) {
+		return var[name];
+	}
+
+	Symbol* FindConst(string name) {
+		return c[name];
+	}
+
+	Symbol* FindType(string name) {
+		return type[name];
+	}
+	
+	void AddVar(Symbol *symb) {
+		var[symb->GetName()] = symb;
+	}
+
+	void AddConst(Symbol *symb) {
+		c[symb->GetName()] = symb;
+	}
+
+	void AddType(Symbol *symb) {
+		type[symb->GetName()] = symb;
 	}
 };
 
@@ -146,7 +170,7 @@ class SymTableStack {
 
 public:
 	SymTableStack() {
-		top = NULL;
+		Push(new SymTable());
 	}
 
 	void Push(SymTable *st) {

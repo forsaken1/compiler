@@ -8,7 +8,6 @@ class Parser {
 	Token *currentToken, *lastToken;
 	Node *top;
 	Scanner *scanner;
-	SymTable *globalType;
 	SymTableStack *symStack;
 	string oper;
 	map<string, bool> assignmentOperator, unaryOperator;
