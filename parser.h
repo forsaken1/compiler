@@ -11,7 +11,8 @@ class Parser {
 	SymTable *globalType;
 	SymTableStack *symStack;
 	string oper;
-	map<string, bool> assignmentOperator, unaryOperator/*, typeName*/;
+	map<string, bool> assignmentOperator, unaryOperator;
+	bool simple; // for testing
 	
 	void Parse();
 
@@ -61,10 +62,17 @@ class Parser {
 	void InitTables();
 
 public:
-	Parser(Scanner*);
+	Parser(Scanner*, bool);
 };
 
-class ParserException {
+//--- Exceptions ---
+
+class Exception {
+public:
+	virtual string GetMessage() { return ""; }
+};
+
+class ParserException: public Exception {
 	string msg;
 	Token *tk;
 
@@ -76,6 +84,21 @@ public:
 
 	string GetMessage() {
 		return "Syntax error: " + msg /* + " on line " + string(1, tk->GetLine() + '0') + " in position " + string(1, tk->GetPos() + '0')*/;
+	}
+};
+
+class SemanticException: public Exception {
+	string msg;
+	Token *tk;
+
+public:
+	SemanticException(Token *_tk, string _msg) {
+		msg = _msg;
+		tk = _tk;
+	}
+
+	string GetMessage() {
+		return "Semantic error: " + msg /* + " on line " + string(1, tk->GetLine() + '0') + " in position " + string(1, tk->GetPos() + '0')*/;
 	}
 };
 

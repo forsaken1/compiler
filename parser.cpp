@@ -1,11 +1,13 @@
 #include "parser.h"
 
-Parser::Parser(Scanner *_scanner) {
+Parser::Parser(Scanner *_scanner, bool _simple) {
 	scanner = _scanner;
 	currentToken = NULL;
 	lastToken = NULL;
 	top = NULL;
+	simple = _simple;
 	symStack = new SymTableStack();
+	symStack->Push(new SymTable());
 	globalType = new SymTable();
 	InitTables();
 
@@ -13,9 +15,6 @@ Parser::Parser(Scanner *_scanner) {
 }
 
 void Parser::Next() {
-	//if(currentToken != NULL && currentToken->GetType() == END_OF_FILE)
-		//throw ParserException(currentToken, "Unexpected end of file");
-
 	scanner->Next();
 	delete lastToken;
 	lastToken = currentToken;
@@ -28,10 +27,13 @@ void Parser::Next() {
 void Parser::Parse() {
 	try {
 		Next();
-		top = Statement();
+		if(simple)
+			top = Statement();
+		else
+			top = Program();
 		top->Print(0, true);
 	}
-	catch(ParserException &e) {
+	catch(Exception &e) {
 		cout << e.GetMessage() << endl;
 	}
 }
@@ -60,9 +62,6 @@ Node* Parser::AssignmentExpr() {
 		Node *right = AssignmentExpr();
 		if(right == NULL)
 			throw ParserException(currentToken, "Assignment expression without left operand");
-
-		//if(left->GetType(globalVar) != right->GetType(globalVar))
-			//throw ParserException(currentToken, "Operand types do not match");
 
 		return new NodeBinary(left, _oper, right);
 	}
@@ -127,7 +126,7 @@ Node* Parser::BinaryOperationExpr(int priority) {
 }
 
 Node* Parser::CastExpr() {
-	if(/*typeName[oper]*/ globalType->At(oper) && lastToken->GetText() == "(") {
+	if(globalType->At(oper) && lastToken->GetText() == "(") {
 		string _oper = oper;
 		Next();
 		if(oper == ")") {
@@ -150,7 +149,7 @@ Node* Parser::UnaryExpr() {
 		if(oper == "(") {
 			Next();
 			string type = oper;
-			if(/*typeName[oper]*/ globalType->At(oper)) {
+			if(globalType->At(oper)) {
 				Next();
 			}
 			if(oper == ")") {
@@ -241,6 +240,9 @@ Node* Parser::ArgumentExprList() {
 
 Node* Parser::PrimaryExpr() {
 	if(currentToken->GetType() == IDENTIFIER) {
+		if( !simple && !symStack->GetTopTable()->At(oper) )
+			throw SemanticException(currentToken, "Undeclared identifier");
+
 		Next();
 		return new NodeVar(lastToken->GetText());
 	}
@@ -293,7 +295,10 @@ Node* Parser::ExternalDecl() {
 }
 
 Node* Parser::Statement() {
-	Node *link = FunctionDefinitionStmt();
+	Node *link = NULL;
+	
+	if(simple)
+		link = FunctionDefinitionStmt();
 
 	if(link == NULL) link = CompoundStmt();
 	if(link == NULL) link = ExpressionStmt();
