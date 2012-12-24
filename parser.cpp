@@ -328,6 +328,23 @@ Node* Parser::PrintStmt() {
 			throw ParserException(currentToken, "Print statement without '('");
 
 		Next();
+		if(currentToken->GetType() != CONST_STRING)
+			throw ParserException(currentToken, "Print statement without format");
+
+		string format = oper;
+
+		Next();
+		if(oper == ")") {
+			Next();
+			if(oper != ";") 
+				throw ParserException(currentToken, "Print statement without ';'");
+			Next();
+			return new NodePrint(format, NULL);
+		}
+		if(oper != ",")
+			throw ParserException(currentToken, "Print statement without ','");
+
+		Next();
 		Node *expr = Expression();
 
 		if(expr == NULL)
@@ -342,7 +359,7 @@ Node* Parser::PrintStmt() {
 			throw ParserException(currentToken, "Print statement without ';'");
 
 		Next();
-		return new NodePrint(expr);
+		return new NodePrint(format, expr);
 	}
 	return NULL;
 }
