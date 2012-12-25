@@ -70,7 +70,7 @@ int main() {
 	int _FROM = 1;
 	int _TO   = 86; //86
 	for(int i = _FROM; i <= _TO; i++) { 
-		string str  = string("Debug\\compiler S tests/parser/") + IntToStr(i) + string(".in");
+		string str  = string("Debug\\compiler S tests\\parser\\") + IntToStr(i) + string(".in");
 		string str1 = string("tests/parser/") + IntToStr(i) + string(".out");
 
 		const char* s = str.c_str();
@@ -126,5 +126,6 @@ int main() {
 	cout << endl << endl;
 
 	system("PAUSE");
+	fclose(stdout);
 	return 0;
 }
