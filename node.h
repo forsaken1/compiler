@@ -213,6 +213,10 @@ public:
 		if(expr == NULL) {
 			cout << "\tinvoke crt_printf, " << "addr const_" << format->GetName() << endl;
 		}
+		else {
+			expr->Generate(cg);
+			cout << "\tinvoke crt_printf, " << "addr const_" << format->GetName() << ", " << endl;
+		}
 	}
 };
 

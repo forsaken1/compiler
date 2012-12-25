@@ -214,7 +214,7 @@ public:
 	void Pop() {
 		SymNode *sn = top;
 		top = sn->GetNext();
-		delete sn;
+		//delete sn;
 	}
 	
 	SymTable* GetTopTable() {
@@ -228,6 +228,12 @@ public:
 				for(map<string, SymConst*>::iterator it = sn->GetTable()->GetTableConst()->begin(); 
 				it != sn->GetTable()->GetTableConst()->end(); it++) {
 					cout << "\t" << "const_" << it->first << "\t\tdb\t'" << it->second->GetConst() << "', 0" << endl;
+				}
+			}
+			if( !sn->GetTable()->GetTableConst()->empty() ) {
+				for(map<string, Symbol*>::iterator it = sn->GetTable()->GetTableVar()->begin(); 
+				it != sn->GetTable()->GetTableVar()->end(); it++) {
+					cout << "\t" << it->first << "\t\tdb\t ?" << endl;
 				}
 			}
 			sn = sn->GetNext();
