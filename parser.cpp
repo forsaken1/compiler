@@ -1,4 +1,6 @@
 #include "parser.h"
+#include <stdlib.h>
+#include <time.h>
 
 Parser::Parser(Scanner *_scanner, bool _simple, bool _print) {
 	scanner = _scanner;
@@ -242,6 +244,16 @@ Node* Parser::ArgumentExprList() {
 	return left;
 }
 
+string GetRandomId() {
+	string random = "";
+	srand ( time(NULL) );
+
+	for(int j = 0; j < 10; j++)
+		random += string(1, (rand() % 10) + 48);
+
+	return random;
+}
+
 Node* Parser::PrimaryExpr() {
 	if(currentToken->GetType() == IDENTIFIER) {
 		if( !simple && !symStack->GetTopTable()->VarAt(oper) )
@@ -255,7 +267,7 @@ Node* Parser::PrimaryExpr() {
 	   currentToken->GetType() == CONST_REAL ||
 	   currentToken->GetType() == CONST_CHAR ||
 	   currentToken->GetType() == CONST_STRING) {
-		symStack->GetTopTable()->AddConst(new Symbol(oper));
+		symStack->GetTopTable()->AddConst(new SymConst(GetRandomId(), oper));
 		Next();
 		return new NodeConst(lastToken->GetText());
 	}
@@ -327,15 +339,18 @@ Node* Parser::PrintStmt() {
 			throw ParserException(currentToken, "Print statement without format");
 
 		string format = oper;
-		symStack->GetTopTable()->AddConst(new Symbol(format));
+		string random = GetRandomId();
+
+		symStack->GetTopTable()->AddConst(new SymConst(random, format));
 
 		Next();
 		if(oper == ")") {
 			Next();
 			if(oper != ";") 
 				throw ParserException(currentToken, "Print statement without ';'");
+
 			Next();
-			return new NodePrint(format, NULL);
+			return new NodePrint(new SymConst(random, format), NULL);
 		}
 		if(oper != ",")
 			throw ParserException(currentToken, "Print statement without ','");
@@ -354,7 +369,7 @@ Node* Parser::PrintStmt() {
 			throw ParserException(currentToken, "Print statement without ';'");
 
 		Next();
-		return new NodePrint(format, expr);
+		return new NodePrint(new SymConst(random, format), expr);
 	}
 	return NULL;
 }

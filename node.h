@@ -191,10 +191,10 @@ public:
 
 class NodePrint: public Node {
 	Node *expr;
-	string format;
+	SymConst *format;
 
 public:
-	NodePrint(string _format, Node *_expr) {
+	NodePrint(SymConst *_format, Node *_expr) {
 		format = _format;
 		expr = _expr;
 	}
@@ -202,7 +202,7 @@ public:
 	void Print(int i, bool b) {
 		cout << "print" << endl;
 		DrawPath(i, b);
-		cout << "(" << format << ")" << endl;
+		cout << "(" << format->GetConst() << ")" << endl;
 		if(expr != NULL) {
 			DrawPath(i, b);
 			expr->Print(i + 1, false);
@@ -211,7 +211,7 @@ public:
 
 	void Generate(CodeGen *cg) {
 		if(expr == NULL) {
-			cout << "\tinvoke crt_printf, " << "addr const_" << format << endl;
+			cout << "\tinvoke crt_printf, " << "addr const_" << format->GetName() << endl;
 		}
 	}
 };

@@ -19,6 +19,19 @@ public:
 	}
 };
 
+class SymConst: public Symbol {
+	string constant;
+
+public:
+	SymConst(string _name, string _constant): Symbol(_name) {
+		constant = _constant;
+	}
+
+	string GetConst() {
+		return constant;
+	}
+};
+
 //--- SymType ---
 
 class SymTypeVoid: public Symbol {
@@ -105,12 +118,13 @@ public:
 //--- SymTable ---
 
 class SymTable {
-	map<string, Symbol*> *var, *c, *type;
+	map<string, Symbol*> *var, *type;
+	map<string, SymConst*> *c;
 
 public:
 	SymTable() {
 		var = new map<string, Symbol*>();
-		c = new map<string, Symbol*>();
+		c = new map<string, SymConst*>();
 		type = new map<string, Symbol*>();
 	}
 
@@ -118,7 +132,7 @@ public:
 		return var;
 	}
 
-	map<string, Symbol*>* GetTableConst() {
+	map<string, SymConst*>* GetTableConst() {
 		return c;
 	}
 
@@ -142,7 +156,7 @@ public:
 		return (*var)[name];
 	}
 
-	Symbol* FindConst(string name) {
+	SymConst* FindConst(string name) {
 		return (*c)[name];
 	}
 
@@ -154,7 +168,7 @@ public:
 		(*var)[symb->GetName()] = symb;
 	}
 
-	void AddConst(Symbol *symb) {
+	void AddConst(SymConst *symb) {
 		(*c)[symb->GetName()] = symb;
 	}
 
@@ -211,9 +225,9 @@ public:
 		SymNode *sn = top;
 		while(sn != NULL) {
 			if( !sn->GetTable()->GetTableConst()->empty() ) {
-				for(map<string, Symbol*>::iterator it = sn->GetTable()->GetTableConst()->begin(); 
+				for(map<string, SymConst*>::iterator it = sn->GetTable()->GetTableConst()->begin(); 
 				it != sn->GetTable()->GetTableConst()->end(); it++) {
-					cout << "\t" << "const_" << (*it).first << "\t\tdb\t'" << (*it).first << "', 0" << endl;
+					cout << "\t" << "const_" << it->first << "\t\tdb\t'" << it->second->GetConst() << "', 0" << endl;
 				}
 			}
 			sn = sn->GetNext();
