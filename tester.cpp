@@ -1,4 +1,5 @@
 #include "parser.h"
+#include <string.h>
 
 bool CompareFiles(const char *fileOut, const char *fileTestOut) {
 	ifstream out, testOut;
@@ -52,15 +53,14 @@ int main() {
 	int FROM = 1;
 	int TO	 = 60;
 	for(int i = FROM; i <= TO; i++) { 
-		string str  = string("tests/scanner/") + IntToStr(i) + string(".in");
+		string str  = string("Debug\\compiler L tests\\scanner\\") + IntToStr(i) + string(".in");
 		string str1 = string("tests/scanner/") + IntToStr(i) + string(".out");
 
 		const char* s = str.c_str();
 		const char* s1 = str1.c_str();
 		
 		freopen("output.txt", "w", stdout);
-		Scanner scanner(s);
-		scanner.Start();
+		system(s);
 		freopen("CON", "w", stdout);
 		if( !test(i, CompareFiles("output.txt", s1)) )
 			ALL_TESTS_SUCCESSFUL++;
@@ -70,15 +70,14 @@ int main() {
 	int _FROM = 1;
 	int _TO   = 86;
 	for(int i = _FROM; i <= _TO; i++) { 
-		string str  = string("tests/parser/") + IntToStr(i) + string(".in");
+		string str  = string("Debug\\compiler S tests/parser/") + IntToStr(i) + string(".in");
 		string str1 = string("tests/parser/") + IntToStr(i) + string(".out");
 
 		const char* s = str.c_str();
 		const char* s1 = str1.c_str();
 		
 		freopen("output.txt", "w", stdout);
-		Scanner scanner(s);
-		Parser parser(&scanner, true, true);
+		system(s);
 		freopen("CON", "w", stdout);
 		if( !test(i, CompareFiles("output.txt", s1)) )
 			ALL_TESTS_SUCCESSFUL++;

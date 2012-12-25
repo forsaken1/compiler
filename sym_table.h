@@ -211,14 +211,10 @@ public:
 		SymNode *sn = top;
 		while(sn != NULL) {
 			if( !sn->GetTable()->GetTableConst()->empty() ) {
-				//for(map<string, Symbol*>::iterator it = sn->GetTable()->GetTableConst().begin(); 
-				//it != sn->GetTable()->GetTableConst().end(); it++) {
-					//cout << "\t" << "const_" << (*it).first << "\t\tdb\t'" << (*it).first << "', 0" << endl;
-				map<string, Symbol*>::iterator it;
-				it = sn->GetTable()->GetTableConst()->begin();
-				//it++;
-				cout << "\t" << "const_" << it->first << "\t\tdb\t'" << it->first << "', 0" << endl;
-				//}
+				for(map<string, Symbol*>::iterator it = sn->GetTable()->GetTableConst()->begin(); 
+				it != sn->GetTable()->GetTableConst()->end(); it++) {
+					cout << "\t" << "const_" << (*it).first << "\t\tdb\t'" << (*it).first << "', 0" << endl;
+				}
 			}
 			sn = sn->GetNext();
 		}

@@ -7,10 +7,10 @@ bool FileExists(const char *fname) {
 
 void GetHelp() {
 	cout << "Compilator C. Author: Krilov Alexey, C8303A" << endl;
-	cout << "L <filename> - lexical analysis" << endl;
-	cout << "S <filename> - syntax analysis" << endl;
-	cout << "C <filename> - compilation" << endl;
-	cout << "H - help" << endl << endl;
+	cout << "l <filename> - lexical analysis" << endl;
+	cout << "s <filename> - syntax analysis" << endl;
+	cout << "c <filename> - compilation" << endl;
+	cout << "h - help" << endl << endl;
 }
 
 int main(int argc, char *argv[]) {
@@ -19,10 +19,9 @@ int main(int argc, char *argv[]) {
 			case 1: {
 				//GetHelp();
 				Scanner scanner("input.txt"); //for debug
-				Parser parser(&scanner, 0, 0);
+				Parser parser(&scanner, false, false);
 				Generator gen(&parser);
 				//cout << endl;
-				//system("PAUSE");
 				break;
 			}
 			case 2: {
@@ -34,12 +33,20 @@ int main(int argc, char *argv[]) {
 			}
 			case 3: {
 				if(FileExists(argv[2])) {
-					if(argv[1][0] == 'L' || argv[1][0] == 'l') {
+					if(argv[1][0] == 'L') {
 						Scanner scanner(argv[2]);
 						scanner.Start();
-						cout << "Lexical analysis is completed." << endl;
 					}
-					if(argv[1][0] == 'S' || argv[1][0] == 's') {
+					if(argv[1][0] == 'l') {
+						Scanner scanner(argv[2]);
+						scanner.Start();
+						cout << endl << "Lexical analysis is completed." << endl;
+					}
+					if(argv[1][0] == 'S') {
+						Scanner scanner(argv[2]);
+						Parser parser(&scanner, true, true);
+					}
+					if(argv[1][0] == 's') {
 						Scanner scanner(argv[2]);
 						Parser parser(&scanner, false, false);
 						cout << endl << "Syntax analysis is completed." << endl;
@@ -62,5 +69,6 @@ int main(int argc, char *argv[]) {
 	catch(Exception &e) {
 		cout << e.GetMessage() << endl;
 	}
+	//system("PAUSE");
 	return 0;
 }
