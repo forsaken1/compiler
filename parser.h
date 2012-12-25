@@ -66,41 +66,4 @@ public:
 	SymTableStack* GetSymStack();
 };
 
-//--- Exceptions ---
-
-class Exception {
-public:
-	virtual string GetMessage() { return ""; }
-};
-
-class ParserException: public Exception {
-	string msg;
-	Token *tk;
-
-public:
-	ParserException(Token *_tk, string _msg) {
-		msg = _msg;
-		tk = _tk;
-	}
-
-	string GetMessage() {
-		return "Syntax error: " + msg /* + " on line " + string(1, tk->GetLine() + '0') + " in position " + string(1, tk->GetPos() + '0')*/;
-	}
-};
-
-class SemanticException: public Exception {
-	string msg;
-	Token *tk;
-
-public:
-	SemanticException(Token *_tk, string _msg) {
-		msg = _msg;
-		tk = _tk;
-	}
-
-	string GetMessage() {
-		return "Semantic error: " + msg /* + " on line " + string(1, tk->GetLine() + '0') + " in position " + string(1, tk->GetPos() + '0')*/;
-	}
-};
-
 #endif PARSER_H

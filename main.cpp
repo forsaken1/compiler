@@ -14,48 +14,53 @@ void GetHelp() {
 }
 
 int main(int argc, char *argv[]) {
-	switch(argc) {
-		case 1: {
-			//GetHelp();
-			Scanner scanner("input.txt"); //for debug
-			Parser parser(&scanner, false, false);
-			Generator gen(&parser);
-			//cout << endl;
-			//system("PAUSE");
-			break;
-		}
-		case 2: {
-			if(argv[1][0] == 'H' || argv[1][0] == 'h')
-				GetHelp();
-			else
-				cout << "Error: Invalid argument" << endl;
-			break;
-		}
-		case 3: {
-			if(FileExists(argv[2])) {
-				if(argv[1][0] == 'L' || argv[1][0] == 'l') {
-					Scanner scanner(argv[2]);
-					scanner.Start();
-					cout << "Lexical analysis is completed." << endl;
-				}
-				if(argv[1][0] == 'S' || argv[1][0] == 's') {
-					Scanner scanner(argv[2]);
-					Parser parser(&scanner, false, false);
-					cout << endl << "Syntax analysis is completed." << endl;
-				}
-				if(argv[1][0] == 'C' || argv[1][0] == 'c') {
-					Scanner scanner(argv[2]);
-					Parser parser(&scanner, false, false);
-					cout << endl << "Compilation is completed." << endl;
-				}
+	try {
+		switch(argc) {
+			case 1: {
+				//GetHelp();
+				Scanner scanner("input.txt"); //for debug
+				Parser parser(&scanner, 0, 0);
+				Generator gen(&parser);
+				//cout << endl;
+				//system("PAUSE");
+				break;
 			}
-			else
-				cout << "Error: File is not found" << endl;
-			break;
+			case 2: {
+				if(argv[1][0] == 'H' || argv[1][0] == 'h')
+					GetHelp();
+				else
+					cout << "Error: Invalid argument" << endl;
+				break;
+			}
+			case 3: {
+				if(FileExists(argv[2])) {
+					if(argv[1][0] == 'L' || argv[1][0] == 'l') {
+						Scanner scanner(argv[2]);
+						scanner.Start();
+						cout << "Lexical analysis is completed." << endl;
+					}
+					if(argv[1][0] == 'S' || argv[1][0] == 's') {
+						Scanner scanner(argv[2]);
+						Parser parser(&scanner, false, false);
+						cout << endl << "Syntax analysis is completed." << endl;
+					}
+					if(argv[1][0] == 'C' || argv[1][0] == 'c') {
+						Scanner scanner(argv[2]);
+						Parser parser(&scanner, false, false);
+						cout << endl << "Compilation is completed." << endl;
+					}
+				}
+				else
+					cout << "Error: File is not found" << endl;
+				break;
+			}
+			default: {
+				cout << "Error: Too many arguments" << endl;
+			}
 		}
-		default: {
-			cout << "Error: Too many arguments" << endl;
-		}
+	}
+	catch(Exception &e) {
+		cout << e.GetMessage() << endl;
 	}
 	return 0;
 }

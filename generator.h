@@ -10,7 +10,7 @@ public:
 	Generator(Parser *_pr) {
 		pr = _pr;
 
-		freopen("result/out.asm", "w", stdout);
+		freopen("out.asm", "w", stdout);
 
 		cout << ".686" << endl << ".model flat, stdcall" << endl << endl;
 		cout << "include \\masm32\\include\\masm32rt.inc" << endl << endl;
@@ -19,13 +19,15 @@ public:
 		pr->GetSymStack()->Print();
 
 		cout << endl << ".code" << endl << "start:" << endl;
-		pr->GetTop()->Generate();
+
+		CodeGen *cg = new CodeGen();
+		pr->GetTop()->Generate(cg);
+
 		cout << endl << "\tinkey" << endl << "\texit" << endl;
 		cout << endl << "end start" << endl;
 
 		fclose(stdout);
-
-		system("result/make.bat");
+		system("make.bat");
 	}
 };
 

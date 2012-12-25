@@ -1,4 +1,3 @@
-#include "scanner.h"
 #include "parser.h"
 
 bool CompareFiles(const char *fileOut, const char *fileTestOut) {

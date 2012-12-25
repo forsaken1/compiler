@@ -19,9 +19,9 @@ protected:
 
 public:
 	virtual void Print(int i, bool b) {}
+	virtual void Generate(CodeGen *cg) {}
 	Symbol* GetType(SymTable *symTable) { return NULL; }
 	string GetName() {}
-	void Generate() {}
 };
 
 //--- Expression ---
@@ -38,9 +38,7 @@ public:
 		cout << "(" << constant << ")" << endl;
 	}
 
-	void Generate() {
-		cout << constant;
-	}
+	void Generate(CodeGen *cg) {}
 };
 
 class NodeVar: public Node {
@@ -59,7 +57,7 @@ public:
 		return symTable->FindType(name);
 	}
 
-	void Generate() {
+	void Generate(CodeGen *cg) {
 
 	}
 };
@@ -193,21 +191,28 @@ public:
 
 class NodePrint: public Node {
 	Node *expr;
+	string format;
 
 public:
-	NodePrint(Node *_expr) {
+	NodePrint(string _format, Node *_expr) {
+		format = _format;
 		expr = _expr;
 	}
 
 	void Print(int i, bool b) {
 		cout << "print" << endl;
 		DrawPath(i, b);
-		expr->Print(i + 1, false);
+		cout << "(" << format << ")" << endl;
+		if(expr != NULL) {
+			DrawPath(i, b);
+			expr->Print(i + 1, false);
+		}
 	}
 
-	void Generate() {
-		expr->Generate();
-
+	void Generate(CodeGen *cg) {
+		if(expr == NULL) {
+			cout << "\tinvoke crt_printf, " << "addr const_" << format << endl;
+		}
 	}
 };
 
@@ -232,6 +237,14 @@ public:
 			DrawPath(i, b);
 			second->Print(i + 1, false);
 		}
+	}
+
+	void Generate(CodeGen *cg) {
+		if(first != NULL)
+			first->Generate(cg);
+
+		if(second != NULL)
+			second->Generate(cg);
 	}
 };
 

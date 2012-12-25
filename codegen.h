@@ -1,6 +1,8 @@
 #ifndef CODEGEN_H
 #define CODEGEN_H
 
+#include <string>
+
 class AsmCmd {
 
 };
@@ -20,7 +22,7 @@ class AsmCmdBinary: public AsmCmd {
 class CodeGen {
 
 public:
-	CodeGen();
+	CodeGen() {}
 
 	void AddCommand();
 };

@@ -1,6 +1,8 @@
 #ifndef SYM_TABLE_H
 #define SYM_TABLE_H
 
+//#include <map>
+
 class Symbol {
 protected:
 	string name;
@@ -103,57 +105,61 @@ public:
 //--- SymTable ---
 
 class SymTable {
-	map<string, Symbol*> var, c, type;
+	map<string, Symbol*> *var, *c, *type;
 
 public:
-	SymTable() {}
+	SymTable() {
+		var = new map<string, Symbol*>();
+		c = new map<string, Symbol*>();
+		type = new map<string, Symbol*>();
+	}
 
-	map<string, Symbol*> GetTableVar() {
+	map<string, Symbol*>* GetTableVar() {
 		return var;
 	}
 
-	map<string, Symbol*> GetTableConst() {
+	map<string, Symbol*>* GetTableConst() {
 		return c;
 	}
 
-	map<string, Symbol*> GetTableType() {
+	map<string, Symbol*>* GetTableType() {
 		return type;
 	}
 
 	bool VarAt(string name) {
-		return var[name] == NULL ? false : true;
+		return (*var)[name] == NULL ? false : true;
 	}
 
 	bool ConstAt(string name) {
-		return c[name] == NULL ? false : true;
+		return (*c)[name] == NULL ? false : true;
 	}
 
 	bool TypeAt(string name) {
-		return type[name] == NULL ? false : true;
+		return (*type)[name] == NULL ? false : true;
 	}
 
 	Symbol* FindVar(string name) {
-		return var[name];
+		return (*var)[name];
 	}
 
 	Symbol* FindConst(string name) {
-		return c[name];
+		return (*c)[name];
 	}
 
 	Symbol* FindType(string name) {
-		return type[name];
+		return (*type)[name];
 	}
 	
 	void AddVar(Symbol *symb) {
-		var[symb->GetName()] = symb;
+		(*var)[symb->GetName()] = symb;
 	}
 
 	void AddConst(Symbol *symb) {
-		c[symb->GetName()] = symb;
+		(*c)[symb->GetName()] = symb;
 	}
 
 	void AddType(Symbol *symb) {
-		type[symb->GetName()] = symb;
+		(*type)[symb->GetName()] = symb;
 	}
 };
 
@@ -204,10 +210,16 @@ public:
 	void Print() {
 		SymNode *sn = top;
 		while(sn != NULL) {
-			/*for(map<string, Symbol*>::iterator it = sn->GetTable()->GetTableConst().begin(); 
-			it != sn->GetTable()->GetTableConst().end(); it++) {
-				cout << "\t" << "c_" +  << "\t\tdb\t" << (*it).first << endl;
-			}*/
+			if( !sn->GetTable()->GetTableConst()->empty() ) {
+				//for(map<string, Symbol*>::iterator it = sn->GetTable()->GetTableConst().begin(); 
+				//it != sn->GetTable()->GetTableConst().end(); it++) {
+					//cout << "\t" << "const_" << (*it).first << "\t\tdb\t'" << (*it).first << "', 0" << endl;
+				map<string, Symbol*>::iterator it;
+				it = sn->GetTable()->GetTableConst()->begin();
+				//it++;
+				cout << "\t" << "const_" << it->first << "\t\tdb\t'" << it->first << "', 0" << endl;
+				//}
+			}
 			sn = sn->GetNext();
 		}
 	}

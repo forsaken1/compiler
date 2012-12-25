@@ -26,42 +26,36 @@ void Scanner::Start() {
 }
 
 bool Scanner::Next() {
-	try {
-		char currentChar;
-		do {
-			if(lastString) {
-				currentToken = new Token(currentLine, currentPos, END_OF_FILE, "EOF", "");
-				return false;
-			}
-			currentChar = GetChar();
+	char currentChar;
+	do {
+		if(lastString) {
+			currentToken = new Token(currentLine, currentPos, END_OF_FILE, "EOF", "");
+			return false;
 		}
-		while(IsSpace(currentChar) || IsTabulationSymbol(currentChar) || IsEndOfLine(currentChar));
+		currentChar = GetChar();
+	}
+	while(IsSpace(currentChar) || IsTabulationSymbol(currentChar) || IsEndOfLine(currentChar));
 
-		if(IsCommentBegin(currentChar)) {
-			char secondChar;
-			if( IsCommentBegin(secondChar = GetChar()) ) {
-				NextLine();
-				return Next();
-			}
-			if(secondChar == '*') {
-				while( GetChar() != '*' || !IsCommentBegin(GetChar()) ) {} 
-				return Next();
-			}
+	if(IsCommentBegin(currentChar)) {
+		char secondChar;
+		if( IsCommentBegin(secondChar = GetChar()) ) {
+			NextLine();
+			return Next();
 		}
-		if(IsLetter(currentChar))				currentToken = GetIdentificator(currentChar); else 
-		if(IsNumber(currentChar))				currentToken = GetNumber(currentChar); else 
-		if(IsCharSeparator(currentChar))		currentToken = GetSymbol(currentChar); else 
-		if(IsStringSeparator(currentChar))		currentToken = GetString(currentChar); else 
-		if(IsSeparator(currentChar))			currentToken = GetSeparator(currentChar); else 
-		if(IsSpecialSymbol(currentChar))		currentToken = GetOperation(currentChar); else 
-		throw ScannerException("Indefinite character: \"" + string(1, currentChar) + "\"");
+		if(secondChar == '*') {
+			while( GetChar() != '*' || !IsCommentBegin(GetChar()) ) {} 
+			return Next();
+		}
+	}
+	if(IsLetter(currentChar))				currentToken = GetIdentificator(currentChar); else 
+	if(IsNumber(currentChar))				currentToken = GetNumber(currentChar); else 
+	if(IsCharSeparator(currentChar))		currentToken = GetSymbol(currentChar); else 
+	if(IsStringSeparator(currentChar))		currentToken = GetString(currentChar); else 
+	if(IsSeparator(currentChar))			currentToken = GetSeparator(currentChar); else 
+	if(IsSpecialSymbol(currentChar))		currentToken = GetOperation(currentChar); else 
+	throw ScannerException("Indefinite character: \"" + string(1, currentChar) + "\"");
 
-		return true;
-	}
-	catch(ScannerException &e) {
-		cout << e.GetMessage() << endl;
-		return false;
-	}
+	return true;
 }
 
 char Scanner::GetChar() {

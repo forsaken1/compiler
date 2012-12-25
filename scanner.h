@@ -4,6 +4,7 @@
 #include <map>
 #include <fstream>
 #include "token.h"
+#include "exception.h"
 
 class Scanner {
 	map<string, bool> keyWord, operation;
@@ -56,19 +57,6 @@ public:
 	Token* GetToken();
 	void Start();
 	bool Next();
-};
-
-class ScannerException {
-	string msg;
-
-public:
-	ScannerException(string _msg) {
-		msg = _msg;
-	}
-
-	string GetMessage() {
-		return "Error: " + msg; /////!!!!!
-	}
 };
 
 #endif SCANNER_H

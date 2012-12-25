@@ -32,19 +32,14 @@ void Parser::Next() {
 //--- Parse Expression ----------
 
 void Parser::Parse() {
-	try {
-		Next();
-		if(simple)
-			top = Statement();
-		else
-			top = Program();
-		
-		if(print) 
-			top->Print(0, true);
-	}
-	catch(Exception &e) {
-		cout << e.GetMessage() << endl;
-	}
+	Next();
+	if(simple)
+		top = Statement();
+	else
+		top = Program();
+	
+	if(print) 
+		top->Print(0, true);
 }
 
 Node* Parser::Expression() {
@@ -260,7 +255,7 @@ Node* Parser::PrimaryExpr() {
 	   currentToken->GetType() == CONST_REAL ||
 	   currentToken->GetType() == CONST_CHAR ||
 	   currentToken->GetType() == CONST_STRING) {
-		//symStack->GetTopTable()->AddConst(new Symbol(oper));
+		symStack->GetTopTable()->AddConst(new Symbol(oper));
 		Next();
 		return new NodeConst(lastToken->GetText());
 	}
@@ -332,6 +327,7 @@ Node* Parser::PrintStmt() {
 			throw ParserException(currentToken, "Print statement without format");
 
 		string format = oper;
+		symStack->GetTopTable()->AddConst(new Symbol(format));
 
 		Next();
 		if(oper == ")") {
@@ -354,7 +350,6 @@ Node* Parser::PrintStmt() {
 			throw ParserException(currentToken, "Print statement without ')'");
 
 		Next();
-
 		if(oper != ";")
 			throw ParserException(currentToken, "Print statement without ';'");
 
@@ -744,6 +739,11 @@ Node* Parser::Declarator(Symbol *type) {
 
 Node* Parser::DirectDeclarator(Symbol *type) {
 	if(currentToken->GetType() == IDENTIFIER) {
+		if( !simple && symStack->GetTopTable()->VarAt(oper) )
+			throw ParserException(currentToken, "Redefinition identifier");
+
+		symStack->GetTopTable()->AddVar(new SymVar(type, oper));  //symtable add
+
 		string _oper = oper;
 		Next();
 		if(oper == "[") {
@@ -754,7 +754,6 @@ Node* Parser::DirectDeclarator(Symbol *type) {
 
 			Next();
 		}
-		symStack->GetTopTable()->AddVar(new SymVar(type, _oper));  //symtable add
 		return new NodeVar(_oper);
 	}
 	return NULL;
