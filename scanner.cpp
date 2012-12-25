@@ -29,7 +29,7 @@ bool Scanner::Next() {
 	char currentChar;
 	do {
 		if(lastString) {
-			currentToken = new Token(currentLine, currentPos, END_OF_FILE, "EOF", "");
+			currentToken = new Token(currentLine, currentPos, END_OF_FILE, DEFAULT, "");
 			return false;
 		}
 		currentChar = GetChar();
@@ -89,7 +89,7 @@ Token* Scanner::GetIdentificator(char currentChar) {
 			break;
 		}
 	}
-	return new Token(line, pos, IsKeyWord(s) ? KEYWORD : IDENTIFIER, IsKeyWord(s) ? "KEYWORD" : "IDENTIF", s);
+	return new Token(line, pos, IsKeyWord(s) ? KEYWORD : IDENTIFIER, IsKeyWord(s) ? keyWord[s] : DEFAULT, s);
 }
 
 string Scanner::GetInvalidToken(int pos) {
@@ -140,7 +140,7 @@ Token* Scanner::GetNumber(char currentChar) {
 	if(IsE(s[s.length() - 1]) || IsDot(s[s.length() - 1])) 
 		throw ScannerException("Invalid real number: \"" + s + "\"");
 
-	return new Token(line, pos, dot || E ? CONST_REAL : CONST_INTEGER, dot || E ? "REAL" : "INT", s);
+	return new Token(line, pos, dot || E ? CONST_REAL : CONST_INTEGER, DEFAULT, s);
 }
 
 Token* Scanner::GetSymbol(char currentChar) {
@@ -162,7 +162,7 @@ Token* Scanner::GetSymbol(char currentChar) {
 	}
 
 	if( IsCharSeparator(currentChar = GetChar()) )
-		return new Token(line, pos, escapeDetector ? ESCAPE_SEQUENCE : CONST_CHAR, escapeDetector ? "ESCAPE" : "CHAR", s);
+		return new Token(line, pos, escapeDetector ? ESCAPE_SEQUENCE : CONST_CHAR, DEFAULT, s);
 	else {
 		s += currentChar;
 		throw ScannerException("Too many long character constant: \"" + s + "\"");
@@ -176,11 +176,11 @@ Token* Scanner::GetString(char currentChar) {
 	while((currentChar = GetChar()) != '\0' && !IsStringSeparator(currentChar)) {
 		s += currentChar;
 	}
-	return new Token(line, pos, CONST_STRING, "STRING", s);
+	return new Token(line, pos, CONST_STRING, DEFAULT, s);
 }
 
 Token* Scanner::GetSeparator(char currentChar) {
-	return new Token(currentLine, currentPos, SEPARATOR, "SEPARAT", string(1, currentChar));
+	return new Token(currentLine, currentPos, SEPARATOR, separator[currentChar], string(1, currentChar));
 }
 
 Token* Scanner::GetOperation(char currentChar) {
@@ -197,7 +197,7 @@ Token* Scanner::GetOperation(char currentChar) {
 		else
 			BackToPreviousChar();
 	}
-	return new Token(line, pos, OPERATOR, "OPERAT", s);
+	return new Token(line, pos, OPERATOR, operation[s], s);
 }
 
 Token* Scanner::GetToken()					{ return currentToken; }
@@ -233,14 +233,14 @@ void Scanner::InitEscapeSequencesTable() {
 }
 
 void Scanner::InitSeparatorsTable() {
-	separator['('] = true;
-	separator[')'] = true;
-	separator['['] = true;
-	separator[']'] = true;
-	separator['{'] = true;
-	separator['}'] = true;
-	separator[';'] = true;
-	separator[','] = true;
+	separator['('] = ROUND_LEFT_BRACKET;
+	separator[')'] = ROUND_RIGHT_BRACKET;
+	separator['['] = SQUARE_LEFT_BRACKET;
+	separator[']'] = SQUARE_RIGHT_BRACKET;
+	separator['{'] = FIGURE_LEFT_BRACKET;
+	separator['}'] = FIGURE_RIGHT_BRACKET;
+	separator[';'] = SEMICOLON;
+	separator[','] = COMMA;
 }
 
 void Scanner::InitSpecialSymbolTable() {
@@ -262,58 +262,58 @@ void Scanner::InitSpecialSymbolTable() {
 }
 
 void Scanner::InitOperationsTable() {
-	operation["+"] = true;
-	operation["-"] = true;
-	operation["*"] = true;
-	operation["/"] = true;
-	operation["=="] = true;
-	operation[">="] = true;
-	operation["<="] = true;
-	operation["!="] = true;
-	operation["="] = true;
-	operation["%"] = true;
-	operation["<"] = true;
-	operation[">"] = true;
-	operation["!"] = true;
-	operation["."] = true;
-	operation["++"] = true;
-	operation["--"] = true;
-	operation[">>"] = true;
-	operation["<<"] = true;
-	operation["&"] = true;
-	operation["~"] = true;
-	operation["|"] = true;
-	operation["||"] = true;
-	operation["&&"] = true;
-	operation["^"] = true;
-	operation["+="] = true;
-	operation["-="] = true;
-	operation["*="] = true;
-	operation["/="] = true;
-	operation["%="] = true;
-	operation["&="] = true;
-	operation["|="] = true;
-	operation["^="] = true;
-	operation["->"] = true;
-	operation["?"] = true;
-	operation[":"] = true;
+	operation["+"] =  OPER_PLUS;
+	operation["-"] =  OPER_MINUS;
+	operation["*"] =  OPER_MULTIPLY;
+	operation["/"] =  OPER_DIVIDE;
+	operation["=="] = OPER_EQUAL;
+	operation[">="] = OPER_MORE_OR_EQUAL;
+	operation["<="] = OPER_LESS_OR_EQUAL;
+	operation["!="] = OPER_NOT_EQUAL;
+	operation["="] =  OPER_ASSIGN;
+	operation["%"] =  OPER_DIVIDE_BY_MOD;
+	operation["<"] =  OPER_LESS;
+	operation[">"] =  OPER_MORE;
+	operation["!"] =  OPER_NOT;
+	operation["."] =  OPER_POINT;
+	operation["++"] = OPER_INC;
+	operation["--"] = OPER_DEC;
+	operation[">>"] = OPER_SHIFT_RIGHT;
+	operation["<<"] = OPER_SHIFT_LEFT;
+	operation["&"] =  OPER_BINARY_AND;
+	operation["~"] =  OPER_BINARY_NOT;
+	operation["|"] =  OPER_BINARY_OR;
+	operation["||"] = OPER_OR;
+	operation["&&"] = OPER_AND;
+	operation["^"] =  OPER_EXCLUSIVE_OR;
+	operation["+="] = OPER_PLUS_EQUAL;
+	operation["-="] = OPER_MINUS_EQUAL;
+	operation["*="] = OPER_MULTIPLY_EQUAL;
+	operation["/="] = OPER_DIVIDE_EQUAL;
+	operation["%="] = OPER_DIVIDE_BY_MOD_EQUAL;
+	operation["&="] = OPER_BINARY_AND_EQUAL;
+	operation["|="] = OPER_BINARY_OR_EQUAL;
+	operation["^="] = OPER_EXCLUSIVE_OR_EQUAL;
+	operation["->"] = OPER_ARROW;
+	operation["?"] =  OPER_QUESTION;
+	operation[":"] =  OPER_COLON;
 }
 
 void Scanner::InitKeyWordsTable() {
-	keyWord["break"] = true;
-	keyWord["char"] = true;
-	keyWord["continue"] = true;
-	keyWord["do"] = true;
-	keyWord["else"] = true;
-	keyWord["float"] = true;
-	keyWord["for"] = true;
-	keyWord["goto"] = true;
-	keyWord["if"] = true;
-	keyWord["int"] = true;
-	keyWord["return"] = true;
-	keyWord["sizeof"] = true;
-	keyWord["struct"] = true;
-	keyWord["void"] = true;
-	keyWord["while"] = true;
-	keyWord["print"] = true;
+	keyWord["break"] =    KEYWORD_BREAK;
+	keyWord["char"] =     KEYWORD_CHAR;
+	keyWord["continue"] = KEYWORD_CONTINUE;
+	keyWord["do"] =       KEYWORD_DO;
+	keyWord["else"] =     KEYWORD_ELSE;
+	keyWord["float"] =    KEYWORD_FLOAT;
+	keyWord["for"] =      KEYWORD_FOR;
+	keyWord["goto"] =     KEYWORD_GOTO;
+	keyWord["if"] =       KEYWORD_IF;
+	keyWord["int"] =      KEYWORD_INT;
+	keyWord["return"] =   KEYWORD_RETURN;
+	keyWord["sizeof"] =   KEYWORD_SIZEOF;
+	keyWord["struct"] =   KEYWORD_STRUCT;
+	keyWord["void"] =     KEYWORD_VOID;
+	keyWord["while"] =    KEYWORD_WHILE;
+	keyWord["print"] =    KEYWORD_PRINT;
 }

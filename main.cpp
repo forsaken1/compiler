@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
 			case 1: {
 				//GetHelp();
 				Scanner scanner("input.txt"); //for debug
-				Parser parser(&scanner, false, false);
+				Parser parser(&scanner, 1, 1);
 				Generator gen(&parser);
 				//cout << endl;
 				break;
@@ -69,6 +69,5 @@ int main(int argc, char *argv[]) {
 	catch(Exception &e) {
 		cout << e.GetMessage() << endl;
 	}
-	//system("PAUSE");
 	return 0;
 }

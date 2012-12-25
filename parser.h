@@ -9,7 +9,8 @@ class Parser {
 	Node *top;
 	Scanner *scanner;
 	SymTableStack *symStack;
-	string oper;
+	TokenValue oper;
+	string text;
 	map<string, bool> assignmentOperator, unaryOperator;
 	bool print, simple; // for testing
 	

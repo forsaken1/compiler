@@ -7,8 +7,9 @@
 #include "exception.h"
 
 class Scanner {
-	map<string, bool> keyWord, operation;
-	map<char, bool> separator, specialSymbol, escapeSequence;
+	map<string, TokenValue> keyWord, operation;
+	map<char, TokenValue> separator;
+	map<char, bool> specialSymbol, escapeSequence;
 	Token* currentToken;
 	string currentString;
 	ifstream inputStream;

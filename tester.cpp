@@ -51,7 +51,7 @@ int main() {
 	int ALL_TESTS_SUCCESSFUL = 0;
 	///*
 	int FROM = 1;
-	int TO	 = 60;
+	int TO	 = 60; //60
 	for(int i = FROM; i <= TO; i++) { 
 		string str  = string("Debug\\compiler L tests\\scanner\\") + IntToStr(i) + string(".in");
 		string str1 = string("tests/scanner/") + IntToStr(i) + string(".out");
@@ -68,7 +68,7 @@ int main() {
 	//*/
 	///*
 	int _FROM = 1;
-	int _TO   = 86;
+	int _TO   = 86; //86
 	for(int i = _FROM; i <= _TO; i++) { 
 		string str  = string("Debug\\compiler S tests/parser/") + IntToStr(i) + string(".in");
 		string str1 = string("tests/parser/") + IntToStr(i) + string(".out");
