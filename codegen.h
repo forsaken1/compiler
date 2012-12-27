@@ -118,7 +118,7 @@ public:
 	}
 	
 	void AddCommand(CmdTernary op, CmdFunc func, string str) {
-		cout << "\t" << GetTernary(op) << " " << GetFunc(func) << ", " << "addr " << str << ", " << endl;
+		cout << "\t" << GetTernary(op) << " " << GetFunc(func) << ", " << "addr " << str << endl;
 	}
 
 	void AddCommand(CmdTernary op, CmdFunc func, string str, Register right) {

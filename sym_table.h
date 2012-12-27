@@ -90,22 +90,6 @@ public:
 	}
 };
 
-class SymVarParam: public SymVar {
-
-};
-
-class SymVarConst: public SymVar {
-
-};
-
-class SymVarLocal: public SymVar {
-
-};
-
-class SymVarGlobal: public SymVar {
-
-};
-
 //--- SymFunction ---
 
 class SymFunc: public Symbol {
@@ -212,7 +196,6 @@ public:
 	void Pop() {
 		SymNode *sn = top;
 		top = sn->GetNext();
-		//delete sn;
 	}
 	
 	SymTable* GetTopTable() {
@@ -228,12 +211,12 @@ public:
 					cout << "\t" << it->first << "\t\tdb\t'" << it->second->GetConst() << "', 0" << endl;
 				}
 			}
-			if( !sn->GetTable()->GetTableVar()->empty() ) {
+			/*if( !sn->GetTable()->GetTableVar()->empty() ) {
 				for(map<string, Symbol*>::iterator it = sn->GetTable()->GetTableVar()->begin(); 
 				it != sn->GetTable()->GetTableVar()->end(); it++) {
 					cout << "\t" << it->first << "\t\tdb\t ?" << endl;
 				}
-			}
+			}*/
 			sn = sn->GetNext();
 		}
 	}

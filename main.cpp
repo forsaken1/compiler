@@ -19,9 +19,8 @@ int main(int argc, char *argv[]) {
 			case 1: {
 				//GetHelp();
 				Scanner scanner("input.txt"); //for debug
-				Parser parser(&scanner, 0, 0);
+				Parser parser(&scanner, 0, 0); //simple, print
 				Generator gen(&parser);
-				//cout << endl;
 				break;
 			}
 			case 2: {
@@ -54,7 +53,7 @@ int main(int argc, char *argv[]) {
 					if(argv[1][0] == 'C' || argv[1][0] == 'c') {
 						Scanner scanner(argv[2]);
 						Parser parser(&scanner, false, false);
-						cout << endl << "Compilation is completed." << endl;
+						Generator gen(&parser);
 					}
 				}
 				else

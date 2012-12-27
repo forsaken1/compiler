@@ -23,11 +23,12 @@ public:
 		CodeGen *cg = new CodeGen();
 		pr->GetTop()->Generate(cg);
 
-		cout << endl << "\tinkey" << endl << "\texit" << endl;
+		cout << "\texit" << endl;
 		cout << endl << "end start" << endl;
-
-		fclose(stdout);
+		
+		freopen("log.txt", "w", stdout);
 		system("make.bat");
+		freopen("CON", "w", stdout);
 	}
 };
 
