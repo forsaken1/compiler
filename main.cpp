@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
 			case 1: {
 				//GetHelp();
 				Scanner scanner("input.txt"); //for debug
-				Parser parser(&scanner, 1, 1);
+				Parser parser(&scanner, 0, 0);
 				Generator gen(&parser);
 				//cout << endl;
 				break;

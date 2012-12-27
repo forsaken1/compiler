@@ -1,8 +1,6 @@
 #ifndef SYM_TABLE_H
 #define SYM_TABLE_H
 
-//#include <map>
-
 class Symbol {
 protected:
 	string name;
@@ -227,10 +225,10 @@ public:
 			if( !sn->GetTable()->GetTableConst()->empty() ) {
 				for(map<string, SymConst*>::iterator it = sn->GetTable()->GetTableConst()->begin(); 
 				it != sn->GetTable()->GetTableConst()->end(); it++) {
-					cout << "\t" << "const_" << it->first << "\t\tdb\t'" << it->second->GetConst() << "', 0" << endl;
+					cout << "\t" << it->first << "\t\tdb\t'" << it->second->GetConst() << "', 0" << endl;
 				}
 			}
-			if( !sn->GetTable()->GetTableConst()->empty() ) {
+			if( !sn->GetTable()->GetTableVar()->empty() ) {
 				for(map<string, Symbol*>::iterator it = sn->GetTable()->GetTableVar()->begin(); 
 				it != sn->GetTable()->GetTableVar()->end(); it++) {
 					cout << "\t" << it->first << "\t\tdb\t ?" << endl;

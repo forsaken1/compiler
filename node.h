@@ -27,10 +27,11 @@ public:
 //--- Expression ---
 
 class NodeConst: public Node {
-	string constant;
+	string constant, id;
 
 public:
-	NodeConst(string _constant) {
+	NodeConst(string _id, string _constant) {
+		id = _id;
 		constant = _constant;
 	}
 
@@ -38,7 +39,9 @@ public:
 		cout << "(" << constant << ")" << endl;
 	}
 
-	void Generate(CodeGen *cg) {}
+	void Generate(CodeGen *cg) {
+		cg->AddCommand(PUSH, constant);
+	}
 };
 
 class NodeVar: public Node {
@@ -153,6 +156,10 @@ public:
 
 		return NULL;
 	}
+
+	void Generate(CodeGen cg) {
+
+	}
 };
 
 class NodeFunc: public Node {
@@ -211,11 +218,11 @@ public:
 
 	void Generate(CodeGen *cg) {
 		if(expr == NULL) {
-			cout << "\tinvoke crt_printf, " << "addr const_" << format->GetName() << endl;
+			cout << "\tinvoke crt_printf, " << "addr " << format->GetName() << endl;
 		}
 		else {
 			expr->Generate(cg);
-			cout << "\tinvoke crt_printf, " << "addr const_" << format->GetName() << ", " << endl;
+			//cout << "\tinvoke crt_printf, " << "addr " << format->GetName() << ", " << endl;
 		}
 	}
 };

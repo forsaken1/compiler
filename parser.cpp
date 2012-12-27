@@ -164,7 +164,7 @@ Node* Parser::UnaryExpr() {
 
 			if(oper == ROUND_RIGHT_BRACKET) {
 				Next();
-				return new NodeUnary("sizeof", new NodeConst(type));
+				return new NodeUnary("sizeof", new NodeConst(type, type));
 			}
 		}
 		else {
@@ -249,7 +249,7 @@ Node* Parser::ArgumentExprList() {
 }
 
 string GetRandomId() {
-	string random = "";
+	string random = "const_";
 	srand ( time(NULL) );
 
 	for(int j = 0; j < 10; j++)
@@ -271,9 +271,10 @@ Node* Parser::PrimaryExpr() {
 	   currentToken->GetType() == CONST_REAL ||
 	   currentToken->GetType() == CONST_CHAR ||
 	   currentToken->GetType() == CONST_STRING) {
-		symStack->GetTopTable()->AddConst(new SymConst(GetRandomId(), text));
+		string id = GetRandomId();
+		symStack->GetTopTable()->AddConst(new SymConst(id, text));
 		Next();
-		return new NodeConst(lastToken->GetText());
+		return new NodeConst(id, lastToken->GetText());
 	}
 
 	Node *expr = NULL;
