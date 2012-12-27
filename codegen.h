@@ -37,45 +37,18 @@ enum CmdTernary {
 	INVOKE
 };
 
-class AsmCmd {
-
-public: 
-	AsmCmd() {}
-};
-
-class AsmCmdNoOperand: public AsmCmd {
-	
-public:
-	AsmCmdNoOperand(CmdNoOp _cmd) {
-
-	}
-};
-
-class AsmCmdUnary: public AsmCmd {
-
-public:
-	AsmCmdUnary(CmdUnary _cmd) {
-
-	}
-};
-
-class AsmCmdBinary: public AsmCmd {
-	
-public:
-	AsmCmdBinary(CmdBinary _cmd) {
-
-	}
-};
-
-class AsmCmdTernary: public AsmCmd {
-
-public:
-	AsmCmdTernary(CmdTernary _cmd) {
-
-	}
+enum CmdFunc {
+	CRT_PRINTF
 };
 
 class CodeGen {
+	
+	string GetFunc(CmdFunc op) {
+		switch(op) {
+			case CRT_PRINTF: return "crt_printf";
+			default: return "";
+		}
+	}
 
 	string GetNoOp(CmdNoOp op) {
 		switch(op) {
@@ -119,6 +92,12 @@ class CodeGen {
 		}
 	}
 
+	string GetTernary(CmdTernary op) {
+		switch(op) {
+			case INVOKE: return "invoke";
+		}
+	}
+
 public:
 	CodeGen() {}
 
@@ -136,6 +115,14 @@ public:
 
 	void AddCommand(CmdBinary op, Register left, Register right) {
 		cout << "\t" << GetBinary(op) << " " << GetRegister(left) << ", " << GetRegister(right) << endl;
+	}
+	
+	void AddCommand(CmdTernary op, CmdFunc func, string str) {
+		cout << "\t" << GetTernary(op) << " " << GetFunc(func) << ", " << "addr " << str << ", " << endl;
+	}
+
+	void AddCommand(CmdTernary op, CmdFunc func, string str, Register right) {
+		cout << "\t" << GetTernary(op) << " " << GetFunc(func) << ", " << "addr " << str << ", " << GetRegister(right) << endl;
 	}
 };
 

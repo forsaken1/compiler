@@ -355,7 +355,7 @@ Node* Parser::PrintStmt() {
 				throw ParserException(currentToken, "Print statement without ';'");
 
 			Next();
-			return new NodePrint(new SymConst(random, format), NULL);
+			return new NodePrint(new NodeConst(random, format), NULL);
 		}
 		if(oper != COMMA)
 			throw ParserException(currentToken, "Print statement without ','");
@@ -374,7 +374,7 @@ Node* Parser::PrintStmt() {
 			throw ParserException(currentToken, "Print statement without ';'");
 
 		Next();
-		return new NodePrint(new SymConst(random, format), expr);
+		return new NodePrint(new NodeConst(random, format), expr);
 	}
 	return NULL;
 }

@@ -20,6 +20,8 @@ protected:
 public:
 	virtual void Print(int i, bool b) {}
 	virtual void Generate(CodeGen *cg) {}
+	virtual string GetId() { return ""; }
+
 	Symbol* GetType(SymTable *symTable) { return NULL; }
 	string GetName() {}
 };
@@ -37,6 +39,10 @@ public:
 
 	void Print(int i, bool b) {
 		cout << "(" << constant << ")" << endl;
+	}
+
+	string GetId() {
+		return id;
 	}
 
 	void Generate(CodeGen *cg) {
@@ -133,11 +139,18 @@ class NodeBinary: public Node {
 	Node *right;
 	Node *left;
 
+	enum Op {
+		NONE,
+		ASSIGN
+	} opType;
+
 public:
 	NodeBinary(Node *_left, string _opname, Node *_right) {
 		left = _left;
 		opname = _opname;
 		right = _right;
+
+		if(opname == "=") opType = ASSIGN;
 	}
 
 	void Print(int i, bool b) {
@@ -158,7 +171,9 @@ public:
 	}
 
 	void Generate(CodeGen cg) {
-
+		switch(opType) {
+			case ASSIGN: break;
+		}
 	}
 };
 
@@ -197,11 +212,10 @@ public:
 //--- Statement ---
 
 class NodePrint: public Node {
-	Node *expr;
-	SymConst *format;
+	Node *expr, *format;
 
 public:
-	NodePrint(SymConst *_format, Node *_expr) {
+	NodePrint(Node *_format, Node *_expr) {
 		format = _format;
 		expr = _expr;
 	}
@@ -209,7 +223,7 @@ public:
 	void Print(int i, bool b) {
 		cout << "print" << endl;
 		DrawPath(i, b);
-		cout << "(" << format->GetConst() << ")" << endl;
+		format->Print(i + 1, true);
 		if(expr != NULL) {
 			DrawPath(i, b);
 			expr->Print(i + 1, false);
@@ -218,11 +232,12 @@ public:
 
 	void Generate(CodeGen *cg) {
 		if(expr == NULL) {
-			cout << "\tinvoke crt_printf, " << "addr " << format->GetName() << endl;
+			cg->AddCommand(INVOKE, CRT_PRINTF, format->GetId());
 		}
 		else {
 			expr->Generate(cg);
-			//cout << "\tinvoke crt_printf, " << "addr " << format->GetName() << ", " << endl;
+			cg->AddCommand(POP, EAX);
+			cg->AddCommand(INVOKE, CRT_PRINTF, format->GetId(), EAX);
 		}
 	}
 };
