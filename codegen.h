@@ -17,7 +17,7 @@ enum CmdNoOp {
 };
 
 enum CmdUnary {
-	INT, 
+	INC, 
 	DEC,
 	CALL,
 	PUSH,
@@ -60,7 +60,7 @@ class CodeGen {
 
 	string GetUnary(CmdUnary op) {
 		switch(op) {
-			case INT:  return "int";
+			case INC:  return "int";
 			case DEC:  return "dec";
 			case CALL: return "call";
 			case PUSH: return "push";
