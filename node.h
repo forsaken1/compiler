@@ -21,9 +21,9 @@ public:
 	virtual void Print(int i, bool b) {}
 	virtual void Generate(CodeGen *cg) {}
 	virtual string GetId() { return ""; }
+	virtual string GetName() { return ""; }
 
 	Symbol* GetType(SymTable *symTable) { return NULL; }
-	string GetName() {}
 };
 
 //--- Expression ---
@@ -67,7 +67,11 @@ public:
 	}
 
 	void Generate(CodeGen *cg) {
+		cg->AddCommand(PUSH, name);
+	}
 
+	string GetName() { 
+		return name; 
 	}
 };
 
@@ -108,6 +112,10 @@ public:
 	Symbol* GetType(SymTable *symTable) {
 		return right->GetType(symTable);
 	}
+
+	void Generate(CodeGen *cg) {
+
+	}
 };
 
 class NodeStruct: public Node {
@@ -139,18 +147,11 @@ class NodeBinary: public Node {
 	Node *right;
 	Node *left;
 
-	enum Op {
-		NONE,
-		ASSIGN
-	} opType;
-
 public:
 	NodeBinary(Node *_left, string _opname, Node *_right) {
 		left = _left;
 		opname = _opname;
 		right = _right;
-
-		if(opname == "=") opType = ASSIGN;
 	}
 
 	void Print(int i, bool b) {
@@ -170,10 +171,54 @@ public:
 		return NULL;
 	}
 
-	void Generate(CodeGen cg) {
-		switch(opType) {
-			case ASSIGN: break;
-		}
+	void Generate(CodeGen *cg) {
+		if(opname == "=") Assign(cg);
+		if(opname == "+") Add(cg);
+		if(opname == "-") Sub(cg);
+		if(opname == "*") Mul(cg);
+		if(opname == "/") Div(cg);
+	}
+
+	void Assign(CodeGen *cg) { //left = variable
+		right->Generate(cg);
+		cg->AddCommand(POP, EAX);
+		cg->AddCommand(MOV, left->GetName(), EAX);
+	}
+
+	void Sub(CodeGen *cg) {
+		left->Generate(cg);
+		right->Generate(cg);
+		cg->AddCommand(POP, EBX);
+		cg->AddCommand(POP, EAX);
+		cg->AddCommand(SUB, EAX, EBX);
+		cg->AddCommand(PUSH, EAX);
+	}
+
+	void Mul(CodeGen *cg) {
+		left->Generate(cg);
+		right->Generate(cg);
+		cg->AddCommand(POP, EAX);
+		cg->AddCommand(POP, EBX);
+		cg->AddCommand(MUL, EBX);
+		cg->AddCommand(PUSH, EAX);
+	}
+
+	void Div(CodeGen *cg) {
+		left->Generate(cg);
+		right->Generate(cg);
+		cg->AddCommand(POP, EBX);
+		cg->AddCommand(POP, EAX);
+		cg->AddCommand(DIV, EBX);
+		cg->AddCommand(PUSH, EAX);
+	}
+
+	void Add(CodeGen *cg) {
+		left->Generate(cg);
+		right->Generate(cg);
+		cg->AddCommand(POP, EAX);
+		cg->AddCommand(POP, EBX);
+		cg->AddCommand(ADD, EAX, EBX);
+		cg->AddCommand(PUSH, EAX);
 	}
 };
 
@@ -257,7 +302,7 @@ public:
 		cout << name << endl;
 		if(first != NULL) {
 			DrawPath(i, b);
-			first->Print(i + 1, second == NULL ? false : true);
+			first->Print(i + 1, second != NULL);
 		}
 		if(second != NULL) {
 			DrawPath(i, b);

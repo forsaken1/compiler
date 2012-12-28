@@ -32,11 +32,7 @@ int main(int argc, char *argv[]) {
 			}
 			case 3: {
 				if(FileExists(argv[2])) {
-					if(argv[1][0] == 'L') {
-						Scanner scanner(argv[2]);
-						scanner.Start();
-					}
-					if(argv[1][0] == 'l') {
+					if(argv[1][0] == 'L' || argv[1][0] == 'l') {
 						Scanner scanner(argv[2]);
 						scanner.Start();
 						cout << endl << "Lexical analysis is completed." << endl;
@@ -48,7 +44,6 @@ int main(int argc, char *argv[]) {
 					if(argv[1][0] == 's') {
 						Scanner scanner(argv[2]);
 						Parser parser(&scanner, false, false);
-						cout << endl << "Syntax analysis is completed." << endl;
 					}
 					if(argv[1][0] == 'C' || argv[1][0] == 'c') {
 						Scanner scanner(argv[2]);

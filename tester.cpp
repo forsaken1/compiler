@@ -1,5 +1,10 @@
-#include "parser.h"
+#include <ios>
+#include <string>
+#include <fstream>
 #include <string.h>
+#include <iostream>
+
+using namespace std;
 
 bool CompareFiles(const char *fileOut, const char *fileTestOut) {
 	ifstream out, testOut;
@@ -82,19 +87,19 @@ int main() {
 		if( !test(i, CompareFiles("output.txt", s1)) )
 			ALL_TESTS_SUCCESSFUL++;
 	}
+	*/
 	/*
 	int _FROM_ = 1;
-	int _TO_   = 10;
+	int _TO_   = 1;
 	for(int i = _FROM_; i <= _TO_; i++) { 
-		string str  = string("tests/symantic/") + IntToStr(i) + string(".in");
-		string str1 = string("tests/symantic/") + IntToStr(i) + string(".out");
+		string str  = string("Debug\\compiler s tests\\semantics\\") + IntToStr(i) + string(".in");
+		string str1 = string("tests/semantics/") + IntToStr(i) + string(".out");
 
 		const char* s = str.c_str();
 		const char* s1 = str1.c_str();
 		
 		freopen("output.txt", "w", stdout);
-		Scanner scanner(s);
-		Parser parser(&scanner);
+		system(s);
 		freopen("CON", "w", stdout);
 		if( !test(i, CompareFiles("output.txt", s1)) )
 			ALL_TESTS_SUCCESSFUL++;
@@ -102,7 +107,7 @@ int main() {
 	*/
 	///*
 	int __FROM_ = 1;
-	int __TO_   = 3;
+	int __TO_   = 8;
 	for(int i = __FROM_; i <= __TO_; i++) { 
 		string str  = string("Debug\\compiler C tests\\generation\\") + IntToStr(i) + string(".in");
 		string str1 = string("tests/generation/") + IntToStr(i) + string(".out");

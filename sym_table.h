@@ -211,12 +211,12 @@ public:
 					cout << "\t" << it->first << "\t\tdb\t'" << it->second->GetConst() << "', 0" << endl;
 				}
 			}
-			/*if( !sn->GetTable()->GetTableVar()->empty() ) {
+			if( !sn->GetTable()->GetTableVar()->empty() ) {
 				for(map<string, Symbol*>::iterator it = sn->GetTable()->GetTableVar()->begin(); 
 				it != sn->GetTable()->GetTableVar()->end(); it++) {
 					cout << "\t" << it->first << "\t\tdb\t ?" << endl;
 				}
-			}*/
+			}
 			sn = sn->GetNext();
 		}
 	}

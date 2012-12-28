@@ -271,8 +271,12 @@ Node* Parser::PrimaryExpr() {
 	   currentToken->GetType() == CONST_REAL ||
 	   currentToken->GetType() == CONST_CHAR ||
 	   currentToken->GetType() == CONST_STRING) {
+		   
 		string id = GetRandomId();
-		symStack->GetTopTable()->AddConst(new SymConst(id, text));
+		if(currentToken->GetType() == CONST_CHAR ||
+		   currentToken->GetType() == CONST_STRING) {
+			symStack->GetTopTable()->AddConst(new SymConst(id, text));
+		}
 		Next();
 		return new NodeConst(id, lastToken->GetText());
 	}

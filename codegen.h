@@ -22,15 +22,15 @@ enum CmdUnary {
 	CALL,
 	PUSH,
 	POP,
-	RET
+	RET,
+	MUL,
+	DIV
 };
 
 enum CmdBinary {
 	MOV,
 	ADD,
-	SUB,
-	MUL,
-	DIV
+	SUB
 };
 
 enum CmdTernary {
@@ -66,6 +66,8 @@ class CodeGen {
 			case PUSH: return "push";
 			case POP:  return "pop";
 			case RET:  return "ret";
+			case MUL:  return "mul";
+			case DIV:  return "div";
 			default:   return "";
 		}
 	}
@@ -86,8 +88,6 @@ class CodeGen {
 			case MOV: return "mov";
 			case ADD: return "add";
 			case SUB: return "sub";
-			case MUL: return "mul";
-			case DIV: return "div";
 			default:  return "";
 		}
 	}
@@ -116,8 +116,12 @@ public:
 	void AddCommand(CmdBinary op, Register left, Register right) {
 		cout << "\t" << GetBinary(op) << " " << GetRegister(left) << ", " << GetRegister(right) << endl;
 	}
+
+	void AddCommand(CmdBinary op, string str, Register right) { //variable = const
+		cout << "\t" << GetBinary(op) << " " << str << ", " << GetRegister(right) << endl;
+	}
 	
-	void AddCommand(CmdTernary op, CmdFunc func, string str) {
+	void AddCommand(CmdTernary op, CmdFunc func, string str) { //invoke crt_printf, addr const
 		cout << "\t" << GetTernary(op) << " " << GetFunc(func) << ", " << "addr " << str << endl;
 	}
 
