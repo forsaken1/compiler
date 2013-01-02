@@ -110,59 +110,23 @@ class SymTable {
 	map<string, SymConst*> *c;
 
 public:
-	SymTable() {
-		var = new map<string, Symbol*>();
-		c = new map<string, SymConst*>();
-		type = new map<string, Symbol*>();
-	}
+	SymTable();
 
-	map<string, Symbol*>* GetTableVar() {
-		return var;
-	}
+	map<string, Symbol*>* GetTableVar();
+	map<string, Symbol*>* GetTableType();
+	map<string, SymConst*>* GetTableConst();
 
-	map<string, SymConst*>* GetTableConst() {
-		return c;
-	}
+	bool VarAt(string);
+	bool ConstAt(string);
+	bool TypeAt(string);
 
-	map<string, Symbol*>* GetTableType() {
-		return type;
-	}
-
-	bool VarAt(string name) {
-		return (*var)[name] == NULL ? false : true;
-	}
-
-	bool ConstAt(string name) {
-		return (*c)[name] == NULL ? false : true;
-	}
-
-	bool TypeAt(string name) {
-		return (*type)[name] == NULL ? false : true;
-	}
-
-	Symbol* FindVar(string name) {
-		return (*var)[name];
-	}
-
-	SymConst* FindConst(string name) {
-		return (*c)[name];
-	}
-
-	Symbol* FindType(string name) {
-		return (*type)[name];
-	}
+	Symbol* FindVar(string);
+	Symbol* FindType(string);
+	SymConst* FindConst(string);
 	
-	void AddVar(Symbol *symb) {
-		(*var)[symb->GetName()] = symb;
-	}
-
-	void AddConst(SymConst *symb) {
-		(*c)[symb->GetName()] = symb;
-	}
-
-	void AddType(Symbol *symb) {
-		(*type)[symb->GetName()] = symb;
-	}
+	void AddVar(Symbol*);
+	void AddConst(SymConst*);
+	void AddType(Symbol*);
 };
 
 class SymTableStack {
@@ -177,55 +141,19 @@ class SymTableStack {
 			table = _table;
 		}
 
-		SymTable* GetTable() {
-			return table;
-		}
-
-		SymNode* GetNext() {
-			return next;
-		}
+		SymTable* GetTable() { return table; }
+		SymNode* GetNext()	 { return next; }
 	};
 
 	SymNode *top;
 
 public:
-	SymTableStack() {
-		top = NULL;
-		Push(new SymTable());
-	}
+	SymTableStack();
 
-	void Push(SymTable *st) {
-		SymNode *sn = new SymNode(top, st);
-		top = sn;
-	}
-
-	void Pop() {
-		SymNode *sn = top;
-		top = sn->GetNext();
-	}
-	
-	SymTable* GetTopTable() {
-		return top->GetTable();
-	}
-
-	void Print() {
-		SymNode *sn = top;
-		while(sn != NULL) {
-			if( !sn->GetTable()->GetTableConst()->empty() ) {
-				for(map<string, SymConst*>::iterator it = sn->GetTable()->GetTableConst()->begin(); 
-				it != sn->GetTable()->GetTableConst()->end(); it++) {
-					cout << "\t" << it->first << "\t\tdb\t'" << it->second->GetConst() << "', 0" << endl;
-				}
-			}
-			if( !sn->GetTable()->GetTableVar()->empty() ) {
-				for(map<string, Symbol*>::iterator it = sn->GetTable()->GetTableVar()->begin(); 
-				it != sn->GetTable()->GetTableVar()->end(); it++) {
-					cout << "\t" << it->first << "\t\tdb\t ?" << endl;
-				}
-			}
-			sn = sn->GetNext();
-		}
-	}
+	void Push(SymTable*);
+	void Pop();
+	void Print();
+	SymTable* GetTopTable();
 };
 
 #endif SYM_TABLE_H

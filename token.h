@@ -82,7 +82,15 @@ enum TokenValue {
 	KEYWORD_STRUCT,
 	KEYWORD_VOID,
 	KEYWORD_WHILE,
-	KEYWORD_PRINT
+	KEYWORD_PRINT,
+	//--- For binary operations ---
+	SIZE_OF,
+	CAST_INT,
+	CAST_FLOAT,
+	CAST_CHAR,
+	FUNCTION_ARGUMENT,
+	ARRAY_INDEX,
+	STRUCT_FIELD
 };
 
 class Token {
@@ -121,7 +129,7 @@ public:
 		return v;
 	}
 
-	TokenType GetType() {
+	TokenType GetTokenType() {
 		return t;
 	}
 

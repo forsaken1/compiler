@@ -23,6 +23,7 @@ public:
 		cout << "\texit" << endl;
 		cout << endl << "end start" << endl;
 		
+		freopen("log.txt", "w", stdout);
 		system("make.bat");
 		freopen("CON", "w", stdout);
 	}

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-Parser::Parser(Scanner *_scanner, bool _simple, bool _print) {
+Parser::Parser(Scanner *_scanner, bool _simple, bool print) {
 	scanner = _scanner;
 	currentToken = NULL;
 	lastToken = NULL;
@@ -13,7 +13,7 @@ Parser::Parser(Scanner *_scanner, bool _simple, bool _print) {
 
 	Parse();
 	
-	if(_print) 
+	if(print) 
 		top->Print(0, true);
 }
 
@@ -34,8 +34,6 @@ void Parser::Next() {
 	text = currentToken->GetText();
 }
 
-//--- Parse Expression ----------
-
 void Parser::Parse() {
 	Next();
 	if(simple)
@@ -44,17 +42,18 @@ void Parser::Parse() {
 		top = Program();
 }
 
+//--- Parse Expression ----------
+
 Node* Parser::Expression() {
 	Node *left = AssignmentExpr();
 
 	if(oper == COMMA) {
-		string _text = text;
 		Next();
 		Node *right = Expression();
 		if(right == NULL)
 			throw ParserException(currentToken, "Enumeration without expression after ','");
 
-		return new NodeBinary(left, _text, right);
+		return new NodeBinary(left, COMMA, right);
 	}
 	return left;
 }
@@ -62,14 +61,14 @@ Node* Parser::Expression() {
 Node* Parser::AssignmentExpr() {
 	Node *left = ConditionalExpr();
 
-	if(assignmentOperator[text]) {
-		string _text = text;
+	if(assignmentOperator[oper]) {
+		TokenValue tv = oper;
 		Next();
 		Node *right = AssignmentExpr();
 		if(right == NULL)
 			throw ParserException(currentToken, "Assignment expression without left operand");
 
-		return new NodeBinary(left, _text, right);
+		return new NodeBinary(left, tv, right);
 	}
 	return left;
 }
@@ -120,20 +119,19 @@ Node* Parser::BinaryOperationExpr(int priority) {
 		case 9: condition = oper == OPER_MULTIPLY || oper == OPER_DIVIDE || oper == OPER_DIVIDE_BY_MOD; break;
 	}
 	if(condition) {
-		string _oper = text;
+		TokenValue tv = oper;
 		Next();
 		Node *right = BinaryOperationExpr(priority);
 		if(right == NULL)
 			throw ParserException(currentToken, "Binary expression without left operand");
 
-		return new NodeBinary(left, _oper, right);
+		return new NodeBinary(left, tv, right);
 	}
 	return left;
 }
 
 Node* Parser::CastExpr() {
 	if(symStack->GetTopTable()->TypeAt(text) && lastToken->GetTokenValue() == ROUND_LEFT_BRACKET) {
-		string _oper = text;
 		Next();
 		if(oper == ROUND_RIGHT_BRACKET) {
 			Next();
@@ -141,7 +139,7 @@ Node* Parser::CastExpr() {
 			if(right == NULL)
 				throw ParserException(currentToken, "Cast expression without left operand");
 
-			return new NodeUnary(_oper, right);
+			return new NodeUnary(CAST_CHAR, right); ///заменить, после правки SymStack!!!
 		}
 		else
 			throw ParserException(currentToken, "Cast expression without ')'");
@@ -155,25 +153,23 @@ Node* Parser::UnaryExpr() {
 		if(oper == ROUND_LEFT_BRACKET) {
 			Next();
 			string type = text;
-			if(symStack->GetTopTable()->TypeAt(text)) {
-				Next();
-			}
-			else/////////////////!!!!!!!!!!!!!!
+			if(!symStack->GetTopTable()->TypeAt(text)) //SYM_STACK
 				ParserException(currentToken, "Undefinite type");
 
+			Next();
 			if(oper == ROUND_RIGHT_BRACKET) {
 				Next();
-				return new NodeUnary("sizeof", new NodeConst(type, type));
+				return new NodeUnary(SIZE_OF, new NodeConst(type, type)); //заменить, после правки SymStack!!!
 			}
 		}
 		else {
 			Next();
 			Node *link = UnaryExpr();
-			return new NodeUnary("sizeof", link);
+			return new NodeUnary(SIZE_OF, link); //заменить, после правки SymStack!!!
 		}
 	}
 	if(oper == OPER_INC || oper == OPER_DEC) {
-		string _oper = text;
+		TokenValue _oper = oper;
 		Next();
 		Node *right = UnaryExpr();
 		if(right == NULL)
@@ -181,8 +177,8 @@ Node* Parser::UnaryExpr() {
 
 		return new NodeUnary(_oper, right);
 	}
-	if(unaryOperator[text]) {
-		string _oper = text;
+	if(unaryOperator[oper]) {
+		TokenValue _oper = oper;
 		Next();
 		Node *right = CastExpr();
 		if(right == NULL)
@@ -205,9 +201,9 @@ Node* Parser::PostfixExpr() {
 
 		Next();
 		if(args == NULL)
-			return new NodeUnary("()", left);
+			return new NodeUnary(FUNCTION_ARGUMENT, left);
 
-		return new NodeBinary(left, "()", args);
+		return new NodeBinary(left, FUNCTION_ARGUMENT, args);
 	}
 	if(oper == SQUARE_LEFT_BRACKET) {
 		Next();
@@ -215,12 +211,12 @@ Node* Parser::PostfixExpr() {
 
 		if(oper == SQUARE_RIGHT_BRACKET) {
 			Next();
-			return new NodeBinary(left, "[]",  link);
+			return new NodeBinary(left, ARRAY_INDEX,  link);
 		}
 		else throw ParserException(currentToken, "No ']'");
 	}
 	if(oper == OPER_POINT || oper == OPER_ARROW) {
-		string _oper = text;
+		TokenValue _oper = oper;
 		Next();
 		Node *right = PrimaryExpr();
 		if(right == NULL)
@@ -229,7 +225,7 @@ Node* Parser::PostfixExpr() {
 		return new NodeBinary(left, _oper, right);
 	}
 	if(oper == OPER_INC || oper == OPER_DEC) {
-		string _oper = text;
+		TokenValue _oper = oper;
 		Next();
 		return new NodeUnary(_oper, left);
 	}
@@ -242,7 +238,7 @@ Node* Parser::ArgumentExprList() {
 	if(oper == COMMA) {
 		Next();
 		Node *right = ArgumentExprList();
-		return new NodeBinary(left, ",", right);
+		return new NodeBinary(left, COMMA, right);
 	}
 	return left;
 }
@@ -258,22 +254,21 @@ string GetRandomId() {
 }
 
 Node* Parser::PrimaryExpr() {
-	if(currentToken->GetType() == IDENTIFIER) {
+	if(currentToken->GetTokenType() == IDENTIFIER) {
 		if( !simple && !symStack->GetTopTable()->VarAt(text) )
 			throw SemanticException(currentToken, "Undeclared identifier");
 
 		Next();
 		return new NodeVar(lastToken->GetText());
 	}
-
-	if(currentToken->GetType() == CONST_INTEGER ||
-	   currentToken->GetType() == CONST_REAL ||
-	   currentToken->GetType() == CONST_CHAR ||
-	   currentToken->GetType() == CONST_STRING) {
+	if(currentToken->GetTokenType() == CONST_INTEGER ||
+	   currentToken->GetTokenType() == CONST_REAL ||
+	   currentToken->GetTokenType() == CONST_CHAR ||
+	   currentToken->GetTokenType() == CONST_STRING) {
 		   
 		string id = GetRandomId();
-		if(currentToken->GetType() == CONST_CHAR ||
-		   currentToken->GetType() == CONST_STRING) {
+		if(currentToken->GetTokenType() == CONST_CHAR ||
+		   currentToken->GetTokenType() == CONST_STRING) {
 			symStack->GetTopTable()->AddConst(new SymConst(id, text));
 		}
 		Next();
@@ -343,7 +338,7 @@ Node* Parser::PrintStmt() {
 			throw ParserException(currentToken, "Print statement without '('");
 
 		Next();
-		if(currentToken->GetType() != CONST_STRING)
+		if(currentToken->GetTokenType() != CONST_STRING)
 			throw ParserException(currentToken, "Print statement without format");
 
 		string format = text;
@@ -396,19 +391,19 @@ Node* Parser::FunctionDefinitionStmt() {
 				}
 				if(oper == OPER_ASSIGN) {
 					Next();
-					Node *node = new NodeBinary(name, "=", Initialiser());
+					Node *node = new NodeBinary(name, OPER_ASSIGN, Initialiser());
 					if(oper == SEMICOLON) {
 						Next();
 						return node;
 					}
 					if(oper == COMMA) {
 						Next();
-						return new NodeBinary(node, ",", InitDeclaratorList(type));
+						return new NodeBinary(node, COMMA, InitDeclaratorList(type));
 					}
 				}
 				if(oper == COMMA) {
 					Next();
-					return new NodeBinary(name, ",", InitDeclaratorList(type));
+					return new NodeBinary(name, COMMA, InitDeclaratorList(type));
 				}
 			}
 			Next();
@@ -439,7 +434,7 @@ Node* Parser::FunctionArgumentList() {
 		Next();
 		Node *link = FunctionArgumentList();
 
-		return new NodeBinary(args, ",", link);
+		return new NodeBinary(args, COMMA, link);
 	}
 	return NULL;
 }
@@ -699,7 +694,7 @@ Node* Parser::InitDeclaratorList(Symbol *type) {
 		if(second == NULL) {
 			return first;
 		}
-		return new NodeBinary(first, ",", second);
+		return new NodeBinary(first, COMMA, second);
 	}
 	return NULL;
 }
@@ -716,7 +711,7 @@ Node* Parser::InitDeclarator(Symbol *type) {
 		if(init == NULL)
 			throw ParserException(currentToken, "Init declarator without initialiser");
 
-		return new NodeBinary(decl, "=", init);
+		return new NodeBinary(decl, OPER_ASSIGN, init);
 	}
 	return NULL;
 }
@@ -744,7 +739,7 @@ Node* Parser::InitialiserList() {
 	if(init != NULL) {
 		if(oper == COMMA) {
 			Next();
-			return new NodeBinary(init, ",", InitialiserList());
+			return new NodeBinary(init, COMMA, InitialiserList());
 		}
 		else 
 			return init;
@@ -760,7 +755,7 @@ Node* Parser::Declarator(Symbol *type) {
 }
 
 Node* Parser::DirectDeclarator(Symbol *type) {
-	if(currentToken->GetType() == IDENTIFIER) {
+	if(currentToken->GetTokenType() == IDENTIFIER) {
 		if( !simple && symStack->GetTopTable()->VarAt(text) )
 			throw ParserException(currentToken, "Redefinition identifier");
 
@@ -796,7 +791,7 @@ Node* Parser::StructSpec() {
 		string ident = "";
 		Next();
 
-		if(currentToken->GetType() == IDENTIFIER) {
+		if(currentToken->GetTokenType() == IDENTIFIER) {
 			ident = oper;
 			Next();
 		}
@@ -873,22 +868,24 @@ Node* Parser::StructDeclarator(Symbol *type) {
 //--- Init Hashes ---
 
 void Parser::InitTables() {
-	assignmentOperator["="] = true;
-	assignmentOperator["*="] = true;
-	assignmentOperator["/="] = true;
-	assignmentOperator["%="] = true;
-	assignmentOperator["+="] = true;
-	assignmentOperator["-="] = true;
-	assignmentOperator["&="] = true;
-	assignmentOperator["^="] = true;
-	assignmentOperator["|="] = true;
+	assignmentOperator[OPER_ASSIGN] = true;
+	assignmentOperator[OPER_MULTIPLY_EQUAL] = true;
+	assignmentOperator[OPER_DIVIDE_EQUAL] = true;
+	assignmentOperator[OPER_DIVIDE_BY_MOD_EQUAL] = true;
+	assignmentOperator[OPER_PLUS_EQUAL] = true;
+	assignmentOperator[OPER_MINUS_EQUAL] = true;
+	assignmentOperator[OPER_BINARY_AND_EQUAL] = true;
+	assignmentOperator[OPER_EXCLUSIVE_OR_EQUAL] = true;
+	assignmentOperator[OPER_BINARY_OR_EQUAL] = true;
+	assignmentOperator[DEFAULT] = false;
 
-	unaryOperator["&"] = true;
-	unaryOperator["*"] = true;
-	unaryOperator["+"] = true;
-	unaryOperator["-"] = true;
-	unaryOperator["~"] = true;
-	unaryOperator["!"] = true;
+	unaryOperator[OPER_BINARY_AND] = true;
+	unaryOperator[OPER_MULTIPLY] = true;
+	unaryOperator[OPER_PLUS] = true;
+	unaryOperator[OPER_MINUS] = true;
+	unaryOperator[OPER_BINARY_NOT] = true;
+	unaryOperator[OPER_NOT] = true;
+	unaryOperator[DEFAULT] = false;
 
 	symStack->GetTopTable()->AddType(new SymTypeVoid());
 	symStack->GetTopTable()->AddType(new SymTypeChar());

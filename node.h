@@ -1,8 +1,11 @@
 #ifndef NODE_H
 #define NODE_H
 
+#include "scanner.h"
 #include "sym_table.h"
 #include "codegen.h"
+
+//--- Node ---
 
 class Node {
 protected:
@@ -17,207 +20,102 @@ public:
 	Symbol* GetType(SymTable *symTable) { return NULL; }
 };
 
-//--- Expression ---
+//--- NodeConst ---
 
 class NodeConst: public Node {
 	string constant, id;
 
 public:
-	NodeConst(string _id, string _constant) {
-		id = _id;
-		constant = _constant;
-	}
+	NodeConst(string, string);
 
-	void Print(int i, bool b) {
-		cout << "(" << constant << ")" << endl;
-	}
-
-	string GetId() {
-		return id;
-	}
-
-	void Generate(CodeGen *cg) {
-		cg->AddCommand(PUSH, constant);
-	}
+	void Print(int, bool);
+	void Generate(CodeGen*);
+	string GetId();
 };
+
+//--- NodeVar ---
 
 class NodeVar: public Node {
 	string name;
 
 public:
-	NodeVar(string _name) {
-		name = _name;
-	}
+	NodeVar(string);
 
-	void Print(int i, bool b) {
-		cout << "(" << name << ")" << endl;
-	}
-
-	Symbol* GetType(SymTable *symTable) {
-		return symTable->FindType(name);
-	}
-
-	void Generate(CodeGen *cg) {
-		cg->AddCommand(PUSH, name);
-	}
-
-	string GetName() { 
-		return name; 
-	}
+	void Print(int, bool);
+	void Generate(CodeGen*);
+	Symbol* GetType(SymTable*);
+	string GetName();
 };
+
+//--- NodeCall ---
 
 class NodeCall: public NodeVar {
 	Node *args;
 
 public:
-	NodeCall(string _name, Node *_args): NodeVar(_name) {
-		args = _args;
-	}
+	NodeCall(string, Node*);
 
-	void Print(int i, bool b) { 
-		cout << "(";
-		args->Print(i + 1, true);
-		cout << ")";
-	}
-
-	Symbol* GetType() {}
+	void Print(int, bool);
 };
 
-class NodeUnary: public Node {
-	string opname;
-	Node *right;
-
-public:
-	NodeUnary(string _opname, Node *_right) {
-		opname = _opname;
-		right = _right;
-	}
-
-	void Print(int i, bool b) {
-		cout << "(" << opname << ")" << endl;
-
-		DrawPath(i, b);
-		right->Print(i + 1, false);
-	}
-
-	Symbol* GetType(SymTable *symTable) {
-		return right->GetType(symTable);
-	}
-
-	void Generate(CodeGen *cg) {
-		if(opname == "++") Dec(cg);
-	}
-
-	void Dec(CodeGen *cg) {
-		right->Generate(cg);
-		cg->AddCommand(POP, EAX);
-		cg->AddCommand(INC, EAX);
-	}
-};
+//--- NodeStruct ---
 
 class NodeStruct: public Node {
 	Node *elem;
 	string name;
 
 public:
-	NodeStruct(string _name, Node *_elem) {
-		name = _name;
-		elem = _elem;
-	}
-
-	string GetName() {
-		return name;
-	}
-
-	void Print(int i, bool b) {
-		cout << "struct (" << name << ")" << endl;
-		
-		if(elem != NULL) {
-			DrawPath(i, b);
-			elem->Print(i + 1, false);
-		}
-	}
+	NodeStruct(string, Node*);
+	
+	void Print(int, bool);
+	string GetName();
 };
+
+//--- NodeUnary ---
+
+class NodeUnary: public Node {
+	string opname;
+	TokenValue opval;
+	Node *right;
+
+	void Dec(CodeGen*);
+	void Inc(CodeGen*);
+
+	string GetOpName(TokenValue tv);
+
+public:
+	NodeUnary(TokenValue, Node*);
+
+	void Print(int, bool);
+	void Generate(CodeGen*);
+	Symbol* GetType(SymTable*);
+};
+
+//--- NodeBinary ---
 
 class NodeBinary: public Node {
 	string opname;
+	TokenValue opval;
 	Node *right;
 	Node *left;
 
+	void Assign(CodeGen*);
+	void Sub(CodeGen*);
+	void Mul(CodeGen*);
+	void Div(CodeGen*);
+	void Add(CodeGen*);
+
+	string GetOpName(TokenValue tv);
+
 public:
-	NodeBinary(Node *_left, string _opname, Node *_right) {
-		left = _left;
-		opname = _opname;
-		right = _right;
-	}
+	NodeBinary(Node*, TokenValue, Node*);
 
-	void Print(int i, bool b) {
-		cout << "(" << opname << ")" << endl;
-
-		DrawPath(i, b);
-		left->Print(i + 1, true);
-
-		DrawPath(i, b);
-		right->Print(i + 1, false);
-	}
-
-	Symbol* GetType(SymTable *symTable) {
-		if(left->GetType(symTable) == right->GetType(symTable))
-			return left->GetType(symTable);
-
-		return NULL;
-	}
-
-	void Generate(CodeGen *cg) {
-		if(opname == "=") Assign(cg);
-		if(opname == "+") Add(cg);
-		if(opname == "-") Sub(cg);
-		if(opname == "*") Mul(cg);
-		if(opname == "/") Div(cg);
-	}
-
-	void Assign(CodeGen *cg) { //left = variable
-		right->Generate(cg);
-		cg->AddCommand(POP, EAX);
-		cg->AddCommand(MOV, left->GetName(), EAX);
-	}
-
-	void Sub(CodeGen *cg) {
-		left->Generate(cg);
-		right->Generate(cg);
-		cg->AddCommand(POP, EBX);
-		cg->AddCommand(POP, EAX);
-		cg->AddCommand(SUB, EAX, EBX);
-		cg->AddCommand(PUSH, EAX);
-	}
-
-	void Mul(CodeGen *cg) {
-		left->Generate(cg);
-		right->Generate(cg);
-		cg->AddCommand(POP, EAX);
-		cg->AddCommand(POP, EBX);
-		cg->AddCommand(MUL, EBX);
-		cg->AddCommand(PUSH, EAX);
-	}
-
-	void Div(CodeGen *cg) {
-		left->Generate(cg);
-		right->Generate(cg);
-		cg->AddCommand(POP, EBX);
-		cg->AddCommand(POP, EAX);
-		cg->AddCommand(DIV, EBX);
-		cg->AddCommand(PUSH, EAX);
-	}
-
-	void Add(CodeGen *cg) {
-		left->Generate(cg);
-		right->Generate(cg);
-		cg->AddCommand(POP, EAX);
-		cg->AddCommand(POP, EBX);
-		cg->AddCommand(ADD, EAX, EBX);
-		cg->AddCommand(PUSH, EAX);
-	}
+	void Print(int, bool);
+	void Generate(CodeGen*);
+	Symbol* GetType(SymTable*);
 };
+
+//--- NodeFunc ---
 
 class NodeFunc: public Node {
 	Symbol *returnValue;
@@ -251,7 +149,7 @@ public:
 	}
 };
 
-//--- Statement ---
+//--- NodePrint ---
 
 class NodePrint: public Node {
 	Node *expr, *format;

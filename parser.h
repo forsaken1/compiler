@@ -1,7 +1,6 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include "scanner.h"
 #include "node.h"
 
 class Parser {
@@ -11,7 +10,7 @@ class Parser {
 	SymTableStack *symStack;
 	TokenValue oper;
 	string text;
-	map<string, bool> assignmentOperator, unaryOperator;
+	map<TokenValue, bool> assignmentOperator, unaryOperator;
 	bool simple; // for testing parser without semantics
 	
 	void Parse();
