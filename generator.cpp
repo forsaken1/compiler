@@ -1,6 +1,3 @@
-#ifndef GENERATOR_H
-#define GENERATOR_H
-
 #include "parser.h"
 
 class Generator {
@@ -26,10 +23,7 @@ public:
 		cout << "\texit" << endl;
 		cout << endl << "end start" << endl;
 		
-		freopen("log.txt", "w", stdout);
 		system("make.bat");
 		freopen("CON", "w", stdout);
 	}
 };
-
-#endif GENERATOR_H

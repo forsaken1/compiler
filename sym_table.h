@@ -1,6 +1,12 @@
 #ifndef SYM_TABLE_H
 #define SYM_TABLE_H
 
+#include <string>
+#include <map>
+#include <iostream>
+
+using namespace std;
+
 class Symbol {
 protected:
 	string name;

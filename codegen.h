@@ -2,6 +2,7 @@
 #define CODEGEN_H
 
 #include <string>
+#include <iostream>
 
 enum Register {
 	EAX,
@@ -60,7 +61,7 @@ class CodeGen {
 
 	string GetUnary(CmdUnary op) {
 		switch(op) {
-			case INC:  return "int";
+			case INC:  return "inc";
 			case DEC:  return "dec";
 			case CALL: return "call";
 			case PUSH: return "push";

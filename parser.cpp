@@ -8,11 +8,13 @@ Parser::Parser(Scanner *_scanner, bool _simple, bool _print) {
 	lastToken = NULL;
 	top = NULL;
 	simple = _simple;
-	print = _print;
 	symStack = new SymTableStack();
 	InitTables();
 
 	Parse();
+	
+	if(_print) 
+		top->Print(0, true);
 }
 
 Node* Parser::GetTop() {
@@ -40,9 +42,6 @@ void Parser::Parse() {
 		top = Statement();
 	else
 		top = Program();
-	
-	if(print) 
-		top->Print(0, true);
 }
 
 Node* Parser::Expression() {

@@ -201,7 +201,8 @@ statement
 	print-statement
 	
 print-statement
-	print ( expression ) ;
+	print ( string-literal ) ;
+	print ( string-literal , 
 
 compound-statement
     { }

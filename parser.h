@@ -12,7 +12,7 @@ class Parser {
 	TokenValue oper;
 	string text;
 	map<string, bool> assignmentOperator, unaryOperator;
-	bool print, simple; // for testing
+	bool simple; // for testing parser without semantics
 	
 	void Parse();
 

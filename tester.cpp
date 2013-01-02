@@ -54,7 +54,7 @@ void MakeFiles(string dir, int from, int to) {
 
 int main() {
 	int ALL_TESTS_SUCCESSFUL = 0;
-	/*
+	///*
 	int FROM = 1;
 	int TO	 = 60; //60
 	for(int i = FROM; i <= TO; i++) { 
@@ -71,7 +71,7 @@ int main() {
 			ALL_TESTS_SUCCESSFUL++;
 	}
 	//*/
-	/*
+	///*
 	int _FROM = 1;
 	int _TO   = 86; //86
 	for(int i = _FROM; i <= _TO; i++) { 
@@ -87,7 +87,7 @@ int main() {
 		if( !test(i, CompareFiles("output.txt", s1)) )
 			ALL_TESTS_SUCCESSFUL++;
 	}
-	*/
+	//*/
 	/*
 	int _FROM_ = 1;
 	int _TO_   = 1;
@@ -107,7 +107,7 @@ int main() {
 	*/
 	///*
 	int __FROM_ = 1;
-	int __TO_   = 8;
+	int __TO_   = 9;
 	for(int i = __FROM_; i <= __TO_; i++) { 
 		string str  = string("Debug\\compiler C tests\\generation\\") + IntToStr(i) + string(".in");
 		string str1 = string("tests/generation/") + IntToStr(i) + string(".out");

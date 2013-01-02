@@ -1,15 +1,15 @@
-#include "generator.h"
 #include <io.h>
+#include "generator.cpp"
 
 bool FileExists(const char *fname) {
 	return _access(fname, 0) != -1;
 }
 
 void GetHelp() {
-	cout << "Compilator C. Author: Krilov Alexey, C8303A" << endl;
-	cout << "l <filename> - lexical analysis" << endl;
-	cout << "s <filename> - syntax analysis" << endl;
-	cout << "c <filename> - compilation" << endl;
+	cout << "Compiler C. Author: Krylov Alexey, C8303A" << endl;
+	cout << "(L | l) <filename> - lexical analysis" << endl;
+	cout << "(S | s) <filename> - (syntax | semantic) analysis" << endl;
+	cout << "(C | c) <filename> - compilation" << endl;
 	cout << "h - help" << endl << endl;
 }
 
@@ -18,8 +18,8 @@ int main(int argc, char *argv[]) {
 		switch(argc) {
 			case 1: {
 				//GetHelp();
-				Scanner scanner("input.txt"); //for debug
-				Parser parser(&scanner, 0, 0); //simple, print
+				Scanner scanner("input.txt");
+				Parser parser(&scanner, 0, 0); //no semantics, printing tree
 				Generator gen(&parser);
 				break;
 			}
@@ -35,21 +35,22 @@ int main(int argc, char *argv[]) {
 					if(argv[1][0] == 'L' || argv[1][0] == 'l') {
 						Scanner scanner(argv[2]);
 						scanner.Start();
-						cout << endl << "Lexical analysis is completed." << endl;
-					}
-					if(argv[1][0] == 'S') {
+					} 
+					else if(argv[1][0] == 'S') {
 						Scanner scanner(argv[2]);
 						Parser parser(&scanner, true, true);
-					}
-					if(argv[1][0] == 's') {
+					} 
+					else if(argv[1][0] == 's') {
 						Scanner scanner(argv[2]);
-						Parser parser(&scanner, false, false);
+						Parser parser(&scanner, false, true);
 					}
-					if(argv[1][0] == 'C' || argv[1][0] == 'c') {
+					else if(argv[1][0] == 'C' || argv[1][0] == 'c') {
 						Scanner scanner(argv[2]);
 						Parser parser(&scanner, false, false);
 						Generator gen(&parser);
 					}
+					else
+						cout << "Error: Invalid argument" << endl;
 				}
 				else
 					cout << "Error: File is not found" << endl;

@@ -6,16 +6,7 @@
 
 class Node {
 protected:
-	void DrawPath(int i, bool b) {
-		string str = b ? "|   " : "    ";
-		
-		for(int j = 0; j < i - 1; j++) cout << "    ";
-		for(int j = i <= 0 ? 0 : i - 1; j < i; j++) cout << str;
-		cout << "|" << endl;
-		for(int j = 0; j < i - 1; j++) cout << "    ";
-		for(int j = i <= 0 ? 0 : i - 1; j < i; j++) cout << str;
-		cout << "+---";
-	}
+	void DrawPath(int, bool);
 
 public:
 	virtual void Print(int i, bool b) {}
@@ -114,7 +105,13 @@ public:
 	}
 
 	void Generate(CodeGen *cg) {
+		if(opname == "++") Dec(cg);
+	}
 
+	void Dec(CodeGen *cg) {
+		right->Generate(cg);
+		cg->AddCommand(POP, EAX);
+		cg->AddCommand(INC, EAX);
 	}
 };
 

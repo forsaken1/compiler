@@ -45,12 +45,12 @@ local.properties
 # Build results
 input.txt
 output.txt
+log.txt
 [Dd]ebug/
 [Rr]elease/
 result/
 *.asm
 *.exe
-*.bat
 *_i.c
 *_p.c
 *.exe
