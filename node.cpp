@@ -204,11 +204,13 @@ Symbol* NodeBinary::GetType(SymTable *symTable) {
 }
 
 void NodeBinary::Generate(CodeGen *cg) {
-	if(opname == "=") Assign(cg);
-	if(opname == "+") Add(cg);
-	if(opname == "-") Sub(cg);
-	if(opname == "*") Mul(cg);
-	if(opname == "/") Div(cg);
+	switch(opval) {
+		case OPER_ASSIGN: Assign(cg); break;
+		case OPER_PLUS: Add(cg); break;
+		case OPER_MINUS: Sub(cg); break;
+		case OPER_MULTIPLY: Mul(cg); break;
+		case OPER_DIVIDE: Div(cg); break;
+	}
 }
 
 void NodeBinary::Assign(CodeGen *cg) { //left = variable
@@ -218,8 +220,8 @@ void NodeBinary::Assign(CodeGen *cg) { //left = variable
 }
 
 void NodeBinary::Sub(CodeGen *cg) {
-	left->Generate(cg);
 	right->Generate(cg);
+	left->Generate(cg);
 	cg->AddCommand(POP, EBX);
 	cg->AddCommand(POP, EAX);
 	cg->AddCommand(SUB, EAX, EBX);

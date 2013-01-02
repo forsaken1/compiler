@@ -1,12 +1,8 @@
 #include "parser.h"
 
 class Generator {
-	Parser *pr;
-
 public:
-	Generator(Parser *_pr) {
-		pr = _pr;
-
+	Generator(Parser *pr) {
 		freopen("out.asm", "w", stdout);
 
 		cout << ".686" << endl << ".model flat, stdcall" << endl << endl;
@@ -26,5 +22,6 @@ public:
 		freopen("log.txt", "w", stdout);
 		system("make.bat");
 		freopen("CON", "w", stdout);
+		system("out.exe");
 	}
 };

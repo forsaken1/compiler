@@ -54,7 +54,7 @@ void MakeFiles(string dir, int from, int to) {
 
 int main() {
 	int ALL_TESTS_SUCCESSFUL = 0;
-	///*
+	/*
 	int FROM = 1;
 	int TO	 = 60; //60
 	for(int i = FROM; i <= TO; i++) { 

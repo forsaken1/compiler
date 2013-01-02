@@ -54,6 +54,8 @@ class Parser {
 	Node* StructDeclaration();
 	Node* StructDeclaratorList(Symbol*);
 	Node* StructDeclarator(Symbol*);
+	
+	Node* DeleteLR(int);
 
 	Symbol* TypeSpec();
 	
