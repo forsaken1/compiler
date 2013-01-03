@@ -97,47 +97,17 @@ Node* Parser::ConditionalExpr() {
 }
 
 Node* Parser::BinaryOperationExpr(int priority) {
-	Node *left = NULL;
+	Node *left = NULL, *right = NULL;
 
 	if(priority == 9)
 		left = CastExpr();
 	else
 		left = BinaryOperationExpr(priority + 1);
 
-	bool condition = false;
-
-	switch(priority) {
-		case 0: condition = oper == OPER_OR; break;
-		case 1: condition = oper == OPER_AND; break;
-		case 2: condition = oper == OPER_BINARY_OR; break;
-		case 3: condition = oper == OPER_EXCLUSIVE_OR; break;
-		case 4: condition = oper == OPER_BINARY_AND; break;
-		case 5: condition = oper == OPER_EQUAL || oper == OPER_NOT_EQUAL; break;
-		case 6: condition = oper == OPER_LESS || oper == OPER_MORE || oper == OPER_LESS_OR_EQUAL || oper == OPER_MORE_OR_EQUAL; break;
-		case 7: condition = oper == OPER_SHIFT_LEFT || oper == OPER_SHIFT_RIGHT; break;
-		case 8: condition = oper == OPER_PLUS || oper == OPER_MINUS; break;
-		case 9: condition = oper == OPER_MULTIPLY || oper == OPER_DIVIDE || oper == OPER_DIVIDE_BY_MOD; break;
-	}
-	if(condition) {
-		TokenValue tv = oper;
-		Next();
-		Node *right = DeleteLR(priority);
-		if(right == NULL)
-			throw ParserException(currentToken, "Binary expression without left operand");
-
-		return new NodeBinary(left, tv, right);
-	}
-	return left;
+	return DeleteLR(priority, left);
 }
 
-Node* Parser::DeleteLR(int priority) {
-	Node *left = NULL;
-
-	if(priority == 9)
-		left = CastExpr();
-	else
-		left = BinaryOperationExpr(priority + 1);
-	
+Node* Parser::DeleteLR(int priority, Node *left) {
 	bool condition = false;
 
 	switch(priority) {
@@ -152,16 +122,21 @@ Node* Parser::DeleteLR(int priority) {
 		case 8: condition = oper == OPER_PLUS || oper == OPER_MINUS; break;
 		case 9: condition = oper == OPER_MULTIPLY || oper == OPER_DIVIDE || oper == OPER_DIVIDE_BY_MOD; break;
 	}
-	if(condition) {
-		TokenValue tv = oper;
-		Next();
-		Node *right = DeleteLR(priority);
-		if(right == NULL)
-			throw ParserException(currentToken, "Binary expression without left operand");
+	if(!condition) return left;
 
-		return new NodeBinary(left, tv, right);
-	}
-	return left;
+	TokenValue tv = oper;
+	Next();
+	Node *right = NULL;
+
+	if(priority == 9)
+		right = CastExpr();
+	else
+		right = BinaryOperationExpr(priority + 1);
+
+	if(right == NULL)
+		throw ParserException(currentToken, "");
+
+	return DeleteLR(priority, new NodeBinary(left, tv, right));
 }
 
 Node* Parser::CastExpr() {

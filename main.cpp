@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
 				//GetHelp();
 				Scanner scanner("input.txt");
 				Parser parser(&scanner, 0, 1); //no semantics, printing tree
-				Generator gen(&parser);
+				//Generator gen(&parser);
 				break;
 			}
 			case 2: {
