@@ -190,17 +190,17 @@ string NodeBinary::GetOpName(TokenValue tv) {
 		case OPER_LESS: return "<";
 		case OPER_MORE_OR_EQUAL: return ">=";
 		case OPER_LESS_OR_EQUAL: return "<=";
-		case OPER_PLUS_EQUAL: return "+=";
-		case OPER_MINUS_EQUAL: return "-=";
-		case OPER_MULTIPLY_EQUAL: return "*=";
-		case OPER_DIVIDE_EQUAL: return "/=";
-		case OPER_DIVIDE_BY_MOD_EQUAL: return "%=";
-		case OPER_BINARY_AND_EQUAL: return "&=";
-		case OPER_BINARY_OR_EQUAL: return "|=";
+		case OPER_PLUS_ASSIGN: return "+=";
+		case OPER_MINUS_ASSIGN: return "-=";
+		case OPER_MULTIPLY_ASSIGN: return "*=";
+		case OPER_DIVIDE_ASSIGN: return "/=";
+		case OPER_DIVIDE_BY_MOD_ASSIGN: return "%=";
+		case OPER_BINARY_AND_ASSIGN: return "&=";
+		case OPER_BINARY_OR_ASSIGN: return "|=";
 		case OPER_SHIFT_LEFT: return "<<";
 		case OPER_SHIFT_RIGHT: return ">>";
 		case OPER_EXCLUSIVE_OR: return "^";
-		case OPER_EXCLUSIVE_OR_EQUAL: return "^=";
+		case OPER_EXCLUSIVE_OR_ASSIGN: return "^=";
 		case OPER_ARROW: return "->";
 		case OPER_POINT: return ".";
 		case ARRAY_INDEX: return "[]";
@@ -234,8 +234,14 @@ Symbol* NodeBinary::GetType(SymTable *symTable) {
 
 void NodeBinary::Generate(CodeGen *cg) {
 	switch(opval) {
-		case OPER_ASSIGN:			Assign(cg); return;
-		case COMMA:					Comma(cg); return;
+		case OPER_ASSIGN:				Assign(cg); return;
+		case COMMA:						Comma(cg); return;
+		case OPER_PLUS_ASSIGN:			PlusAssign(cg); return;
+		case OPER_MINUS_ASSIGN:			MinusAssign(cg); return;
+		case OPER_MULTIPLY_ASSIGN:		MultiplyAssign(cg); return;
+		case OPER_DIVIDE_ASSIGN:		DivideAssign(cg); return;
+		case OPER_DIVIDE_BY_MOD_ASSIGN:	DivideByModAssign(cg); return;	
+		case OPER_EXCLUSIVE_OR_ASSIGN:	ExclusiveOrAssign(cg); return;
 	}
 	
 	left->Generate(cg);
@@ -244,36 +250,30 @@ void NodeBinary::Generate(CodeGen *cg) {
 	cg->AddCommand(POP, EAX);
 
 	switch(opval) {
-		case OPER_PLUS:				Add(cg); break;
-		case OPER_MINUS:			Sub(cg); break;
-		case OPER_MULTIPLY:			Mul(cg); break;
-		case OPER_DIVIDE:			Div(cg); break;
-		case OPER_DIVIDE_BY_MOD:	DivideByMod(cg); break;
-		case OPER_AND:				And(cg); break;
-		case OPER_OR:				Or(cg); break;
-		case OPER_EXCLUSIVE_OR:		Xor(cg); break;
-		case OPER_BINARY_AND:		break;
-		case OPER_BINARY_OR:		break;
-		case OPER_SHIFT_LEFT:		ShiftLeft(cg); break;
-		case OPER_SHIFT_RIGHT:		ShiftRight(cg); break;
-		case OPER_MORE:				More(cg); break;
-		case OPER_LESS:				Less(cg); break;
-		case OPER_EQUAL:			Equal(cg); break;
-		case OPER_NOT_EQUAL:		NotEqual(cg); break;
-		case OPER_MORE_OR_EQUAL:	break;
-		case OPER_LESS_OR_EQUAL:	break;
-		case OPER_PLUS_EQUAL:		break;
-		case OPER_MINUS_EQUAL:		break;
-		case OPER_MULTIPLY_EQUAL:	break;
-		case OPER_DIVIDE_EQUAL:		break;
-		case OPER_DIVIDE_BY_MOD_EQUAL: break;
-		case OPER_BINARY_AND_EQUAL: break;
-		case OPER_BINARY_OR_EQUAL:	break;
-		case OPER_EXCLUSIVE_OR_EQUAL: break;
-		case OPER_ARROW:			break;
-		case OPER_POINT:			break;
-		case ARRAY_INDEX:			break;
-		case FUNCTION_ARGUMENT:		break;
+		case OPER_PLUS:					Add(cg); break;
+		case OPER_MINUS:				Sub(cg); break;
+		case OPER_MULTIPLY:				Mul(cg); break;
+		case OPER_DIVIDE:				Div(cg); break;
+		case OPER_DIVIDE_BY_MOD:		DivideByMod(cg); break;
+		case OPER_AND:					And(cg); break;
+		case OPER_OR:					Or(cg); break;
+		case OPER_EXCLUSIVE_OR:			Xor(cg); break;
+		case OPER_BINARY_AND:			break;
+		case OPER_BINARY_OR:			break;
+		case OPER_SHIFT_LEFT:			ShiftLeft(cg); break;
+		case OPER_SHIFT_RIGHT:			ShiftRight(cg); break;
+		case OPER_MORE:					More(cg); break;
+		case OPER_LESS:					Less(cg); break;
+		case OPER_EQUAL:				Equal(cg); break;
+		case OPER_NOT_EQUAL:			NotEqual(cg); break;
+		case OPER_MORE_OR_EQUAL:		break;
+		case OPER_LESS_OR_EQUAL:		break;
+		case OPER_BINARY_AND_ASSIGN:	break;
+		case OPER_BINARY_OR_ASSIGN:		break;
+		case OPER_ARROW:				break;
+		case OPER_POINT:				break;
+		case ARRAY_INDEX:				break;
+		case FUNCTION_ARGUMENT:			break;
 	}
 	cg->AddCommand(PUSH, EAX);
 }
@@ -288,6 +288,57 @@ void NodeBinary::Assign(CodeGen *cg) {
 	right->Generate(cg);
 	cg->AddCommand(POP, EAX);
 	cg->AddCommand(MOV, left->GetName(), EAX);
+	cg->AddCommand(PUSH, left->GetName());
+}
+
+void NodeBinary::PlusAssign(CodeGen *cg) {
+	right->Generate(cg);
+	cg->AddCommand(POP, EAX);
+	cg->AddCommand(ADD, left->GetName(), EAX);
+	cg->AddCommand(PUSH, left->GetName());
+}
+
+void NodeBinary::MinusAssign(CodeGen *cg) {
+	right->Generate(cg);
+	cg->AddCommand(POP, EAX);
+	cg->AddCommand(SUB, left->GetName(), EAX);
+	cg->AddCommand(PUSH, left->GetName());
+}
+
+void NodeBinary::MultiplyAssign(CodeGen *cg) {
+	right->Generate(cg);
+	cg->AddCommand(POP, EBX);
+	cg->AddCommand(MOV, EAX, left->GetName());
+	cg->AddCommand(MUL, EBX);
+	cg->AddCommand(MOV, left->GetName(), EAX);
+	cg->AddCommand(PUSH, left->GetName());
+}
+
+void NodeBinary::DivideAssign(CodeGen *cg) {
+	right->Generate(cg);
+	cg->AddCommand(POP, EBX);
+	cg->AddCommand(MOV, EAX, left->GetName());
+	cg->AddCommand(MOV, EDX, "0");
+	cg->AddCommand(DIV, EBX);
+	cg->AddCommand(MOV, left->GetName(), EAX);
+	cg->AddCommand(PUSH, left->GetName());
+}
+
+void NodeBinary::DivideByModAssign(CodeGen *cg) {
+	right->Generate(cg);
+	cg->AddCommand(POP, EBX);
+	cg->AddCommand(MOV, EAX, left->GetName());
+	cg->AddCommand(MOV, EDX, "0");
+	cg->AddCommand(DIV, EBX);
+	cg->AddCommand(MOV, left->GetName(), EDX);
+	cg->AddCommand(PUSH, left->GetName());
+}
+
+void NodeBinary::ExclusiveOrAssign(CodeGen *cg) {
+	right->Generate(cg);
+	cg->AddCommand(POP, EAX);
+	cg->AddCommand(XOR, left->GetName(), EAX);
+	cg->AddCommand(PUSH, left->GetName());
 }
 //------------------------------
 

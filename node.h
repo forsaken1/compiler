@@ -121,6 +121,13 @@ class NodeBinary: public Node {
 	void Equal(CodeGen*);
 	void NotEqual(CodeGen*);
 
+	void PlusAssign(CodeGen*);
+	void MinusAssign(CodeGen*);
+	void MultiplyAssign(CodeGen*);
+	void DivideAssign(CodeGen*);
+	void DivideByModAssign(CodeGen*);
+	void ExclusiveOrAssign(CodeGen*);
+
 	string GetOpName(TokenValue tv);
 
 public:

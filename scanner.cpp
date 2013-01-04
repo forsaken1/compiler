@@ -46,6 +46,8 @@ bool Scanner::Next() {
 			while( GetChar() != '*' || !IsCommentBegin(GetChar()) ) {} 
 			return Next();
 		}
+		else
+			BackToPreviousChar();
 	}
 	if(IsLetter(currentChar))				currentToken = GetIdentificator(currentChar); else 
 	if(IsNumber(currentChar))				currentToken = GetNumber(currentChar); else 
@@ -286,14 +288,14 @@ void Scanner::InitOperationsTable() {
 	operation["||"] = OPER_OR;
 	operation["&&"] = OPER_AND;
 	operation["^"] =  OPER_EXCLUSIVE_OR;
-	operation["+="] = OPER_PLUS_EQUAL;
-	operation["-="] = OPER_MINUS_EQUAL;
-	operation["*="] = OPER_MULTIPLY_EQUAL;
-	operation["/="] = OPER_DIVIDE_EQUAL;
-	operation["%="] = OPER_DIVIDE_BY_MOD_EQUAL;
-	operation["&="] = OPER_BINARY_AND_EQUAL;
-	operation["|="] = OPER_BINARY_OR_EQUAL;
-	operation["^="] = OPER_EXCLUSIVE_OR_EQUAL;
+	operation["+="] = OPER_PLUS_ASSIGN;
+	operation["-="] = OPER_MINUS_ASSIGN;
+	operation["*="] = OPER_MULTIPLY_ASSIGN;
+	operation["/="] = OPER_DIVIDE_ASSIGN;
+	operation["%="] = OPER_DIVIDE_BY_MOD_ASSIGN;
+	operation["&="] = OPER_BINARY_AND_ASSIGN;
+	operation["|="] = OPER_BINARY_OR_ASSIGN;
+	operation["^="] = OPER_EXCLUSIVE_OR_ASSIGN;
 	operation["->"] = OPER_ARROW;
 	operation["?"] =  OPER_QUESTION;
 	operation[":"] =  OPER_COLON;

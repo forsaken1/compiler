@@ -104,10 +104,10 @@ int main() {
 		if( !test(i, CompareFiles("output.txt", s1)) )
 			ALL_TESTS_SUCCESSFUL++;
 	}
-	*/
+	//*/
 	///*
 	int __FROM_ = 1;
-	int __TO_   = 18;
+	int __TO_   = 25;
 	for(int i = __FROM_; i <= __TO_; i++) { 
 		string str  = string("Debug\\compiler C tests\\generation\\") + IntToStr(i) + string(".in");
 		string str1 = string("tests/generation/") + IntToStr(i) + string(".out");

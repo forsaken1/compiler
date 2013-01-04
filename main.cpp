@@ -14,13 +14,12 @@ void GetHelp() {
 }
 
 int main(int argc, char *argv[]) {
-	//cout << (27 >> 1) << endl;
-	//system("PAUSE");
 	try {
 		switch(argc) {
 			case 1: {
 				//GetHelp();
 				Scanner scanner("input.txt");
+				//scanner.Start();
 				Parser parser(&scanner, 0, 0); //no semantics, printing tree
 				Generator gen(&parser);
 				break;

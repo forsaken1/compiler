@@ -878,14 +878,14 @@ Node* Parser::StructDeclarator(Symbol *type) {
 
 void Parser::InitTables() {
 	assignmentOperator[OPER_ASSIGN] = true;
-	assignmentOperator[OPER_MULTIPLY_EQUAL] = true;
-	assignmentOperator[OPER_DIVIDE_EQUAL] = true;
-	assignmentOperator[OPER_DIVIDE_BY_MOD_EQUAL] = true;
-	assignmentOperator[OPER_PLUS_EQUAL] = true;
-	assignmentOperator[OPER_MINUS_EQUAL] = true;
-	assignmentOperator[OPER_BINARY_AND_EQUAL] = true;
-	assignmentOperator[OPER_EXCLUSIVE_OR_EQUAL] = true;
-	assignmentOperator[OPER_BINARY_OR_EQUAL] = true;
+	assignmentOperator[OPER_MULTIPLY_ASSIGN] = true;
+	assignmentOperator[OPER_DIVIDE_ASSIGN] = true;
+	assignmentOperator[OPER_DIVIDE_BY_MOD_ASSIGN] = true;
+	assignmentOperator[OPER_PLUS_ASSIGN] = true;
+	assignmentOperator[OPER_MINUS_ASSIGN] = true;
+	assignmentOperator[OPER_BINARY_AND_ASSIGN] = true;
+	assignmentOperator[OPER_EXCLUSIVE_OR_ASSIGN] = true;
+	assignmentOperator[OPER_BINARY_OR_ASSIGN] = true;
 	assignmentOperator[DEFAULT] = false;
 
 	unaryOperator[OPER_BINARY_AND] = true;
