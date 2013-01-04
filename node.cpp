@@ -144,7 +144,7 @@ void NodeUnary::Dereference(CodeGen *cg) {
 }
 
 void NodeUnary::Plus(CodeGen *cg) {
-
+	
 }
 
 void NodeUnary::Minus(CodeGen *cg) {
@@ -400,4 +400,184 @@ void NodeBinary::Or(CodeGen *cg) {
 
 void NodeBinary::Add(CodeGen *cg) {
 	cg->AddCommand(ADD, EAX, EBX);
+}
+
+//--- NodeFunc ---
+
+NodeFunc::NodeFunc(Symbol *_returnValue, Node *_name, Node *_args, Node *_stmt) {
+	returnValue = _returnValue;
+	stmt = _stmt;
+	name = _name;
+	args = _args;
+}
+
+void NodeFunc::Print(int i, bool b) {
+	cout << returnValue->GetName() << " function ";
+	name->Print(i + 1, true);
+
+	if(args != NULL) {
+		DrawPath(i, b);
+		args->Print(i + 1, stmt == NULL ? false : true);
+	}
+
+	if(stmt != NULL) {
+		DrawPath(i, b);
+		stmt->Print(i + 1, false);
+	}
+}
+
+Symbol* NodeFunc::GetType() {
+	return returnValue;
+}
+
+//--- NodePrint ---
+
+NodePrint::NodePrint(Node *_format, Node *_expr) {
+	format = _format;
+	expr = _expr;
+}
+
+void NodePrint::Print(int i, bool b) {
+	cout << "print" << endl;
+	DrawPath(i, b);
+	format->Print(i + 1, true);
+	if(expr != NULL) {
+		DrawPath(i, b);
+		expr->Print(i + 1, false);
+	}
+}
+
+void NodePrint::Generate(CodeGen *cg) {
+	if(expr == NULL) {
+		cg->AddCommand(INVOKE, CRT_PRINTF, format->GetId());
+	}
+	else {
+		expr->Generate(cg);
+		cg->AddCommand(POP, EAX);
+		cg->AddCommand(INVOKE, CRT_PRINTF, format->GetId(), EAX);
+	}
+}
+
+//--- NodeStmt ---
+
+NodeStmt::NodeStmt(string _name, Node *_first, Node *_second) {
+	name = _name;
+	first = _first;
+	second = _second;
+}
+
+void NodeStmt::Print(int i, bool b) {
+	cout << name << endl;
+	if(first != NULL) {
+		DrawPath(i, b);
+		first->Print(i + 1, second != NULL);
+	}
+	if(second != NULL) {
+		DrawPath(i, b);
+		second->Print(i + 1, false);
+	}
+}
+
+void NodeStmt::Generate(CodeGen *cg) {
+	if(first != NULL)
+		first->Generate(cg);
+
+	if(second != NULL)
+		second->Generate(cg);
+}
+
+//--- NodeIterationWhile ---
+
+NodeIterationWhile::NodeIterationWhile(Node *_cond, Node *_stmt) {
+	cond = _cond;
+	stmt = _stmt;
+}
+
+void NodeIterationWhile::Print(int i, bool b) {
+	cout << "while" << endl;
+
+	DrawPath(i, b);
+	cond->Print(i + 1, true);
+
+	DrawPath(i, b);
+	stmt->Print(i + 1, false);
+}
+
+//--- NodeIterationDo ---
+
+NodeIterationDo::NodeIterationDo(Node *_cond, Node *_stmt): NodeIterationWhile(_cond, _stmt) {}
+
+void NodeIterationDo::Print(int i, bool b) {
+	cout << "do" << endl;
+	DrawPath(i, b);
+	cond->Print(i + 1, true);
+
+	DrawPath(i, b);
+	stmt->Print(i + 1, false);
+}
+
+//--- NodeIterationFor ---
+
+NodeIterationFor::NodeIterationFor(Node *_init, Node *_cond, Node *_iter, Node *_stmt): NodeIterationWhile(_cond, _stmt) {
+	iter = _iter;
+	init = _init;
+}
+
+void NodeIterationFor::Print(int i, bool b) {
+	cout << "for" << endl;
+
+	if(init != NULL) {
+		DrawPath(i, b);
+		init->Print(i + 1, true);
+	}
+
+	if(cond != NULL) {
+		DrawPath(i, b);
+		cond->Print(i + 1, true);
+	}
+
+	if(iter != NULL) {
+		DrawPath(i, b);
+		iter->Print(i + 1, true);
+	}
+
+	DrawPath(i, b);
+	stmt->Print(i + 1, false);
+}
+
+//--- NodeSelectionStmt ---
+
+NodeSelectionStmt::NodeSelectionStmt(Node *_expr, Node *_trueStmt, Node *_falseStmt) {
+	expr = _expr;
+	trueStmt = _trueStmt;
+	falseStmt = _falseStmt;
+}
+
+void NodeSelectionStmt::Print(int i, bool b) {
+	cout << "if" << endl;
+	DrawPath(i, b);
+	expr->Print(i + 1, true);
+
+	DrawPath(i, b);
+	trueStmt->Print(i + 1, falseStmt == NULL ? false : true);
+
+	if(falseStmt != NULL) {
+		DrawPath(i, b);
+		falseStmt->Print(i + 1, false);
+	}
+}
+
+//--- NodeJumpStmt ---
+
+NodeJumpStmt::NodeJumpStmt(string _name, Node *_expr) {
+	name = _name;
+	expr = _expr;
+}
+
+void NodeJumpStmt::Print(int i, bool b) {
+	cout << "(" << name << ")" << endl;
+	if(expr != NULL) {
+		DrawPath(i, b);
+		expr->Print(i + 1, b);
+	}
 }

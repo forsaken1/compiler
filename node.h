@@ -145,31 +145,10 @@ class NodeFunc: public Node {
 	Node *stmt, *args, *name;
 
 public:
-	NodeFunc(Symbol *_returnValue, Node *_name, Node *_args, Node *_stmt) {
-		returnValue = _returnValue;
-		stmt = _stmt;
-		name = _name;
-		args = _args;
-	}
+	NodeFunc(Symbol*, Node*, Node*, Node*);
 
-	void Print(int i, bool b) {
-		cout << returnValue->GetName() << " function ";
-		name->Print(i + 1, true);
-
-		if(args != NULL) {
-			DrawPath(i, b);
-			args->Print(i + 1, stmt == NULL ? false : true);
-		}
-
-		if(stmt != NULL) {
-			DrawPath(i, b);
-			stmt->Print(i + 1, false);
-		}
-	}
-
-	Symbol* GetType() {
-		return returnValue;
-	}
+	void Print(int, bool);
+	Symbol* GetType();
 };
 
 //--- NodePrint ---
@@ -178,175 +157,79 @@ class NodePrint: public Node {
 	Node *expr, *format;
 
 public:
-	NodePrint(Node *_format, Node *_expr) {
-		format = _format;
-		expr = _expr;
-	}
+	NodePrint(Node*, Node*);
 
-	void Print(int i, bool b) {
-		cout << "print" << endl;
-		DrawPath(i, b);
-		format->Print(i + 1, true);
-		if(expr != NULL) {
-			DrawPath(i, b);
-			expr->Print(i + 1, false);
-		}
-	}
-
-	void Generate(CodeGen *cg) {
-		if(expr == NULL) {
-			cg->AddCommand(INVOKE, CRT_PRINTF, format->GetId());
-		}
-		else {
-			expr->Generate(cg);
-			cg->AddCommand(POP, EAX);
-			cg->AddCommand(INVOKE, CRT_PRINTF, format->GetId(), EAX);
-		}
-	}
+	void Print(int, bool);
+	void Generate(CodeGen*);
 };
+
+//--- NodeStmt ---
 
 class NodeStmt: public Node {
 	Node *first, *second;
 	string name;
 
 public:
-	NodeStmt(string _name, Node *_first, Node *_second) {
-		name = _name;
-		first = _first;
-		second = _second;
-	}
+	NodeStmt(string, Node*, Node*);
 
-	void Print(int i, bool b) {
-		cout << name << endl;
-		if(first != NULL) {
-			DrawPath(i, b);
-			first->Print(i + 1, second != NULL);
-		}
-		if(second != NULL) {
-			DrawPath(i, b);
-			second->Print(i + 1, false);
-		}
-	}
-
-	void Generate(CodeGen *cg) {
-		if(first != NULL)
-			first->Generate(cg);
-
-		if(second != NULL)
-			second->Generate(cg);
-	}
+	void Print(int, bool);
+	void Generate(CodeGen*);
 };
+
+//--- NodeIterationWhile ---
 
 class NodeIterationWhile: public Node {
 protected:
 	Node *cond, *stmt;
 
 public:
-	NodeIterationWhile(Node *_cond, Node *_stmt) {
-		cond = _cond;
-		stmt = _stmt;
-	}
+	NodeIterationWhile(Node*, Node*);
 
-	void Print(int i, bool b) {
-		cout << "while" << endl;
-
-		DrawPath(i, b);
-		cond->Print(i + 1, true);
-
-		DrawPath(i, b);
-		stmt->Print(i + 1, false);
-	}
+	void Print(int, bool);
 };
+
+//--- NodeIterationDo ---
 
 class NodeIterationDo: public NodeIterationWhile {
 
 public:
-	NodeIterationDo(Node *_cond, Node *_stmt): NodeIterationWhile(_cond, _stmt) {}
+	NodeIterationDo(Node*, Node*);
 
-	void Print(int i, bool b) {
-		cout << "do" << endl;
-		DrawPath(i, b);
-		cond->Print(i + 1, true);
-
-		DrawPath(i, b);
-		stmt->Print(i + 1, false);
-	}
+	void Print(int, bool);
 };
+
+//--- NodeIterationFor ---
 
 class NodeIterationFor: public NodeIterationWhile {
 	Node *iter, *init;
 
 public:
-	NodeIterationFor(Node *_init, Node *_cond, Node *_iter, Node *_stmt): NodeIterationWhile(_cond, _stmt) {
-		iter = _iter;
-		init = _init;
-	}
+	NodeIterationFor(Node*, Node*, Node*, Node*);
 
-	void Print(int i, bool b) {
-		cout << "for" << endl;
-
-		if(init != NULL) {
-			DrawPath(i, b);
-			init->Print(i + 1, true);
-		}
-
-		if(cond != NULL) {
-			DrawPath(i, b);
-			cond->Print(i + 1, true);
-		}
-
-		if(iter != NULL) {
-			DrawPath(i, b);
-			iter->Print(i + 1, true);
-		}
-
-		DrawPath(i, b);
-		stmt->Print(i + 1, false);
-	}
+	void Print(int, bool);
 };
+
+//--- NodeSelectionStmt ---
 
 class NodeSelectionStmt: public Node {
 	Node *expr, *trueStmt, *falseStmt;
 
 public:
-	NodeSelectionStmt(Node *_expr, Node *_trueStmt, Node *_falseStmt) {
-		expr = _expr;
-		trueStmt = _trueStmt;
-		falseStmt = _falseStmt;
-	}
+	NodeSelectionStmt(Node*, Node*, Node*);
 
-	void Print(int i, bool b) {
-		cout << "if" << endl;
-		DrawPath(i, b);
-		expr->Print(i + 1, true);
-
-		DrawPath(i, b);
-		trueStmt->Print(i + 1, falseStmt == NULL ? false : true);
-
-		if(falseStmt != NULL) {
-			DrawPath(i, b);
-			falseStmt->Print(i + 1, false);
-		}
-	}
+	void Print(int, bool);
 };
+
+//--- NodeJumpStmt ---
 
 class NodeJumpStmt: public Node {
 	string name;
 	Node *expr;
 
 public:
-	NodeJumpStmt(string _name, Node *_expr) {
-		name = _name;
-		expr = _expr;
-	}
+	NodeJumpStmt(string, Node*);
 
-	void Print(int i, bool b) {
-		cout << "(" << name << ")" << endl;
-		if(expr != NULL) {
-			DrawPath(i, b);
-			expr->Print(i + 1, b);
-		}
-	}
+	void Print(int, bool);
 };
 
 #endif NODE_H
