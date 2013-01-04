@@ -236,39 +236,44 @@ Symbol* NodeBinary::GetType(SymTable *symTable) {
 
 void NodeBinary::Generate(CodeGen *cg) {
 	switch(opval) {
-		case OPER_ASSIGN: Assign(cg); break;
-		case OPER_PLUS: Add(cg); break;
-		case OPER_MINUS: Sub(cg); break;
-		case OPER_MULTIPLY: Mul(cg); break;
-		case OPER_DIVIDE: Div(cg); break;
-		case OPER_DIVIDE_BY_MOD: DivideByMod(cg); break;
-		case OPER_BINARY_AND: break;
-		case OPER_AND: break;
-		case OPER_BINARY_OR: break;
-		case OPER_OR: break;
-		case COMMA: break;
-		case OPER_EQUAL: break;
-		case OPER_NOT_EQUAL: break;
-		case OPER_MORE: break;
-		case OPER_LESS: break;
-		case OPER_MORE_OR_EQUAL: break;
-		case OPER_LESS_OR_EQUAL: break;
-		case OPER_PLUS_EQUAL: break;
-		case OPER_MINUS_EQUAL: break;
-		case OPER_MULTIPLY_EQUAL: break;
-		case OPER_DIVIDE_EQUAL: break;
+		case OPER_ASSIGN:			Assign(cg); break;
+		case OPER_PLUS:				Add(cg); break;
+		case OPER_MINUS:			Sub(cg); break;
+		case OPER_MULTIPLY:			Mul(cg); break;
+		case OPER_DIVIDE:			Div(cg); break;
+		case OPER_DIVIDE_BY_MOD:	DivideByMod(cg); break;
+		case OPER_AND:				And(cg); break;
+		case OPER_OR:				Or(cg); break;
+		case OPER_BINARY_AND:		break;
+		case OPER_BINARY_OR:		break;
+		case COMMA:					Comma(cg); break;
+		case OPER_EQUAL:			break;
+		case OPER_NOT_EQUAL:		break;
+		case OPER_MORE:				break;
+		case OPER_LESS:				break;
+		case OPER_MORE_OR_EQUAL:	break;
+		case OPER_LESS_OR_EQUAL:	break;
+		case OPER_PLUS_EQUAL:		break;
+		case OPER_MINUS_EQUAL:		break;
+		case OPER_MULTIPLY_EQUAL:	break;
+		case OPER_DIVIDE_EQUAL:		break;
 		case OPER_DIVIDE_BY_MOD_EQUAL: break;
 		case OPER_BINARY_AND_EQUAL: break;
-		case OPER_BINARY_OR_EQUAL: break;
-		case OPER_SHIFT_LEFT: break;
-		case OPER_SHIFT_RIGHT: break;
-		case OPER_EXCLUSIVE_OR: break;
+		case OPER_BINARY_OR_EQUAL:	break;
+		case OPER_SHIFT_LEFT:		break;
+		case OPER_SHIFT_RIGHT:		break;
+		case OPER_EXCLUSIVE_OR:		break;
 		case OPER_EXCLUSIVE_OR_EQUAL: break;
-		case OPER_ARROW: break;
-		case OPER_POINT: break;
-		case ARRAY_INDEX: break;
-		case FUNCTION_ARGUMENT: break;
+		case OPER_ARROW:			break;
+		case OPER_POINT:			break;
+		case ARRAY_INDEX:			break;
+		case FUNCTION_ARGUMENT:		break;
 	}
+}
+
+void NodeBinary::Comma(CodeGen *cg) {
+	left->Generate(cg);
+	right->Generate(cg);
 }
 
 void NodeBinary::Assign(CodeGen *cg) {
@@ -313,6 +318,23 @@ void NodeBinary::DivideByMod(CodeGen *cg) {
 	cg->AddCommand(MOV, EDX, "0");
 	cg->AddCommand(DIV, EBX);
 	cg->AddCommand(PUSH, EDX);
+}
+void NodeBinary::And(CodeGen *cg) {
+	left->Generate(cg);
+	right->Generate(cg);
+	cg->AddCommand(POP, EBX);
+	cg->AddCommand(POP, EAX);
+	cg->AddCommand(AND, EAX, EBX);
+	cg->AddCommand(PUSH, EAX);
+}
+
+void NodeBinary::Or(CodeGen *cg) {
+	left->Generate(cg);
+	right->Generate(cg);
+	cg->AddCommand(POP, EBX);
+	cg->AddCommand(POP, EAX);
+	cg->AddCommand(OR, EAX, EBX);
+	cg->AddCommand(PUSH, EAX);
 }
 
 void NodeBinary::Add(CodeGen *cg) {

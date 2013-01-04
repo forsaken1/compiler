@@ -104,12 +104,15 @@ class NodeBinary: public Node {
 	Node *right;
 	Node *left;
 
+	void Comma(CodeGen*);
 	void Assign(CodeGen*);
 	void Sub(CodeGen*);
 	void Mul(CodeGen*);
 	void Div(CodeGen*);
 	void Add(CodeGen*);
 	void DivideByMod(CodeGen*);
+	void And(CodeGen*);
+	void Or(CodeGen*);
 
 	string GetOpName(TokenValue tv);
 

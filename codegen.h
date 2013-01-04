@@ -37,6 +37,9 @@ enum Cmd {
 	CMP,
 	XCHG,
 	XOR,
+	AND,
+	OR,
+
 //--- Ternary operations ---
 	INVOKE,
 //--- Crt-functions ---
@@ -60,6 +63,11 @@ protected:
 
 	string GetCmd(Cmd _cmd) {
 		switch(_cmd) {
+			case CMP: return "cmp";
+			case XCHG: return "xcng";
+			case XOR: return "xor";
+			case AND: return "and";
+			case OR: return "or";
 			case INKEY: return "inkey";
 			case EXIT: return "exit";
 			case INC: return "inc";
