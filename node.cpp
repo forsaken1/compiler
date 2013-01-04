@@ -124,20 +124,48 @@ Symbol* NodeUnary::GetType(SymTable *symTable) {
 }
 
 void NodeUnary::Generate(CodeGen *cg) {
+	right->Generate(cg);
+	cg->AddCommand(POP, EAX);
+
 	switch(opval) {
-		case OPER_DEC: Dec(cg);
-		case OPER_INC: Inc(cg);
+		case OPER_DEC: Dec(cg); break;
+		case OPER_INC: Inc(cg); break;
+		case OPER_MULTIPLY: Dereference(cg); break;
+		case OPER_PLUS: Plus(cg); break;
+		case OPER_MINUS: Minus(cg); break;
+		case OPER_BINARY_NOT: BinaryNot(cg); break;
+		case OPER_NOT: Binary(cg); break;
 	}
+	cg->AddCommand(MOV, right->GetName(), EAX);
+	cg->AddCommand(PUSH, EAX);
+}
+
+void NodeUnary::Dereference(CodeGen *cg) {
+	
+}
+
+void NodeUnary::Plus(CodeGen *cg) {
+
+}
+
+void NodeUnary::Minus(CodeGen *cg) {
+	//cg->AddCommand();
+}
+
+void NodeUnary::BinaryNot(CodeGen *cg) {
+
+}
+
+void NodeUnary::Binary(CodeGen *cg) {
+
 }
 
 void NodeUnary::Dec(CodeGen *cg) {
-	right->Generate(cg);
-	cg->AddCommand(POP, EAX);
-	cg->AddCommand(INC, EAX);
+	cg->AddCommand(DEC, EAX);
 }
 
 void NodeUnary::Inc(CodeGen *cg) {
-	right->Generate(cg);
+	cg->AddCommand(INC, EAX);
 }
 
 //--- NodeBinary ---
@@ -213,15 +241,15 @@ void NodeBinary::Generate(CodeGen *cg) {
 	}
 }
 
-void NodeBinary::Assign(CodeGen *cg) { //left = variable
+void NodeBinary::Assign(CodeGen *cg) {
 	right->Generate(cg);
 	cg->AddCommand(POP, EAX);
 	cg->AddCommand(MOV, left->GetName(), EAX);
 }
 
 void NodeBinary::Sub(CodeGen *cg) {
-	right->Generate(cg);
 	left->Generate(cg);
+	right->Generate(cg);
 	cg->AddCommand(POP, EBX);
 	cg->AddCommand(POP, EAX);
 	cg->AddCommand(SUB, EAX, EBX);

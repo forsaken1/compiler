@@ -14,11 +14,12 @@ class Parser {
 	bool simple; // for testing parser without semantics
 	
 	void Parse();
-
+	
 	Node* Expression();
 	Node* AssignmentExpr();
 	Node* ConditionalExpr();
 	Node* BinaryOperationExpr(int);
+	Node* DeleteLeftRecursion(int, Node*);
 	Node* CastExpr();
 	Node* UnaryExpr();
 	Node* PostfixExpr();
@@ -54,8 +55,6 @@ class Parser {
 	Node* StructDeclaration();
 	Node* StructDeclaratorList(Symbol*);
 	Node* StructDeclarator(Symbol*);
-	
-	Node* DeleteLR(int, Node*);
 
 	Symbol* TypeSpec();
 	

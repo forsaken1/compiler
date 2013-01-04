@@ -1,6 +1,8 @@
 #ifndef CODEGEN_H
 #define CODEGEN_H
 
+#include <map>
+#include <vector>
 #include <string>
 #include <iostream>
 
@@ -12,12 +14,11 @@ enum Register {
 	ESP
 };
 
-enum CmdNoOp {
+enum Cmd {
+//--- No operands ---
 	INKEY,
 	EXIT,
-};
-
-enum CmdUnary {
+//--- Unary operations ---
 	INC, 
 	DEC,
 	CALL,
@@ -25,109 +26,203 @@ enum CmdUnary {
 	POP,
 	RET,
 	MUL,
-	DIV
-};
-
-enum CmdBinary {
+	DIV,
+//--- Binary operations ---
 	MOV,
 	ADD,
-	SUB
-};
-
-enum CmdTernary {
-	INVOKE
-};
-
-enum CmdFunc {
+	SUB,
+//--- Ternary operations ---
+	INVOKE,
+//--- Crt-functions ---
 	CRT_PRINTF
 };
 
-class CodeGen {
-	
-	string GetFunc(CmdFunc op) {
-		switch(op) {
-			case CRT_PRINTF: return "crt_printf";
-			default: return "";
-		}
-	}
+class AsmCmd {
+protected:
+	Cmd cmd;
+	string cmdStr;
 
-	string GetNoOp(CmdNoOp op) {
-		switch(op) {
-			case INKEY: return "inkey";
-			case EXIT:	return "exit";
-			default:	return "";
-		}
-	}
-
-	string GetUnary(CmdUnary op) {
-		switch(op) {
-			case INC:  return "inc";
-			case DEC:  return "dec";
-			case CALL: return "call";
-			case PUSH: return "push";
-			case POP:  return "pop";
-			case RET:  return "ret";
-			case MUL:  return "mul";
-			case DIV:  return "div";
-			default:   return "";
-		}
-	}
-
-	string GetRegister(Register reg) {
-		switch(reg) {
+	string GetReg(Register _reg) {
+		switch(_reg) {
 			case EAX: return "eax";
 			case EBX: return "ebx";
 			case ECX: return "ecx";
 			case EDX: return "edx";
 			case ESP: return "esp";
-			default:  return "";
 		}
 	}
 
-	string GetBinary(CmdBinary op) {
-		switch(op) {
+	string GetCmd(Cmd _cmd) {
+		switch(_cmd) {
+			case INKEY: return "inkey";
+			case EXIT: return "exit";
+			case INC: return "inc";
+			case DEC: return "dec";
+			case CALL: return "call";
+			case PUSH: return "push";
+			case POP: return "pop";
+			case RET: return "ret";
+			case MUL: return "mul";
+			case DIV: return "div";
 			case MOV: return "mov";
 			case ADD: return "add";
 			case SUB: return "sub";
-			default:  return "";
-		}
-	}
-
-	string GetTernary(CmdTernary op) {
-		switch(op) {
 			case INVOKE: return "invoke";
+			case CRT_PRINTF: return "crt_printf";
 		}
 	}
 
 public:
-	CodeGen() {}
-
-	void AddCommand(CmdNoOp op) {
-		cout << "\t" << GetNoOp(op) << endl;
+	AsmCmd(Cmd _cmd) {
+		cmd = _cmd;
+		cmdStr = GetCmd(cmd);
 	}
 
-	void AddCommand(CmdUnary op, Register reg) {
-		cout << "\t" << GetUnary(op) << " " << GetRegister(reg) << endl;
+	virtual void Print() {
+		cout << "\t" << cmdStr << endl;
 	}
 
-	void AddCommand(CmdUnary op, string str) {
-		cout << "\t" << GetUnary(op) << " " << str << endl;
+	Cmd GetCmd() {
+		return cmd;
 	}
+};
 
-	void AddCommand(CmdBinary op, Register left, Register right) {
-		cout << "\t" << GetBinary(op) << " " << GetRegister(left) << ", " << GetRegister(right) << endl;
-	}
+class AsmUnary: public AsmCmd {
+	bool regMode; 
 
-	void AddCommand(CmdBinary op, string str, Register right) { //variable = const
-		cout << "\t" << GetBinary(op) << " " << str << ", " << GetRegister(right) << endl;
+protected:
+	string regStr;
+	Register reg;
+
+public:
+	AsmUnary(Cmd _cmd, Register _reg): AsmCmd(_cmd) {
+		reg = _reg;
+		regStr = GetReg(reg);
+		regMode = true;
 	}
 	
-	void AddCommand(CmdTernary op, CmdFunc func, string str) { //invoke crt_printf, addr const
-		cout << "\t" << GetTernary(op) << " " << GetFunc(func) << ", " << "addr " << str << endl;
+	AsmUnary(Cmd _cmd, string str): AsmCmd(_cmd) {
+		regStr = str;
+		regMode = false;
 	}
 
-	void AddCommand(CmdTernary op, CmdFunc func, string str, Register right) {
-		cout << "\t" << GetTernary(op) << " " << GetFunc(func) << ", " << "addr " << str << ", " << GetRegister(right) << endl;
+	void Print() {
+		if(regMode)
+			cout << "\t" << cmdStr << " \t" << regStr << endl;
+		else
+			cout << "\t" << cmdStr << " \tdword ptr " << regStr << "" << endl;
+	}
+};
+
+class AsmBinary: public AsmUnary {
+	int regMode;
+
+protected:
+	string regSecondStr;
+	Register regSecond;
+
+public:
+	AsmBinary(Cmd _cmd, Register _reg, Register __reg): AsmUnary(_cmd, _reg) {
+		regSecond = __reg;
+		regSecondStr = GetReg(regSecond);
+		regMode = 0;
+	}
+
+	AsmBinary(Cmd _cmd, Register _reg, string str): AsmUnary(_cmd, _reg) {
+		regSecondStr = str;
+		regMode = 1;
+	}
+
+	AsmBinary(Cmd _cmd, string str, Register _reg): AsmUnary(_cmd, str) {
+		regSecond = _reg;
+		regSecondStr = GetReg(regSecond);
+		regMode = 2;
+	}
+
+	void Print() {
+		cout << "\t" << cmdStr;
+		switch(regMode) {
+			case 0: cout << " \t" << regStr << ", " << regSecondStr << endl; break;
+			case 1: cout << " \t" << regStr << ", dword ptr " << regSecondStr << "" << endl; break;
+			case 2: cout << " \tdword ptr " << regStr << ", " << regSecondStr << endl; break;
+		}
+	}
+};
+
+class AsmTernary: public AsmCmd {
+	bool onlyString;
+
+protected:
+	string funcStr, format, regStr;
+	Register reg;
+	Cmd func;
+
+public:
+	AsmTernary(Cmd _cmd, Cmd _func, string str, Register _reg): AsmCmd(_cmd) {
+		func = _func;
+		format = str;
+		reg = _reg;
+		funcStr = GetCmd(func);
+		regStr = GetReg(reg);
+		onlyString = false;
+	}
+
+	AsmTernary(Cmd _cmd, Cmd _func, string str): AsmCmd(_cmd) {
+		func = _func;
+		format = str;
+		funcStr = GetCmd(func);
+		onlyString = true;
+	}
+
+	void Print() {
+		if(onlyString)
+			cout << "\t" << cmdStr << "\t" << funcStr << ", addr " << format << endl;
+		else
+			cout << "\t" << cmdStr << "\t" << funcStr << ", addr " << format << ", " << regStr << endl;
+	}
+};
+
+class CodeGen {
+	vector<AsmCmd*> command;
+
+public:
+	CodeGen() {}
+
+	void Print() {
+		for(int i = 0; i < command.size(); i++)
+			command[i]->Print();
+	}
+
+	void AddCommand(Cmd op) {
+		command.push_back(new AsmCmd(op));
+	}
+
+	void AddCommand(Cmd op, Register reg) {
+		command.push_back(new AsmUnary(op, reg));
+	}
+
+	void AddCommand(Cmd op, string str) {
+		command.push_back(new AsmUnary(op, str));
+	}
+
+	void AddCommand(Cmd op, Register left, Register right) {
+		command.push_back(new AsmBinary(op, left, right));
+	}
+
+	void AddCommand(Cmd op, string str, Register reg) {
+		command.push_back(new AsmBinary(op, str, reg));
+	}
+
+	void AddCommand(Cmd op, Register reg, string str) {
+		command.push_back(new AsmBinary(op, reg, str));
+	}
+	
+	void AddCommand(Cmd op, Cmd func, string str) {
+		command.push_back(new AsmTernary(op, func, str));
+	}
+
+	void AddCommand(Cmd op, Cmd func, string str, Register right) {
+		command.push_back(new AsmTernary(op, func, str, right));
 	}
 };
 

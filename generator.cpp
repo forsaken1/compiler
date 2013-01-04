@@ -15,6 +15,7 @@ public:
 
 		CodeGen *cg = new CodeGen();
 		pr->GetTop()->Generate(cg);
+		cg->Print();
 
 		cout << "\texit" << endl;
 		cout << endl << "end start" << endl;
@@ -22,6 +23,6 @@ public:
 		freopen("log.txt", "w", stdout);
 		system("make.bat");
 		freopen("CON", "w", stdout);
-		system("out.exe");
+		system("out");
 	}
 };

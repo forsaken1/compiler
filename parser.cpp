@@ -104,10 +104,10 @@ Node* Parser::BinaryOperationExpr(int priority) {
 	else
 		left = BinaryOperationExpr(priority + 1);
 
-	return DeleteLR(priority, left);
+	return DeleteLeftRecursion(priority, left);
 }
 
-Node* Parser::DeleteLR(int priority, Node *left) {
+Node* Parser::DeleteLeftRecursion(int priority, Node *left) {
 	bool condition = false;
 
 	switch(priority) {
@@ -134,9 +134,9 @@ Node* Parser::DeleteLR(int priority, Node *left) {
 		right = BinaryOperationExpr(priority + 1);
 
 	if(right == NULL)
-		throw ParserException(currentToken, "");
+		throw ParserException(currentToken, "Binary expression without left operand");
 
-	return DeleteLR(priority, new NodeBinary(left, tv, right));
+	return DeleteLeftRecursion(priority, new NodeBinary(left, tv, right));
 }
 
 Node* Parser::CastExpr() {
