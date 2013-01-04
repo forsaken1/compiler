@@ -134,9 +134,8 @@ void NodeUnary::Generate(CodeGen *cg) {
 		case OPER_PLUS: Plus(cg); break;
 		case OPER_MINUS: Minus(cg); break;
 		case OPER_BINARY_NOT: BinaryNot(cg); break;
-		case OPER_NOT: Binary(cg); break;
+		case OPER_NOT: Not(cg); break;
 	}
-	cg->AddCommand(MOV, right->GetName(), EAX);
 	cg->AddCommand(PUSH, EAX);
 }
 
@@ -149,23 +148,27 @@ void NodeUnary::Plus(CodeGen *cg) {
 }
 
 void NodeUnary::Minus(CodeGen *cg) {
-	//cg->AddCommand();
+	cg->AddCommand(MOV, EBX, EAX);
+	cg->AddCommand(SUB, EAX, EBX);
+	cg->AddCommand(SUB, EAX, EBX);
 }
 
 void NodeUnary::BinaryNot(CodeGen *cg) {
 
 }
 
-void NodeUnary::Binary(CodeGen *cg) {
+void NodeUnary::Not(CodeGen *cg) {
 
 }
 
 void NodeUnary::Dec(CodeGen *cg) {
 	cg->AddCommand(DEC, EAX);
+	cg->AddCommand(MOV, right->GetName(), EAX);
 }
 
 void NodeUnary::Inc(CodeGen *cg) {
 	cg->AddCommand(INC, EAX);
+	cg->AddCommand(MOV, right->GetName(), EAX);
 }
 
 //--- NodeBinary ---
@@ -238,6 +241,33 @@ void NodeBinary::Generate(CodeGen *cg) {
 		case OPER_MINUS: Sub(cg); break;
 		case OPER_MULTIPLY: Mul(cg); break;
 		case OPER_DIVIDE: Div(cg); break;
+		case OPER_DIVIDE_BY_MOD: DivideByMod(cg); break;
+		case OPER_BINARY_AND: break;
+		case OPER_AND: break;
+		case OPER_BINARY_OR: break;
+		case OPER_OR: break;
+		case COMMA: break;
+		case OPER_EQUAL: break;
+		case OPER_NOT_EQUAL: break;
+		case OPER_MORE: break;
+		case OPER_LESS: break;
+		case OPER_MORE_OR_EQUAL: break;
+		case OPER_LESS_OR_EQUAL: break;
+		case OPER_PLUS_EQUAL: break;
+		case OPER_MINUS_EQUAL: break;
+		case OPER_MULTIPLY_EQUAL: break;
+		case OPER_DIVIDE_EQUAL: break;
+		case OPER_DIVIDE_BY_MOD_EQUAL: break;
+		case OPER_BINARY_AND_EQUAL: break;
+		case OPER_BINARY_OR_EQUAL: break;
+		case OPER_SHIFT_LEFT: break;
+		case OPER_SHIFT_RIGHT: break;
+		case OPER_EXCLUSIVE_OR: break;
+		case OPER_EXCLUSIVE_OR_EQUAL: break;
+		case OPER_ARROW: break;
+		case OPER_POINT: break;
+		case ARRAY_INDEX: break;
+		case FUNCTION_ARGUMENT: break;
 	}
 }
 
@@ -259,8 +289,8 @@ void NodeBinary::Sub(CodeGen *cg) {
 void NodeBinary::Mul(CodeGen *cg) {
 	left->Generate(cg);
 	right->Generate(cg);
-	cg->AddCommand(POP, EAX);
 	cg->AddCommand(POP, EBX);
+	cg->AddCommand(POP, EAX);
 	cg->AddCommand(MUL, EBX);
 	cg->AddCommand(PUSH, EAX);
 }
@@ -270,15 +300,26 @@ void NodeBinary::Div(CodeGen *cg) {
 	right->Generate(cg);
 	cg->AddCommand(POP, EBX);
 	cg->AddCommand(POP, EAX);
+	cg->AddCommand(MOV, EDX, "0");
 	cg->AddCommand(DIV, EBX);
 	cg->AddCommand(PUSH, EAX);
+}
+
+void NodeBinary::DivideByMod(CodeGen *cg) {
+	left->Generate(cg);
+	right->Generate(cg);
+	cg->AddCommand(POP, EBX);
+	cg->AddCommand(POP, EAX);
+	cg->AddCommand(MOV, EDX, "0");
+	cg->AddCommand(DIV, EBX);
+	cg->AddCommand(PUSH, EDX);
 }
 
 void NodeBinary::Add(CodeGen *cg) {
 	left->Generate(cg);
 	right->Generate(cg);
-	cg->AddCommand(POP, EAX);
 	cg->AddCommand(POP, EBX);
+	cg->AddCommand(POP, EAX);
 	cg->AddCommand(ADD, EAX, EBX);
 	cg->AddCommand(PUSH, EAX);
 }

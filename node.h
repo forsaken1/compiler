@@ -80,6 +80,11 @@ class NodeUnary: public Node {
 
 	void Dec(CodeGen*);
 	void Inc(CodeGen*);
+	void Dereference(CodeGen*);
+	void Plus(CodeGen*);
+	void Minus(CodeGen*);
+	void BinaryNot(CodeGen*);
+	void Not(CodeGen*);
 
 	string GetOpName(TokenValue tv);
 
@@ -104,6 +109,7 @@ class NodeBinary: public Node {
 	void Mul(CodeGen*);
 	void Div(CodeGen*);
 	void Add(CodeGen*);
+	void DivideByMod(CodeGen*);
 
 	string GetOpName(TokenValue tv);
 

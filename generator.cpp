@@ -23,6 +23,5 @@ public:
 		freopen("log.txt", "w", stdout);
 		system("make.bat");
 		freopen("CON", "w", stdout);
-		system("out");
 	}
 };

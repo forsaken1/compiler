@@ -27,10 +27,16 @@ enum Cmd {
 	RET,
 	MUL,
 	DIV,
+	JMP,
+	JZ,
+
 //--- Binary operations ---
 	MOV,
 	ADD,
 	SUB,
+	CMP,
+	XCHG,
+	XOR,
 //--- Ternary operations ---
 	INVOKE,
 //--- Crt-functions ---
