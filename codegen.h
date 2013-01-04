@@ -11,7 +11,9 @@ enum Register {
 	EBX,
 	ECX,
 	EDX,
-	ESP
+	ESP,
+
+	CL
 };
 
 enum Cmd {
@@ -29,7 +31,7 @@ enum Cmd {
 	DIV,
 	JMP,
 	JZ,
-
+	NOT,
 //--- Binary operations ---
 	MOV,
 	ADD,
@@ -39,7 +41,8 @@ enum Cmd {
 	XOR,
 	AND,
 	OR,
-
+	RCL,
+	RCR,
 //--- Ternary operations ---
 	INVOKE,
 //--- Crt-functions ---
@@ -58,11 +61,16 @@ protected:
 			case ECX: return "ecx";
 			case EDX: return "edx";
 			case ESP: return "esp";
+
+			case CL: return "cl";
 		}
 	}
 
 	string GetCmd(Cmd _cmd) {
 		switch(_cmd) {
+			case RCL: return "rcl";
+			case RCR: return "rcr";
+			case NOT: return "not";
 			case CMP: return "cmp";
 			case XCHG: return "xcng";
 			case XOR: return "xor";

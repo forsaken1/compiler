@@ -113,6 +113,13 @@ class NodeBinary: public Node {
 	void DivideByMod(CodeGen*);
 	void And(CodeGen*);
 	void Or(CodeGen*);
+	void Xor(CodeGen*);
+	void ShiftLeft(CodeGen*);
+	void ShiftRight(CodeGen*);
+	void More(CodeGen*);
+	void Less(CodeGen*);
+	void Equal(CodeGen*);
+	void NotEqual(CodeGen*);
 
 	string GetOpName(TokenValue tv);
 

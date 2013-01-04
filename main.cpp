@@ -14,6 +14,8 @@ void GetHelp() {
 }
 
 int main(int argc, char *argv[]) {
+	//cout << (27 >> 1) << endl;
+	//system("PAUSE");
 	try {
 		switch(argc) {
 			case 1: {
