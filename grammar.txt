@@ -191,8 +191,15 @@ initializer-list
 # C statement rules
 #
 
+program
+	external_declaration
+	program external_declaration
+
+external_declaration
+	function_definition
+	statement-list
+	
 statement
-    labeled-statement
     compound-statement
     expression-statement
     selection-statement
@@ -202,7 +209,7 @@ statement
 	
 print-statement
 	print ( string-literal ) ;
-	print ( string-literal , 
+	print ( string-literal , expression ) ;
 
 compound-statement
     { }
@@ -225,7 +232,6 @@ expression-statement
 selection-statement
     if ( expression ) statement
     if ( expression ) statement else statement
-    switch ( expression ) statement
 
 iteration-statement
     while ( expression ) statement
@@ -240,14 +246,10 @@ iteration-statement
     for ( expression ; expression ; expression ) statement
 
 jump-statement
-    goto identifier ;
     continue ;
     break ;
     return ;
     return expression ;
 	
 function-definition
-                           declarator                  compound-statement
-    declaration-specifiers declarator                  compound-statement
-                           declarator declaration-list compound-statement
     declaration-specifiers declarator declaration-list compound-statement

@@ -1,5 +1,6 @@
 #include <io.h>
-#include "generator.cpp"
+#include <time.h>
+#include "generator.h"
 
 bool FileExists(const char *fname) {
 	return _access(fname, 0) != -1;
@@ -14,13 +15,14 @@ void GetHelp() {
 }
 
 int main(int argc, char *argv[]) {
+	srand(static_cast<unsigned>(time(NULL)));
 	try {
 		switch(argc) {
 			case 1: {
 				//GetHelp();
 				Scanner scanner("input.txt");
 				//scanner.Start();
-				Parser parser(&scanner, 0, 1); //no semantics, printing tree
+				Parser parser(&scanner, 0, 0); //no semantics, printing tree
 				Generator gen(&parser);
 				break;
 			}

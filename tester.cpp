@@ -28,21 +28,10 @@ bool test(int i, bool exp) {
 	return exp;
 }
 
-string IntToStr(int n) {
-	if(n > 99) {
-		int m = n % 100;
-		return string(1, n / 100 + 48) + string(1, m / 10 + 48) + string(1, m % 10 + 48);
-	}
-	if(n < 10) 
-		return string(1, n + 48);
-	else 
-		return string(1, n / 10 + 48) + string(1, n % 10 + 48);
-}
-
 void MakeFiles(string dir, int from, int to) {
 	for(int i = from; i <= to; i++) {
-		string str  = string("tests/" + dir + "/") + IntToStr(i) + string(".in");
-		string str1 = string("tests/" + dir + "/") + IntToStr(i) + string(".out");
+		string str  = string("tests/" + dir + "/" + to_string((_Longlong)i) + ".in");
+		string str1 = string("tests/" + dir + "/" + to_string((_Longlong)i) + ".out");
 		const char* s = str.c_str();
 		const char* s1 = str1.c_str();
 		ofstream fo(s, ios::out);
@@ -57,9 +46,10 @@ int main() {
 	///*
 	int FROM = 1;
 	int TO	 = 60; //60
+	cout << endl << "Scanner tests" << endl << endl;
 	for(int i = FROM; i <= TO; i++) { 
-		string str  = string("Debug\\compiler L tests\\scanner\\") + IntToStr(i) + string(".in");
-		string str1 = string("tests/scanner/") + IntToStr(i) + string(".out");
+		string str  = string("Debug\\compiler L tests\\scanner\\" + to_string((_Longlong)i) + ".in");
+		string str1 = string("tests/scanner/" + to_string((_Longlong)i) + ".out");
 
 		const char* s = str.c_str();
 		const char* s1 = str1.c_str();
@@ -74,9 +64,10 @@ int main() {
 	///*
 	int _FROM = 1;
 	int _TO   = 88; //88
+	cout << endl << "Parser tests" << endl << endl;
 	for(int i = _FROM; i <= _TO; i++) { 
-		string str  = string("Debug\\compiler S tests\\parser\\") + IntToStr(i) + string(".in");
-		string str1 = string("tests/parser/") + IntToStr(i) + string(".out");
+		string str  = string("Debug\\compiler S tests\\parser\\" + to_string((_Longlong)i) + ".in");
+		string str1 = string("tests/parser/" + to_string((_Longlong)i) + ".out");
 
 		const char* s = str.c_str();
 		const char* s1 = str1.c_str();
@@ -91,9 +82,10 @@ int main() {
 	///*
 	int _FROM_ = 1;
 	int _TO_   = 1;
+	cout << endl << "Semantics tests" << endl << endl;
 	for(int i = _FROM_; i <= _TO_; i++) { 
-		string str  = string("Debug\\compiler s tests\\semantics\\") + IntToStr(i) + string(".in");
-		string str1 = string("tests/semantics/") + IntToStr(i) + string(".out");
+		string str  = string("Debug\\compiler s tests\\semantics\\" + to_string((_Longlong)i) + ".in");
+		string str1 = string("tests/semantics/" + to_string((_Longlong)i) + ".out");
 
 		const char* s = str.c_str();
 		const char* s1 = str1.c_str();
@@ -107,10 +99,11 @@ int main() {
 	//*/
 	///*
 	int __FROM_ = 1;
-	int __TO_   = 25;
+	int __TO_   = 27;
+	cout << endl << "Generation tests" << endl << endl;
 	for(int i = __FROM_; i <= __TO_; i++) { 
-		string str  = string("Debug\\compiler C tests\\generation\\") + IntToStr(i) + string(".in");
-		string str1 = string("tests/generation/") + IntToStr(i) + string(".out");
+		string str  = string("Debug\\compiler C tests\\generation\\" + to_string((_Longlong)i) + ".in");
+		string str1 = string("tests/generation/" + to_string((_Longlong)i) + ".out");
 
 		const char* s = str.c_str();
 		const char* s1 = str1.c_str();

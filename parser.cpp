@@ -1,6 +1,19 @@
 #include "parser.h"
+
+//--- GetRandomId ---
+
 #include <stdlib.h>
-#include <time.h>
+
+string GetRandomId(string str) {
+	string random = str;
+
+	for(int j = 0; j < 10; j++)
+		random += to_string( (_Longlong)(rand() % 10) );
+
+	return random;
+}
+
+//--------------------
 
 Parser::Parser(Scanner *_scanner, bool _simple, bool print) {
 	scanner = _scanner;
@@ -62,6 +75,7 @@ Node* Parser::AssignmentExpr() {
 	Node *left = ConditionalExpr();
 
 	if(assignmentOperator[oper]) {
+		//if(left->GetType()
 		//проверка, что left_type == right_type
 		TokenValue tv = oper;
 		Next();
@@ -265,16 +279,6 @@ Node* Parser::ArgumentExprList() {
 	return left;
 }
 
-string GetRandomId() {
-	string random = "const_";
-	srand ( time(NULL) );
-
-	for(int j = 0; j < 10; j++)
-		random += string(1, (rand() % 10) + 48);
-
-	return random;
-}
-
 Node* Parser::PrimaryExpr() {
 	if(currentToken->GetTokenType() == IDENTIFIER) {
 		if(!simple) {
@@ -292,7 +296,7 @@ Node* Parser::PrimaryExpr() {
 	   currentToken->GetTokenType() == CONST_CHAR ||
 	   currentToken->GetTokenType() == CONST_STRING) {
 		   
-		string id = GetRandomId();
+		string id = GetRandomId("const_");
 		if(currentToken->GetTokenType() == CONST_CHAR ||
 		   currentToken->GetTokenType() == CONST_STRING) {
 			symStack->GetTopTable()->AddConst(new SymConst(id, text));
@@ -338,7 +342,7 @@ Node* Parser::ExternalDecl() {
 	Node* def = FunctionDefinitionStmt();
 	
 	if(def == NULL) {
-		return Statement();
+		return StatementList(); //DeclList
 	}
 	return def;
 }
@@ -371,7 +375,7 @@ Node* Parser::PrintStmt() {
 			throw ParserException(currentToken, "Print statement without format");
 
 		string format = text;
-		string random = GetRandomId();
+		string random = GetRandomId("const_");
 
 		symStack->GetTopTable()->AddConst(new SymConst(random, format));
 
@@ -897,6 +901,7 @@ Node* Parser::StructDeclarator(Symbol *type) {
 //--- Init Hashes ---
 
 void Parser::InitTables() {
+	assignmentOperator[DEFAULT] = false;
 	assignmentOperator[OPER_ASSIGN] = true;
 	assignmentOperator[OPER_MULTIPLY_ASSIGN] = true;
 	assignmentOperator[OPER_DIVIDE_ASSIGN] = true;
@@ -906,18 +911,20 @@ void Parser::InitTables() {
 	assignmentOperator[OPER_BINARY_AND_ASSIGN] = true;
 	assignmentOperator[OPER_EXCLUSIVE_OR_ASSIGN] = true;
 	assignmentOperator[OPER_BINARY_OR_ASSIGN] = true;
-	assignmentOperator[DEFAULT] = false;
-
+	
+	unaryOperator[DEFAULT] = false;
 	unaryOperator[OPER_BINARY_AND] = true;
 	unaryOperator[OPER_MULTIPLY] = true;
 	unaryOperator[OPER_PLUS] = true;
 	unaryOperator[OPER_MINUS] = true;
 	unaryOperator[OPER_BINARY_NOT] = true;
 	unaryOperator[OPER_NOT] = true;
-	unaryOperator[DEFAULT] = false;
 
 	symStack->GetTopTable()->AddType(new SymTypeVoid());
 	symStack->GetTopTable()->AddType(new SymTypeChar());
 	symStack->GetTopTable()->AddType(new SymTypeInteger());
 	symStack->GetTopTable()->AddType(new SymTypeFloat());
+
+	symStack->GetTopTable()->AddVar(new SymVar(new SymTypeInteger(), "true"));
+	symStack->GetTopTable()->AddVar(new SymVar(new SymTypeInteger(), "false"));
 }

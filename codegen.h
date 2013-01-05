@@ -29,9 +29,18 @@ enum Cmd {
 	RET,
 	MUL,
 	DIV,
-	JMP,
-	JZ,
 	NOT,
+	JE,
+	JL,
+	JNL,
+	JLE,
+	JNLE,
+	JNGE,
+	JGE,
+	JNG,
+	JG,
+	JMP,
+	JNE,
 //--- Binary operations ---
 	MOV,
 	ADD,
@@ -53,44 +62,58 @@ class AsmCmd {
 protected:
 	Cmd cmd;
 	string cmdStr;
+	bool label;
 
 	string GetReg(Register _reg) {
 		switch(_reg) {
-			case EAX: return "eax";
-			case EBX: return "ebx";
-			case ECX: return "ecx";
-			case EDX: return "edx";
-			case ESP: return "esp";
+			case EAX:	return "eax";
+			case EBX:	return "ebx";
+			case ECX:	return "ecx";
+			case EDX:	return "edx";
+			case ESP:	return "esp";
 
-			case CL: return "cl";
+			case CL:	return "cl";
+			default:	return "";
 		}
 	}
 
 	string GetCmd(Cmd _cmd) {
 		switch(_cmd) {
-			case RCL: return "rcl";
-			case RCR: return "rcr";
-			case NOT: return "not";
-			case CMP: return "cmp";
-			case XCHG: return "xcng";
-			case XOR: return "xor";
-			case AND: return "and";
-			case OR: return "or";
+			case JNE:	return "jne";
+			case JMP:	return "jmp";
+			case JE:	return "je";
+			case JL:	return "jl";
+			case JNL:	return "jnl";
+			case JLE:	return "jle";
+			case JNLE:	return "jnle";
+			case JNGE:	return "jnge";
+			case JGE:	return "jge";
+			case JNG:	return "jng";
+			case JG:	return "jg";
+			case RCL:	return "rcl";
+			case RCR:	return "rcr";
+			case NOT:	return "not";
+			case CMP:	return "cmp";
+			case XCHG:	return "xcng";
+			case XOR:	return "xor";
+			case AND:	return "and";
+			case OR:	return "or";
 			case INKEY: return "inkey";
-			case EXIT: return "exit";
-			case INC: return "inc";
-			case DEC: return "dec";
-			case CALL: return "call";
-			case PUSH: return "push";
-			case POP: return "pop";
-			case RET: return "ret";
-			case MUL: return "mul";
-			case DIV: return "div";
-			case MOV: return "mov";
-			case ADD: return "add";
-			case SUB: return "sub";
+			case EXIT:	return "exit";
+			case INC:	return "inc";
+			case DEC:	return "dec";
+			case CALL:	return "call";
+			case PUSH:	return "push";
+			case POP:	return "pop";
+			case RET:	return "ret";
+			case MUL:	return "mul";
+			case DIV:	return "div";
+			case MOV:	return "mov";
+			case ADD:	return "add";
+			case SUB:	return "sub";
 			case INVOKE: return "invoke";
 			case CRT_PRINTF: return "crt_printf";
+			default:	return "";
 		}
 	}
 
@@ -98,14 +121,36 @@ public:
 	AsmCmd(Cmd _cmd) {
 		cmd = _cmd;
 		cmdStr = GetCmd(cmd);
+		label = false;
+	}
+
+	AsmCmd(string label) {
+		cmdStr = label;
+		label = true;
 	}
 
 	virtual void Print() {
-		cout << "\t" << cmdStr << endl;
+		if(label)
+			cout << endl << cmdStr << ":" << endl;
+		else
+			cout << "\t" << cmdStr << endl;
 	}
 
 	Cmd GetCmd() {
 		return cmd;
+	}
+};
+
+class AsmLabel: public AsmCmd {
+	string label;
+	
+public:
+	AsmLabel(Cmd _op, string _label): AsmCmd(_op) {
+		label = _label;
+	}
+
+	void Print() {
+		cout << "\t" << cmdStr << "\t\t" << label << endl;
 	}
 };
 
@@ -211,8 +256,16 @@ public:
 	CodeGen() {}
 
 	void Print() {
-		for(int i = 0; i < command.size(); i++)
+		for(int i = 0; i < (int)command.size(); i++)
 			command[i]->Print();
+	}
+
+	void AddLabel(string label) {
+		command.push_back(new AsmCmd(label));
+	}
+
+	void SetLabel(Cmd op, string label) {
+		command.push_back(new AsmLabel(op, label));
 	}
 
 	void AddCommand(Cmd op) {

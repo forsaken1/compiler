@@ -74,7 +74,7 @@ public:
 	
 };
 
-class SymTypeRecord: public Symbol {
+class SymTypeStruct: public Symbol {
 
 };
 
