@@ -600,7 +600,20 @@ void NodeIterationWhile::Print(int i, bool b) {
 }
 
 void NodeIterationWhile::Generate(CodeGen *cg) {
+	string repeat = _GetRandomId("label_while_");
+	string out = _GetRandomId("label_while_");
+
+	cg->AddLabel(repeat);
+
+	cond->Generate(cg);
+	cg->AddCommand(POP, EAX);
+	cg->AddCommand(CMP, EAX, "0");
+	cg->SetLabel(JE, out);
 	
+	stmt->Generate(cg);
+
+	cg->SetLabel(JMP, repeat);
+	cg->AddLabel(out);
 }
 
 //--- NodeIterationDo ---
@@ -617,7 +630,20 @@ void NodeIterationDo::Print(int i, bool b) {
 }
 
 void NodeIterationDo::Generate(CodeGen *cg) {
+	string repeat = _GetRandomId("label_do_");
+	string out = _GetRandomId("label_do_");
+
+	cg->AddLabel(repeat);
 	
+	stmt->Generate(cg);
+
+	cond->Generate(cg);
+	cg->AddCommand(POP, EAX);
+	cg->AddCommand(CMP, EAX, "0");
+	cg->SetLabel(JE, out);
+	
+	cg->SetLabel(JMP, repeat);
+	cg->AddLabel(out);
 }
 
 //--- NodeIterationFor ---
@@ -650,10 +676,28 @@ void NodeIterationFor::Print(int i, bool b) {
 }
 
 void NodeIterationFor::Generate(CodeGen *cg) {
-	init->Generate(cg);
+	string repeat = _GetRandomId("label_for_");
+	string out = _GetRandomId("label_for_");
 
-	string labelTrue = _GetRandomId("label_for_");
-	string labelOut = _GetRandomId("label_for_");
+	if(init != NULL)
+		init->Generate(cg);
+
+	cg->AddLabel(repeat);
+
+	if(cond != NULL)
+		cond->Generate(cg);
+
+	cg->AddCommand(POP, EAX);
+	cg->AddCommand(CMP, EAX, "0");
+	cg->SetLabel(JE, out);
+	
+	stmt->Generate(cg);
+
+	if(cond != NULL)
+		iter->Generate(cg);
+
+	cg->SetLabel(JMP, repeat);
+	cg->AddLabel(out);
 }
 
 //--- NodeSelectionStmt ---
