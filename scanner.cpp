@@ -55,7 +55,7 @@ bool Scanner::Next() {
 	if(IsStringSeparator(currentChar))		currentToken = GetString(currentChar); else 
 	if(IsSeparator(currentChar))			currentToken = GetSeparator(currentChar); else 
 	if(IsSpecialSymbol(currentChar))		currentToken = GetOperation(currentChar); else 
-	throw ScannerException("Indefinite character: \"" + string(1, currentChar) + "\"");
+	throw ScannerException(currentLine, currentPos, "Indefinite character: \"" + string(1, currentChar) + "\"");
 
 	return true;
 }
@@ -112,18 +112,18 @@ Token* Scanner::GetNumber(char currentChar) {
 
 	while( (currentChar = GetChar()) != '\0' && !IsSpace(currentChar)) {
 		if(dot && IsDot(currentChar)) 
-			throw ScannerException("Too many dots in real number: \"" + GetInvalidToken(pos) + "\"");
+			throw ScannerException(currentLine, currentPos, "Too many dots in real number: \"" + GetInvalidToken(pos) + "\"");
 
 		if(E) {
 			if(IsE(currentChar)) 
-				throw ScannerException("Too many symbol \"E\" in real number: \"" + GetInvalidToken(pos) + "\"");
+				throw ScannerException(currentLine, currentPos, "Too many symbol \"E\" in real number: \"" + GetInvalidToken(pos) + "\"");
 
 			if(IsNumber(currentChar) || currentChar == '-' || currentChar == '+') {
 				s += currentChar;
 				continue;
 			}
 			else
-				throw ScannerException("Invalid real number: \"" + GetInvalidToken(pos) + "\"");
+				throw ScannerException(currentLine, currentPos, "Invalid real number: \"" + GetInvalidToken(pos) + "\"");
 		}
 
 		if( IsNumber(currentChar) || IsE(currentChar) || IsDot(currentChar) ) {
@@ -133,14 +133,14 @@ Token* Scanner::GetNumber(char currentChar) {
 		}
 		else {
 			if(IsLetter(currentChar)) 
-				throw ScannerException("Invalid identificator: \"" + GetInvalidToken(pos) + "\"");
+				throw ScannerException(currentLine, currentPos, "Invalid identificator: \"" + GetInvalidToken(pos) + "\"");
 
 			BackToPreviousChar();
 			break;
 		}
 	}
 	if(IsE(s[s.length() - 1]) || IsDot(s[s.length() - 1])) 
-		throw ScannerException("Invalid real number: \"" + s + "\"");
+		throw ScannerException(currentLine, currentPos, "Invalid real number: \"" + s + "\"");
 
 	return new Token(line, pos, dot || E ? CONST_REAL : CONST_INTEGER, DEFAULT, s);
 }
@@ -152,22 +152,22 @@ Token* Scanner::GetSymbol(char currentChar) {
 	currentChar = GetChar();
 	s += currentChar;
 
-	if(IsCharSeparator(currentChar))	throw ScannerException("Empty character constant");
-	if(IsEndOfLine(currentChar))		throw ScannerException("Newline in character constant");
-	if(IsTabulationSymbol(currentChar))	throw ScannerException("Tabulation symbol in character constant");
+	if(IsCharSeparator(currentChar))	throw ScannerException(currentLine, currentPos, "Empty character constant");
+	if(IsEndOfLine(currentChar))		throw ScannerException(currentLine, currentPos, "Newline in character constant");
+	if(IsTabulationSymbol(currentChar))	throw ScannerException(currentLine, currentPos, "Tabulation symbol in character constant");
 
 	if(currentChar == '\\') {
 		escapeDetector = true;
 		s += (currentChar = GetChar());
 		if(!IsEscapeSequence(currentChar)) 
-			throw ScannerException("Invalid ESCAPE-sequence: \"" + s + "\"");
+			throw ScannerException(currentLine, currentPos, "Invalid ESCAPE-sequence: \"" + s + "\"");
 	}
 
 	if( IsCharSeparator(currentChar = GetChar()) )
 		return new Token(line, pos, escapeDetector ? ESCAPE_SEQUENCE : CONST_CHAR, DEFAULT, s);
 	else {
 		s += currentChar;
-		throw ScannerException("Too many long character constant: \"" + s + "\"");
+		throw ScannerException(currentLine, currentPos, "Too many long character constant: \"" + s + "\"");
 	}
 }
 

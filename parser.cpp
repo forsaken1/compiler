@@ -62,11 +62,12 @@ Node* Parser::AssignmentExpr() {
 	Node *left = ConditionalExpr();
 
 	if(assignmentOperator[oper]) {
+		//проверка, что left_type == right_type
 		TokenValue tv = oper;
 		Next();
 		Node *right = AssignmentExpr();
 		if(right == NULL)
-			throw ParserException(currentToken, "Assignment expression without left operand");
+			throw ParserException(currentToken, "Assignment expression without right operand");
 
 		return new NodeBinary(left, tv, right);
 	}
@@ -91,7 +92,7 @@ Node* Parser::ConditionalExpr() {
 			return new NodeSelectionStmt(condition, cond_true, cond_false);
 		}
 		else
-			throw ParserException(currentToken, "Ternary expression without false-condition");
+			throw ParserException(currentToken, "Ternary expression without ':'");
 	}
 	return condition;
 }
@@ -134,7 +135,8 @@ Node* Parser::DeleteLeftRecursion(int priority, Node *left) {
 		right = BinaryOperationExpr(priority + 1);
 
 	if(right == NULL)
-		throw ParserException(currentToken, "Binary expression without left operand");
+		throw ParserException(currentToken, "Binary expression without right operand");
+	//проверка что left_type == right_type
 
 	return DeleteLeftRecursion(priority, new NodeBinary(left, tv, right));
 }
@@ -146,7 +148,7 @@ Node* Parser::CastExpr() {
 			Next();
 			Node *right = CastExpr();
 			if(right == NULL)
-				throw ParserException(currentToken, "Cast expression without left operand");
+				throw ParserException(currentToken, "Cast expression without right operand");
 
 			return new NodeUnary(CAST_CHAR, right); ///заменить, после правки SymStack!!!
 		}
@@ -170,10 +172,15 @@ Node* Parser::UnaryExpr() {
 				Next();
 				return new NodeUnary(SIZE_OF, new NodeConst(type, type)); //заменить, после правки SymStack!!!
 			}
+			else
+				throw ParserException(currentToken, "Sizeof operation without ')'");
 		}
 		else {
 			Next();
 			Node *link = UnaryExpr();
+			if(link == NULL)
+				throw ParserException(currentToken, "Sizeof operation without argument");
+
 			return new NodeUnary(SIZE_OF, link); //заменить, после правки SymStack!!!
 		}
 	}
@@ -202,6 +209,7 @@ Node* Parser::PostfixExpr() {
 	Node *left = PrimaryExpr();
 
 	if(oper == ROUND_LEFT_BRACKET) {
+		//проверка что left функция
 		Next();
 		Node *args = ArgumentExprList();
 
@@ -215,6 +223,7 @@ Node* Parser::PostfixExpr() {
 		return new NodeBinary(left, FUNCTION_ARGUMENT, args);
 	}
 	if(oper == SQUARE_LEFT_BRACKET) {
+		//проверка, что left - массив
 		Next();
 		Node *link = Expression();
 
@@ -225,6 +234,7 @@ Node* Parser::PostfixExpr() {
 		else throw ParserException(currentToken, "No ']'");
 	}
 	if(oper == OPER_POINT || oper == OPER_ARROW) {
+		//проверка, что left - структура
 		TokenValue _oper = oper;
 		Next();
 		Node *right = PrimaryExpr();
@@ -247,6 +257,9 @@ Node* Parser::ArgumentExprList() {
 	if(oper == COMMA) {
 		Next();
 		Node *right = ArgumentExprList();
+		if(right == NULL)
+			throw ParserException(currentToken, "Argument list without expression after ','");
+
 		return new NodeBinary(left, COMMA, right);
 	}
 	return left;
@@ -264,9 +277,13 @@ string GetRandomId() {
 
 Node* Parser::PrimaryExpr() {
 	if(currentToken->GetTokenType() == IDENTIFIER) {
-		if( !simple && !symStack->GetTopTable()->VarAt(text) )
-			throw SemanticException(currentToken, "Undeclared identifier");
+		if(!simple) {
+			if( !symStack->GetTopTable()->VarAt(text) )
+				throw SemanticException(currentToken, "Undeclared identifier");
 
+			if( symStack->GetTopTable()->TypeAt(text) )
+				throw SemanticException(currentToken, "Using type as identifier");
+		}
 		Next();
 		return new NodeVar(lastToken->GetText());
 	}
@@ -289,6 +306,9 @@ Node* Parser::PrimaryExpr() {
 	if(oper == ROUND_LEFT_BRACKET) {
 		Next();
 		expr = Expression();
+
+		if(expr == NULL)
+			throw ParserException(currentToken, "Expression expected");
 
 		if(oper == ROUND_RIGHT_BRACKET) {
 			Next();

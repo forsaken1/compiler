@@ -15,11 +15,16 @@ public:
 };
 
 class ScannerException: public Exception {
+	int line, pos;
+
 public:
-	ScannerException(string _msg): Exception(_msg) {}
+	ScannerException(int _line, int _pos, string _msg): Exception(_msg) {
+		line = _line;
+		pos = _pos;
+	}
 
 	string GetMessage() {
-		return "Error: " + msg;
+		return "Lexical error: " + msg + " on line " + to_string((_Longlong)line) + " in position " + to_string((_Longlong)pos);
 	}
 };
 
@@ -33,7 +38,7 @@ public:
 	}
 
 	string GetMessage() {
-		return "Syntax error: " + msg /* + " on line " + string(1, tk->GetLine() + '0') + " in position " + string(1, tk->GetPos() + '0')*/;
+		return "Syntax error: " + msg + " on line " + to_string((_Longlong)tk->GetLine()) + " in position " + to_string((_Longlong)tk->GetPos());
 	}
 };
 
@@ -42,7 +47,7 @@ public:
 	SemanticException(Token *_tk, string _msg): ParserException(_tk, _msg) {}
 
 	string GetMessage() {
-		return "Semantic error: " + msg /* + " on line " + string(1, tk->GetLine() + '0') + " in position " + string(1, tk->GetPos() + '0')*/;
+		return "Semantic error: " + msg + " on line " + to_string((_Longlong)tk->GetLine()) + " in position " + to_string((_Longlong)tk->GetPos());
 	}
 };
 

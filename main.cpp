@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
 				//GetHelp();
 				Scanner scanner("input.txt");
 				//scanner.Start();
-				Parser parser(&scanner, 0, 0); //no semantics, printing tree
+				Parser parser(&scanner, 0, 1); //no semantics, printing tree
 				Generator gen(&parser);
 				break;
 			}

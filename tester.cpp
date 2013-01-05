@@ -73,7 +73,7 @@ int main() {
 	//*/
 	///*
 	int _FROM = 1;
-	int _TO   = 86; //86
+	int _TO   = 88; //88
 	for(int i = _FROM; i <= _TO; i++) { 
 		string str  = string("Debug\\compiler S tests\\parser\\") + IntToStr(i) + string(".in");
 		string str1 = string("tests/parser/") + IntToStr(i) + string(".out");
