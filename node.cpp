@@ -370,10 +370,30 @@ void NodeBinary::ShiftRight(CodeGen *cg) {
 
 void NodeBinary::More(CodeGen *cg) {
 	cg->AddCommand(CMP, EAX, EBX);
+	cg->AddCommand(MOV, EAX, "0");
+
+	string labelTrue =  _GetRandomId("label_");
+	string labelFalse = _GetRandomId("label_");
+
+	cg->SetLabel(JG, labelTrue);
+	cg->SetLabel(JMP, labelFalse);
+	cg->AddLabel(labelTrue);
+	cg->AddCommand(MOV, EAX, "1");
+	cg->AddLabel(labelFalse);
 }
 
 void NodeBinary::Less(CodeGen *cg) {
 	cg->AddCommand(CMP, EAX, EBX);
+	cg->AddCommand(MOV, EAX, "0");
+
+	string labelTrue =  _GetRandomId("label_");
+	string labelFalse = _GetRandomId("label_");
+
+	cg->SetLabel(JL, labelTrue);
+	cg->SetLabel(JMP, labelFalse);
+	cg->AddLabel(labelTrue);
+	cg->AddCommand(MOV, EAX, "1");
+	cg->AddLabel(labelFalse);
 }
 
 void NodeBinary::Equal(CodeGen *cg) {
