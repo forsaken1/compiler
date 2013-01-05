@@ -155,8 +155,6 @@ public:
 };
 
 class AsmUnary: public AsmCmd {
-	bool regMode; 
-
 protected:
 	string regStr;
 	Register reg;
@@ -165,25 +163,18 @@ public:
 	AsmUnary(Cmd _cmd, Register _reg): AsmCmd(_cmd) {
 		reg = _reg;
 		regStr = GetReg(reg);
-		regMode = true;
 	}
 	
 	AsmUnary(Cmd _cmd, string str): AsmCmd(_cmd) {
 		regStr = str;
-		regMode = false;
 	}
 
 	void Print() {
-		if(regMode)
-			cout << "\t" << cmdStr << " \t" << regStr << endl;
-		else
-			cout << "\t" << cmdStr << " \tdword ptr " << regStr << "" << endl;
+		cout << "\t" << cmdStr << " \t" << regStr << endl;
 	}
 };
 
 class AsmBinary: public AsmUnary {
-	int regMode;
-
 protected:
 	string regSecondStr;
 	Register regSecond;
@@ -192,27 +183,19 @@ public:
 	AsmBinary(Cmd _cmd, Register _reg, Register __reg): AsmUnary(_cmd, _reg) {
 		regSecond = __reg;
 		regSecondStr = GetReg(regSecond);
-		regMode = 0;
 	}
 
 	AsmBinary(Cmd _cmd, Register _reg, string str): AsmUnary(_cmd, _reg) {
 		regSecondStr = str;
-		regMode = 1;
 	}
 
 	AsmBinary(Cmd _cmd, string str, Register _reg): AsmUnary(_cmd, str) {
 		regSecond = _reg;
 		regSecondStr = GetReg(regSecond);
-		regMode = 2;
 	}
 
 	void Print() {
-		cout << "\t" << cmdStr;
-		switch(regMode) {
-			case 0: cout << " \t" << regStr << ", " << regSecondStr << endl; break;
-			case 1: cout << " \t" << regStr << ", dword ptr " << regSecondStr << "" << endl; break;
-			case 2: cout << " \tdword ptr " << regStr << ", " << regSecondStr << endl; break;
-		}
+		cout << "\t" << cmdStr << " \t" << regStr << ", " << regSecondStr << endl;
 	}
 };
 

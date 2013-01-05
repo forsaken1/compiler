@@ -1,9 +1,11 @@
 {
-	int i = 0;
-	int j = 0;
+	int i = 0, j = 2;
 
-	if(i == 1)
+	if(i == 1) {
+		i = 3;
 		j = 1;
+	}
 
+	print("%d", i);
 	print("%d", j);
 }

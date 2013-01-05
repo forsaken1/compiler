@@ -56,6 +56,7 @@ public:
 	NodeCall(string, Node*);
 
 	void Print(int, bool);
+	void Generate(CodeGen*);
 };
 
 //--- NodeStruct ---
@@ -68,6 +69,7 @@ public:
 	NodeStruct(string, Node*);
 	
 	void Print(int, bool);
+	void Generate(CodeGen*);
 	string GetName();
 };
 
@@ -150,6 +152,7 @@ public:
 	NodeFunc(Symbol*, Node*, Node*, Node*);
 
 	void Print(int, bool);
+	void Generate(CodeGen*);
 	Symbol* GetType();
 };
 
@@ -188,6 +191,7 @@ public:
 	NodeIterationWhile(Node*, Node*);
 
 	void Print(int, bool);
+	void Generate(CodeGen*);
 };
 
 //--- NodeIterationDo ---
@@ -198,6 +202,7 @@ public:
 	NodeIterationDo(Node*, Node*);
 
 	void Print(int, bool);
+	void Generate(CodeGen*);
 };
 
 //--- NodeIterationFor ---
@@ -209,6 +214,7 @@ public:
 	NodeIterationFor(Node*, Node*, Node*, Node*);
 
 	void Print(int, bool);
+	void Generate(CodeGen*);
 };
 
 //--- NodeSelectionStmt ---
@@ -233,6 +239,7 @@ public:
 	NodeJumpStmt(string, Node*);
 
 	void Print(int, bool);
+	void Generate(CodeGen*);
 };
 
 #endif NODE_H

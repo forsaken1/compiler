@@ -89,7 +89,7 @@ void SymTableStack::Print() {
 		if( !sn->GetTable()->GetTableVar()->empty() ) {
 			for(map<string, Symbol*>::iterator it = sn->GetTable()->GetTableVar()->begin(); 
 			it != sn->GetTable()->GetTableVar()->end(); it++) {
-				cout << "\t" << it->first << "\t\tdb\t ?" << endl;
+				cout << "\t" << it->first << "\t\tdd\t ?" << endl;
 			}
 		}
 		sn = sn->GetNext();

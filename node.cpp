@@ -80,6 +80,10 @@ void NodeCall::Print(int i, bool b) {
 	cout << ")";
 }
 
+void NodeCall::Generate(CodeGen *cg) {
+	
+}
+
 //--- NodeStruct ---
 
 NodeStruct::NodeStruct(string _name, Node *_elem) {
@@ -98,6 +102,10 @@ void NodeStruct::Print(int i, bool b) {
 		DrawPath(i, b);
 		elem->Print(i + 1, false);
 	}
+}
+
+void NodeStruct::Generate(CodeGen *cg) {
+	
 }
 
 //--- NodeUnary ---
@@ -514,6 +522,10 @@ Symbol* NodeFunc::GetType() {
 	return returnValue;
 }
 
+void NodeFunc::Generate(CodeGen *cg) {
+	
+}
+
 //--- NodePrint ---
 
 NodePrint::NodePrint(Node *_format, Node *_expr) {
@@ -587,6 +599,10 @@ void NodeIterationWhile::Print(int i, bool b) {
 	stmt->Print(i + 1, false);
 }
 
+void NodeIterationWhile::Generate(CodeGen *cg) {
+	
+}
+
 //--- NodeIterationDo ---
 
 NodeIterationDo::NodeIterationDo(Node *_cond, Node *_stmt): NodeIterationWhile(_cond, _stmt) {}
@@ -598,6 +614,10 @@ void NodeIterationDo::Print(int i, bool b) {
 
 	DrawPath(i, b);
 	stmt->Print(i + 1, false);
+}
+
+void NodeIterationDo::Generate(CodeGen *cg) {
+	
 }
 
 //--- NodeIterationFor ---
@@ -627,6 +647,13 @@ void NodeIterationFor::Print(int i, bool b) {
 
 	DrawPath(i, b);
 	stmt->Print(i + 1, false);
+}
+
+void NodeIterationFor::Generate(CodeGen *cg) {
+	init->Generate(cg);
+
+	string labelTrue = _GetRandomId("label_for_");
+	string labelOut = _GetRandomId("label_for_");
 }
 
 //--- NodeSelectionStmt ---
@@ -694,4 +721,8 @@ void NodeJumpStmt::Print(int i, bool b) {
 		DrawPath(i, b);
 		expr->Print(i + 1, b);
 	}
+}
+
+void NodeJumpStmt::Generate(CodeGen *cg) {
+	
 }
