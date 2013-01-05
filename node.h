@@ -120,6 +120,8 @@ class NodeBinary: public Node {
 	void Less(CodeGen*);
 	void Equal(CodeGen*);
 	void NotEqual(CodeGen*);
+	void MoreEqual(CodeGen*);
+	void LessEqual(CodeGen*);
 
 	void PlusAssign(CodeGen*);
 	void MinusAssign(CodeGen*);

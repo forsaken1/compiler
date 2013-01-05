@@ -274,16 +274,16 @@ void NodeBinary::Generate(CodeGen *cg) {
 		case OPER_AND:					And(cg); break;
 		case OPER_OR:					Or(cg); break;
 		case OPER_EXCLUSIVE_OR:			Xor(cg); break;
-		case OPER_BINARY_AND:			break;
-		case OPER_BINARY_OR:			break;
 		case OPER_SHIFT_LEFT:			ShiftLeft(cg); break;
 		case OPER_SHIFT_RIGHT:			ShiftRight(cg); break;
 		case OPER_MORE:					More(cg); break;
 		case OPER_LESS:					Less(cg); break;
 		case OPER_EQUAL:				Equal(cg); break;
 		case OPER_NOT_EQUAL:			NotEqual(cg); break;
-		case OPER_MORE_OR_EQUAL:		break;
-		case OPER_LESS_OR_EQUAL:		break;
+		case OPER_MORE_OR_EQUAL:		MoreEqual(cg); break;
+		case OPER_LESS_OR_EQUAL:		LessEqual(cg); break;
+		case OPER_BINARY_AND:			break;
+		case OPER_BINARY_OR:			break;
 		case OPER_BINARY_AND_ASSIGN:	break;
 		case OPER_BINARY_OR_ASSIGN:		break;
 		case OPER_ARROW:				break;
@@ -366,6 +366,34 @@ void NodeBinary::ShiftLeft(CodeGen *cg) {
 void NodeBinary::ShiftRight(CodeGen *cg) {
 	cg->AddCommand(MOV, ECX, "1");
 	cg->AddCommand(RCR, EAX, CL);
+}
+
+void NodeBinary::MoreEqual(CodeGen *cg) {
+	cg->AddCommand(CMP, EAX, EBX);
+	cg->AddCommand(MOV, EAX, "0");
+
+	string labelTrue =  _GetRandomId("label_");
+	string labelFalse = _GetRandomId("label_");
+
+	cg->SetLabel(JGE, labelTrue);
+	cg->SetLabel(JMP, labelFalse);
+	cg->AddLabel(labelTrue);
+	cg->AddCommand(MOV, EAX, "1");
+	cg->AddLabel(labelFalse);
+}
+
+void NodeBinary::LessEqual(CodeGen *cg) {
+	cg->AddCommand(CMP, EAX, EBX);
+	cg->AddCommand(MOV, EAX, "0");
+
+	string labelTrue =  _GetRandomId("label_");
+	string labelFalse = _GetRandomId("label_");
+
+	cg->SetLabel(JLE, labelTrue);
+	cg->SetLabel(JMP, labelFalse);
+	cg->AddLabel(labelTrue);
+	cg->AddCommand(MOV, EAX, "1");
+	cg->AddLabel(labelFalse);
 }
 
 void NodeBinary::More(CodeGen *cg) {
