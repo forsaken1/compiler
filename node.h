@@ -220,6 +220,7 @@ public:
 	NodeSelectionStmt(Node*, Node*, Node*);
 
 	void Print(int, bool);
+	void Generate(CodeGen*);
 };
 
 //--- NodeJumpStmt ---

@@ -651,6 +651,36 @@ void NodeSelectionStmt::Print(int i, bool b) {
 	}
 }
 
+void NodeSelectionStmt::Generate(CodeGen *cg) {
+	string labelTrue = _GetRandomId("label_if_");
+	string labelFalse = _GetRandomId("label_if_");
+	string labelOut = _GetRandomId("label_if_");
+
+	expr->Generate(cg);
+	cg->AddCommand(POP, EAX);
+	cg->AddCommand(CMP, EAX, "1");
+
+	cg->SetLabel(JE, labelTrue);
+
+	if(falseStmt != NULL) {
+		cg->SetLabel(JNE, labelFalse);
+		cg->AddLabel(labelTrue);
+
+		trueStmt->Generate(cg);
+		cg->SetLabel(JMP, labelOut);
+		cg->AddLabel(labelFalse);
+
+		falseStmt->Generate(cg);
+	}
+	else {
+		cg->SetLabel(JMP, labelOut);
+		cg->AddLabel(labelTrue);
+
+		trueStmt->Generate(cg);
+	}
+	cg->AddLabel(labelOut);
+}
+
 //--- NodeJumpStmt ---
 
 NodeJumpStmt::NodeJumpStmt(string _name, Node *_expr) {

@@ -99,7 +99,7 @@ int main() {
 	//*/
 	///*
 	int __FROM_ = 1;
-	int __TO_   = 31;
+	int __TO_   = 33;
 	cout << endl << "Generation tests" << endl << endl;
 	for(int i = __FROM_; i <= __TO_; i++) { 
 		string str  = string("Debug\\compiler C tests\\generation\\" + to_string((_Longlong)i) + ".in");
