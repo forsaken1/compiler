@@ -55,7 +55,8 @@ enum Cmd {
 //--- Ternary operations ---
 	INVOKE,
 //--- Crt-functions ---
-	CRT_PRINTF
+	CRT_PRINTF,
+	CRT_SCANF
 };
 
 class AsmCmd {
@@ -113,11 +114,14 @@ protected:
 			case SUB:	return "sub";
 			case INVOKE: return "invoke";
 			case CRT_PRINTF: return "crt_printf";
+			case CRT_SCANF: return "crt_scanf";
 			default:	return "";
 		}
 	}
 
 public:
+	AsmCmd() {}
+
 	AsmCmd(Cmd _cmd) {
 		cmd = _cmd;
 		cmdStr = GetCmd(cmd);
@@ -138,6 +142,32 @@ public:
 
 	Cmd GetCmd() {
 		return cmd;
+	}
+};
+
+class AsmProc: public AsmCmd {
+	string name;
+
+public:
+	AsmProc(string _name): AsmCmd() {
+		name = _name;
+	}
+
+	void Print() {
+		cout << endl << name << " proc" << endl;
+	}
+};
+
+class AsmProcEnd: public AsmCmd {
+	string name;
+
+public:
+	AsmProcEnd(string _name): AsmCmd() {
+		name = _name;
+	}
+
+	void Print() {
+		cout << endl << name << " endp" << endl << endl;
 	}
 };
 
@@ -247,8 +277,16 @@ public:
 		command.push_back(new AsmCmd(label));
 	}
 
-	void SetLabel(Cmd op, string label) {
+	void CallLabel(Cmd op, string label) {
 		command.push_back(new AsmLabel(op, label));
+	}
+
+	void AddProc(string name) {
+		command.push_back(new AsmProc(name));
+	}
+
+	void AddProcEnd(string name) {
+		command.push_back(new AsmProcEnd(name));
 	}
 
 	void AddCommand(Cmd op) {

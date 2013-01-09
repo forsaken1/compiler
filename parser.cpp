@@ -231,10 +231,8 @@ Node* Parser::PostfixExpr() {
 			throw ParserException(currentToken, "Postfix expression without ')'");
 
 		Next();
-		if(args == NULL)
-			return new NodeUnary(FUNCTION_ARGUMENT, left);
 
-		return new NodeBinary(left, FUNCTION_ARGUMENT, args);
+		return new NodeCall(left->GetName(), args);
 	}
 	if(oper == SQUARE_LEFT_BRACKET) {
 		//проверка, что left - массив
@@ -342,7 +340,9 @@ Node* Parser::ExternalDecl() {
 	Node* def = FunctionDefinitionStmt();
 	
 	if(def == NULL) {
-		return StatementList(); //DeclList
+		if(simple)
+			return StatementList();
+		return DeclarationList();
 	}
 	return def;
 }
@@ -360,12 +360,26 @@ Node* Parser::Statement() {
 	if(link == NULL) link = IterationStmt();
 	if(link == NULL) link = JumpStmt();
 	if(link == NULL) link = PrintStmt();
+	if(link == NULL) link = PauseStmt();
 
 	return link;
 }
 
+Node* Parser::PauseStmt() {
+	if(oper == KEYWORD_PAUSE) {
+		Next();
+		if(oper != SEMICOLON)
+			throw ParserException(currentToken, "Pause statement without ';'");
+
+		Next();
+		return new NodePause();
+	}
+	return NULL;
+}
+
 Node* Parser::PrintStmt() {
-	if(oper == KEYWORD_PRINT) {
+	if(oper == KEYWORD_PRINT || oper == KEYWORD_SCAN) {
+		TokenValue _oper = oper;
 		Next();
 		if(oper != ROUND_LEFT_BRACKET)
 			throw ParserException(currentToken, "Print statement without '('");
@@ -386,7 +400,7 @@ Node* Parser::PrintStmt() {
 				throw ParserException(currentToken, "Print statement without ';'");
 
 			Next();
-			return new NodePrint(new NodeConst(random, format), NULL);
+			return new NodePrint(_oper, new NodeConst(random, format), NULL);
 		}
 		if(oper != COMMA)
 			throw ParserException(currentToken, "Print statement without ','");
@@ -405,7 +419,7 @@ Node* Parser::PrintStmt() {
 			throw ParserException(currentToken, "Print statement without ';'");
 
 		Next();
-		return new NodePrint(new NodeConst(random, format), expr);
+		return new NodePrint(_oper, new NodeConst(random, format), expr);
 	}
 	return NULL;
 }
@@ -450,6 +464,8 @@ Node* Parser::FunctionDefinitionStmt() {
 
 			if(stmt == NULL)
 				throw ParserException(currentToken, "Function definition without statement");
+
+			symStack->GetTopTable()->AddVar(new SymFunction(name->GetName()));  //symtable add
 
 			return new NodeFunc(type, name, args, stmt);
 		}
@@ -790,9 +806,7 @@ Node* Parser::Declarator(Symbol *type) {
 Node* Parser::DirectDeclarator(Symbol *type) {
 	if(currentToken->GetTokenType() == IDENTIFIER) {
 		if( !simple && symStack->GetTopTable()->VarAt(text) )
-			throw ParserException(currentToken, "Redefinition identifier");
-
-		symStack->GetTopTable()->AddVar(new SymVar(type, text));  //symtable add
+			throw SemanticException(currentToken, "Redefinition identifier");
 
 		string _oper = text;
 		Next();
@@ -804,6 +818,9 @@ Node* Parser::DirectDeclarator(Symbol *type) {
 
 			Next();
 		}
+		if(oper != ROUND_LEFT_BRACKET)
+			symStack->GetTopTable()->AddVar(new SymVar(type, _oper));  //symtable add
+
 		return new NodeVar(_oper);
 	}
 	return NULL;

@@ -30,6 +30,8 @@ class Parser {
 	Node* ExternalDecl();
 	Node* Statement();
 	Node* PrintStmt();
+	Node* PauseStmt();
+	Node* ScanStmt();
 	Node* StatementList();
 	Node* CompoundStmt();
 	Node* ExpressionStmt();

@@ -206,6 +206,8 @@ statement
     iteration-statement
     jump-statement
 	print-statement
+	pause-statement
+	scan-statement
 	
 print-statement
 	print ( string-literal ) ;

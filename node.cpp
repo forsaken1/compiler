@@ -81,7 +81,7 @@ void NodeCall::Print(int i, bool b) {
 }
 
 void NodeCall::Generate(CodeGen *cg) {
-	
+	//
 }
 
 //--- NodeStruct ---
@@ -120,7 +120,6 @@ string NodeUnary::GetOpName(TokenValue tv) {
 		case OPER_BINARY_NOT:	return "~";
 		case OPER_NOT:			return "!";
 
-		case FUNCTION_ARGUMENT: return "()";
 		case SIZE_OF:			return "sizeof";
 		case CAST_INT:			return "int";
 		case CAST_CHAR:			return "char";
@@ -227,7 +226,6 @@ string NodeBinary::GetOpName(TokenValue tv) {
 		case OPER_ARROW:				return "->";
 		case OPER_POINT:				return ".";
 		case ARRAY_INDEX:				return "[]";
-		case FUNCTION_ARGUMENT:			return "()";
 		default:						return "";
 	}
 }
@@ -297,7 +295,6 @@ void NodeBinary::Generate(CodeGen *cg) {
 		case OPER_ARROW:				break;
 		case OPER_POINT:				break;
 		case ARRAY_INDEX:				break;
-		case FUNCTION_ARGUMENT:			break;
 	}
 	cg->AddCommand(PUSH, EAX);
 }
@@ -383,8 +380,8 @@ void NodeBinary::MoreEqual(CodeGen *cg) {
 	string labelTrue =  _GetRandomId("label_");
 	string labelFalse = _GetRandomId("label_");
 
-	cg->SetLabel(JGE, labelTrue);
-	cg->SetLabel(JMP, labelFalse);
+	cg->CallLabel(JGE, labelTrue);
+	cg->CallLabel(JMP, labelFalse);
 	cg->AddLabel(labelTrue);
 	cg->AddCommand(MOV, EAX, "1");
 	cg->AddLabel(labelFalse);
@@ -397,8 +394,8 @@ void NodeBinary::LessEqual(CodeGen *cg) {
 	string labelTrue =  _GetRandomId("label_");
 	string labelFalse = _GetRandomId("label_");
 
-	cg->SetLabel(JLE, labelTrue);
-	cg->SetLabel(JMP, labelFalse);
+	cg->CallLabel(JLE, labelTrue);
+	cg->CallLabel(JMP, labelFalse);
 	cg->AddLabel(labelTrue);
 	cg->AddCommand(MOV, EAX, "1");
 	cg->AddLabel(labelFalse);
@@ -411,8 +408,8 @@ void NodeBinary::More(CodeGen *cg) {
 	string labelTrue =  _GetRandomId("label_");
 	string labelFalse = _GetRandomId("label_");
 
-	cg->SetLabel(JG, labelTrue);
-	cg->SetLabel(JMP, labelFalse);
+	cg->CallLabel(JG, labelTrue);
+	cg->CallLabel(JMP, labelFalse);
 	cg->AddLabel(labelTrue);
 	cg->AddCommand(MOV, EAX, "1");
 	cg->AddLabel(labelFalse);
@@ -425,8 +422,8 @@ void NodeBinary::Less(CodeGen *cg) {
 	string labelTrue =  _GetRandomId("label_");
 	string labelFalse = _GetRandomId("label_");
 
-	cg->SetLabel(JL, labelTrue);
-	cg->SetLabel(JMP, labelFalse);
+	cg->CallLabel(JL, labelTrue);
+	cg->CallLabel(JMP, labelFalse);
 	cg->AddLabel(labelTrue);
 	cg->AddCommand(MOV, EAX, "1");
 	cg->AddLabel(labelFalse);
@@ -439,8 +436,8 @@ void NodeBinary::Equal(CodeGen *cg) {
 	string labelTrue =  _GetRandomId("label_");
 	string labelFalse = _GetRandomId("label_");
 
-	cg->SetLabel(JE, labelTrue);
-	cg->SetLabel(JMP, labelFalse);
+	cg->CallLabel(JE, labelTrue);
+	cg->CallLabel(JMP, labelFalse);
 	cg->AddLabel(labelTrue);
 	cg->AddCommand(MOV, EAX, "1");
 	cg->AddLabel(labelFalse);
@@ -453,8 +450,8 @@ void NodeBinary::NotEqual(CodeGen *cg) {
 	string labelTrue =  _GetRandomId("label_");
 	string labelFalse = _GetRandomId("label_");
 
-	cg->SetLabel(JNE, labelTrue);
-	cg->SetLabel(JMP, labelFalse);
+	cg->CallLabel(JNE, labelTrue);
+	cg->CallLabel(JMP, labelFalse);
 	cg->AddLabel(labelTrue);
 	cg->AddCommand(MOV, EAX, "1");
 	cg->AddLabel(labelFalse);
@@ -523,18 +520,36 @@ Symbol* NodeFunc::GetType() {
 }
 
 void NodeFunc::Generate(CodeGen *cg) {
-	
+	cg->AddProc(name->GetName());
+	stmt->Generate(cg);
+	if(name->GetName() == "main")
+		cg->AddCommand(EXIT);
+
+	cg->AddProcEnd(name->GetName());
+}
+
+//--- NodePause ---
+
+void NodePause::Generate(CodeGen *cg) {
+	cg->AddCommand(INKEY);
 }
 
 //--- NodePrint ---
 
-NodePrint::NodePrint(Node *_format, Node *_expr) {
+NodePrint::NodePrint(TokenValue _type, Node *_format, Node *_expr) {
+	type = _type;
 	format = _format;
 	expr = _expr;
+
+	switch(type) {
+		case KEYWORD_PRINT: func = CRT_PRINTF; funcStrName = "print"; break;
+		case KEYWORD_SCAN:  func = CRT_SCANF;  funcStrName = "scan"; break;
+		default: break;
+	}
 }
 
 void NodePrint::Print(int i, bool b) {
-	cout << "print" << endl;
+	cout << funcStrName << endl;
 	DrawPath(i, b);
 	format->Print(i + 1, true);
 	if(expr != NULL) {
@@ -545,12 +560,12 @@ void NodePrint::Print(int i, bool b) {
 
 void NodePrint::Generate(CodeGen *cg) {
 	if(expr == NULL) {
-		cg->AddCommand(INVOKE, CRT_PRINTF, format->GetId());
+		cg->AddCommand(INVOKE, func, format->GetId());
 	}
 	else {
 		expr->Generate(cg);
 		cg->AddCommand(POP, EAX);
-		cg->AddCommand(INVOKE, CRT_PRINTF, format->GetId(), EAX);
+		cg->AddCommand(INVOKE, func, format->GetId(), EAX);
 	}
 }
 
@@ -608,11 +623,11 @@ void NodeIterationWhile::Generate(CodeGen *cg) {
 	cond->Generate(cg);
 	cg->AddCommand(POP, EAX);
 	cg->AddCommand(CMP, EAX, "0");
-	cg->SetLabel(JE, out);
+	cg->CallLabel(JE, out);
 	
 	stmt->Generate(cg);
 
-	cg->SetLabel(JMP, repeat);
+	cg->CallLabel(JMP, repeat);
 	cg->AddLabel(out);
 }
 
@@ -640,9 +655,9 @@ void NodeIterationDo::Generate(CodeGen *cg) {
 	cond->Generate(cg);
 	cg->AddCommand(POP, EAX);
 	cg->AddCommand(CMP, EAX, "0");
-	cg->SetLabel(JE, out);
+	cg->CallLabel(JE, out);
 	
-	cg->SetLabel(JMP, repeat);
+	cg->CallLabel(JMP, repeat);
 	cg->AddLabel(out);
 }
 
@@ -689,14 +704,14 @@ void NodeIterationFor::Generate(CodeGen *cg) {
 
 	cg->AddCommand(POP, EAX);
 	cg->AddCommand(CMP, EAX, "0");
-	cg->SetLabel(JE, out);
+	cg->CallLabel(JE, out);
 	
 	stmt->Generate(cg);
 
 	if(cond != NULL)
 		iter->Generate(cg);
 
-	cg->SetLabel(JMP, repeat);
+	cg->CallLabel(JMP, repeat);
 	cg->AddLabel(out);
 }
 
@@ -731,20 +746,20 @@ void NodeSelectionStmt::Generate(CodeGen *cg) {
 	cg->AddCommand(POP, EAX);
 	cg->AddCommand(CMP, EAX, "1");
 
-	cg->SetLabel(JE, labelTrue);
+	cg->CallLabel(JE, labelTrue);
 
 	if(falseStmt != NULL) {
-		cg->SetLabel(JNE, labelFalse);
+		cg->CallLabel(JNE, labelFalse);
 		cg->AddLabel(labelTrue);
 
 		trueStmt->Generate(cg);
-		cg->SetLabel(JMP, labelOut);
+		cg->CallLabel(JMP, labelOut);
 		cg->AddLabel(labelFalse);
 
 		falseStmt->Generate(cg);
 	}
 	else {
-		cg->SetLabel(JMP, labelOut);
+		cg->CallLabel(JMP, labelOut);
 		cg->AddLabel(labelTrue);
 
 		trueStmt->Generate(cg);

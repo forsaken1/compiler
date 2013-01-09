@@ -8,6 +8,20 @@ SymTable::SymTable() {
 	type = new map<string, Symbol*>();
 }
 
+void SymTable::Print() {
+	if( !c->empty() ) {
+		for(map<string, SymConst*>::iterator it = c->begin(); it != c->end(); it++) {
+			cout << "\t" << it->first << "\t\tdb\t'" << it->second->GetConst() << "', 0" << endl;
+		}
+	}
+	if( !var->empty() ) {
+		for(map<string, Symbol*>::iterator it = var->begin(); it != var->end(); it++) {
+			if(it->second->GetSymType() != FUNCTION)
+				cout << "\t" << it->first << "\t\tdd\t ?" << endl;
+		}
+	}
+}
+
 map<string, Symbol*>* SymTable::GetTableVar() {
 	return var;
 }
@@ -21,15 +35,15 @@ map<string, Symbol*>* SymTable::GetTableType() {
 }
 
 bool SymTable::VarAt(string name) {
-	return (*var)[name] == NULL ? false : true;
+	return (*var)[name] != NULL;
 }
 
 bool SymTable::ConstAt(string name) {
-	return (*c)[name] == NULL ? false : true;
+	return (*c)[name] != NULL;
 }
 
 bool SymTable::TypeAt(string name) {
-	return (*type)[name] == NULL ? false : true;
+	return (*type)[name] != NULL;
 }
 
 Symbol* SymTable::FindVar(string name) {
@@ -68,9 +82,11 @@ void SymTableStack::Push(SymTable *st) {
 	top = sn;
 }
 
-void SymTableStack::Pop() {
+SymTable* SymTableStack::Pop() {
+	SymTable *t = top->GetTable();
 	SymNode *sn = top;
 	top = sn->GetNext();
+	return t;
 }
 	
 SymTable* SymTableStack::GetTopTable() {
@@ -80,18 +96,7 @@ SymTable* SymTableStack::GetTopTable() {
 void SymTableStack::Print() {
 	SymNode *sn = top;
 	while(sn != NULL) {
-		if( !sn->GetTable()->GetTableConst()->empty() ) {
-			for(map<string, SymConst*>::iterator it = sn->GetTable()->GetTableConst()->begin(); 
-			it != sn->GetTable()->GetTableConst()->end(); it++) {
-				cout << "\t" << it->first << "\t\tdb\t'" << it->second->GetConst() << "', 0" << endl;
-			}
-		}
-		if( !sn->GetTable()->GetTableVar()->empty() ) {
-			for(map<string, Symbol*>::iterator it = sn->GetTable()->GetTableVar()->begin(); 
-			it != sn->GetTable()->GetTableVar()->end(); it++) {
-				cout << "\t" << it->first << "\t\tdd\t ?" << endl;
-			}
-		}
+		sn->GetTable()->Print();
 		sn = sn->GetNext();
 	}
 }

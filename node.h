@@ -160,12 +160,25 @@ public:
 
 class NodePrint: public Node {
 	Node *expr, *format;
+	TokenValue type;
+	Cmd func;
+	string funcStr, funcStrName;
 
 public:
-	NodePrint(Node*, Node*);
+	NodePrint(TokenValue, Node*, Node*);
 
 	void Print(int, bool);
 	void Generate(CodeGen*);
+};
+
+//--- NodePause ---
+
+class NodePause: public Node {
+public:
+	NodePause() {}
+
+	void Generate(CodeGen*);
+	void Print(int, bool) {}
 };
 
 //--- NodeStmt ---

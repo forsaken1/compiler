@@ -7,9 +7,22 @@
 
 using namespace std;
 
+enum SymbolType {
+	CONSTANT,
+	VARIABLE,
+	FUNCTION,
+	STRUCT,
+	ARRAY,
+	TYPE_INT,
+	TYPE_FLOAT,
+	TYPE_VOID,
+	TYPE_CHAR
+};
+
 class Symbol {
 protected:
 	string name;
+	SymbolType symType;
 
 public:
 	Symbol() {}
@@ -21,6 +34,10 @@ public:
 	virtual string GetName() {
 		return name;
 	}
+
+	virtual SymbolType GetSymType() {
+		return symType;
+	}
 };
 
 class SymConst: public Symbol {
@@ -29,6 +46,7 @@ class SymConst: public Symbol {
 public:
 	SymConst(string _name, string _constant): Symbol(_name) {
 		constant = _constant;
+		symType = CONSTANT;
 	}
 
 	string GetConst() {
@@ -42,6 +60,7 @@ class SymTypeVoid: public Symbol {
 public:
 	SymTypeVoid() {
 		name = "void";
+		symType = TYPE_VOID;
 	}
 };
 
@@ -49,6 +68,7 @@ class SymTypeChar: public Symbol {
 public:
 	SymTypeChar() {
 		name = "char";
+		symType = TYPE_CHAR;
 	}
 };
 
@@ -56,6 +76,7 @@ class SymTypeFloat: public Symbol {
 public:
 	SymTypeFloat() {
 		name = "float";
+		symType = TYPE_FLOAT;
 	}
 };
 
@@ -63,6 +84,7 @@ class SymTypeInteger: public Symbol {
 public:
 	SymTypeInteger() {
 		name = "int";
+		symType = TYPE_INT;
 	}
 };
 
@@ -71,11 +93,16 @@ class SymTypeArray: public Symbol {
 	int length;
 
 public:
-	
+	SymTypeArray() {
+		symType = ARRAY;
+	}
 };
 
 class SymTypeStruct: public Symbol {
-
+public:
+	SymTypeStruct() {
+		symType = STRUCT;
+	}
 };
 
 class SymTypePointer: public Symbol {
@@ -93,14 +120,18 @@ class SymVar: public Symbol {
 public:
 	SymVar(Symbol *_type, string _name): Symbol(_name) {
 		type = _type;
+		symType = VARIABLE;
 	}
 };
 
 //--- SymFunction ---
 
-class SymFunc: public Symbol {
-public:
+class SymFunction: public Symbol {
 
+public:
+	SymFunction(string _name): Symbol(_name) {
+		symType = FUNCTION;
+	}
 };
 
 //--- SymTable ---
@@ -111,6 +142,8 @@ class SymTable {
 
 public:
 	SymTable();
+
+	void Print();
 
 	map<string, Symbol*>* GetTableVar();
 	map<string, Symbol*>* GetTableType();
@@ -151,8 +184,9 @@ public:
 	SymTableStack();
 
 	void Push(SymTable*);
-	void Pop();
 	void Print();
+	
+	SymTable* Pop();
 	SymTable* GetTopTable();
 };
 

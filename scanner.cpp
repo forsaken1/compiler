@@ -318,4 +318,6 @@ void Scanner::InitKeyWordsTable() {
 	keyWord["void"] =     KEYWORD_VOID;
 	keyWord["while"] =    KEYWORD_WHILE;
 	keyWord["print"] =    KEYWORD_PRINT;
+	keyWord["pause"] =    KEYWORD_PAUSE;
+	keyWord["scan"] =	  KEYWORD_SCAN;
 }

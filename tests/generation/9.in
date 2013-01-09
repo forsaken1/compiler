@@ -1,4 +1,4 @@
-{
+void main() {
 	int a = 1;
 	a++;
 	print("%d", a);
