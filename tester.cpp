@@ -58,7 +58,7 @@ int main() {
 			ERROR_TEST_COUNT++;
 	}
 	//*/
-	///*
+	/*
 	int _FROM = 1;
 	int _TO   = 88; //88
 	cout << endl << "Parser tests" << endl << endl;
@@ -88,8 +88,8 @@ int main() {
 			ERROR_TEST_COUNT++;
 	}
 	//*/
-	/*
-	int __FROM_ = 1;
+	///*
+	int __FROM_ = 32;
 	int __TO_   = 39;
 	cout << endl << "Generation tests" << endl << endl;
 	for(int i = __FROM_; i <= __TO_; i++) { 

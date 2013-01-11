@@ -4,6 +4,7 @@
 #include "scanner.h"
 #include "sym_table.h"
 #include "codegen.h"
+#include "lib.h"
 
 //--- Node ---
 
@@ -98,8 +99,6 @@ class NodeUnary: public Node {
 	void BinaryNot(CodeGen*);
 	void Not(CodeGen*);
 
-	string GetOpName(TokenValue tv);
-
 public:
 	NodeUnary(TokenValue, Node*);
 
@@ -141,8 +140,6 @@ class NodeBinary: public Node {
 	void DivideAssign(CodeGen*);
 	void DivideByModAssign(CodeGen*);
 	void ExclusiveOrAssign(CodeGen*);
-
-	string GetOpName(TokenValue tv);
 
 public:
 	NodeBinary(Node*, TokenValue, Node*);
@@ -189,7 +186,7 @@ public:
 	NodePause() {}
 
 	void Generate(CodeGen*);
-	void Print(int, bool) {}
+	void Print(int, bool);
 };
 
 //--- NodeSafeStmt ---
@@ -269,11 +266,17 @@ public:
 //--- NodeJumpStmt ---
 
 class NodeJumpStmt: public Node {
+	TokenValue tv;
 	string name;
 	Node *expr;
 
+	void Return(CodeGen*);
+	void Continue(CodeGen*);
+	void Break(CodeGen*);
+	void Goto(CodeGen*);
+
 public:
-	NodeJumpStmt(string, Node*);
+	NodeJumpStmt(TokenValue, Node*);
 
 	void Print(int, bool);
 	void Generate(CodeGen*);

@@ -1,20 +1,5 @@
 #include "parser.h"
 
-//--- GetRandomId ---
-
-#include <stdlib.h>
-
-string GetRandomId(string str) {
-	string random = str;
-
-	for(int j = 0; j < 10; j++)
-		random += to_string( (_Longlong)(rand() % 10) );
-
-	return random;
-}
-
-//--------------------
-
 Parser::Parser(Scanner *_scanner, bool _simple, bool print) {
 	scanner = _scanner;
 	currentToken = NULL;
@@ -670,10 +655,10 @@ Node* Parser::JumpStmt() {
 			throw ParserException(currentToken, "Jump statement without ';'");
 
 		Next();
-		return new NodeJumpStmt("goto", ident);
+		return new NodeJumpStmt(KEYWORD_GOTO, ident);
 	}
 	if(oper == KEYWORD_CONTINUE || oper == KEYWORD_BREAK) {
-		string _oper = text;
+		TokenValue _oper = oper;
 		Next();
 		if(oper != SEMICOLON)
 			throw ParserException(currentToken, "Jump statement without ';'");
@@ -689,7 +674,7 @@ Node* Parser::JumpStmt() {
 			throw ParserException(currentToken, "Jump statement without ';'");
 
 		Next();
-		return new NodeJumpStmt("return", expr);
+		return new NodeJumpStmt(KEYWORD_RETURN, expr);
 	}
 	return NULL;
 }

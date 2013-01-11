@@ -1,3 +1,10 @@
-int main() {
-	print("Hello");
+void main() {
+	int i = 0;
+
+	while(i < 10) {
+		i++;
+		print("%d", i);
+		if(i == 5)
+			return;
+	}
 }
