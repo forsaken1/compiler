@@ -42,7 +42,7 @@ void MakeFiles(string dir, int from, int to) {
 }
 
 int main() {
-	int ALL_TESTS_SUCCESSFUL = 0;
+	int ERROR_TEST_COUNT = 0;
 	/*
 	int FROM = 1;
 	int TO	 = 60; //60
@@ -51,17 +51,14 @@ int main() {
 		string str  = string("Debug\\compiler L tests\\scanner\\" + to_string((_Longlong)i) + ".in");
 		string str1 = string("tests/scanner/" + to_string((_Longlong)i) + ".out");
 
-		const char* s = str.c_str();
-		const char* s1 = str1.c_str();
-		
 		freopen("output.txt", "w", stdout);
-		system(s);
+		system(str.c_str());
 		freopen("CON", "w", stdout);
-		if( !test(i, CompareFiles("output.txt", s1)) )
-			ALL_TESTS_SUCCESSFUL++;
+		if( !test(i, CompareFiles("output.txt", str1.c_str())) )
+			ERROR_TEST_COUNT++;
 	}
 	//*/
-	/*
+	///*
 	int _FROM = 1;
 	int _TO   = 88; //88
 	cout << endl << "Parser tests" << endl << endl;
@@ -69,14 +66,11 @@ int main() {
 		string str  = string("Debug\\compiler S tests\\parser\\" + to_string((_Longlong)i) + ".in");
 		string str1 = string("tests/parser/" + to_string((_Longlong)i) + ".out");
 
-		const char* s = str.c_str();
-		const char* s1 = str1.c_str();
-		
 		freopen("output.txt", "w", stdout);
-		system(s);
+		system(str.c_str());
 		freopen("CON", "w", stdout);
-		if( !test(i, CompareFiles("output.txt", s1)) )
-			ALL_TESTS_SUCCESSFUL++;
+		if( !test(i, CompareFiles("output.txt", str1.c_str())) )
+			ERROR_TEST_COUNT++;
 	}
 	//*/
 	/*
@@ -87,17 +81,14 @@ int main() {
 		string str  = string("Debug\\compiler s tests\\semantics\\" + to_string((_Longlong)i) + ".in");
 		string str1 = string("tests/semantics/" + to_string((_Longlong)i) + ".out");
 
-		const char* s = str.c_str();
-		const char* s1 = str1.c_str();
-		
 		freopen("output.txt", "w", stdout);
-		system(s);
+		system(str.c_str());
 		freopen("CON", "w", stdout);
-		if( !test(i, CompareFiles("output.txt", s1)) )
-			ALL_TESTS_SUCCESSFUL++;
+		if( !test(i, CompareFiles("output.txt", str1.c_str())) )
+			ERROR_TEST_COUNT++;
 	}
 	//*/
-	///*
+	/*
 	int __FROM_ = 1;
 	int __TO_   = 39;
 	cout << endl << "Generation tests" << endl << endl;
@@ -105,19 +96,16 @@ int main() {
 		string str  = string("Debug\\compiler C tests\\generation\\" + to_string((_Longlong)i) + ".in");
 		string str1 = string("tests/generation/" + to_string((_Longlong)i) + ".out");
 
-		const char* s = str.c_str();
-		const char* s1 = str1.c_str();
-		
 		freopen("log.txt", "w", stdout);
-		system(s);
+		system(str.c_str());
 		freopen("output.txt", "w", stdout);
 		system("out");
 		freopen("CON", "w", stdout);
-		if( !test(i, CompareFiles("output.txt", s1)) )
-			ALL_TESTS_SUCCESSFUL++;
+		if( !test(i, CompareFiles("output.txt", str1.c_str())) )
+			ERROR_TEST_COUNT++;
 	}
 	//*/
-	if(ALL_TESTS_SUCCESSFUL == 0)
+	if(ERROR_TEST_COUNT == 0)
 		cout << endl << "All test successful =)";
 	else
 		cout << endl << "Several test error =(";
@@ -128,3 +116,6 @@ int main() {
 	fclose(stdout);
 	return 0;
 }
+
+
+

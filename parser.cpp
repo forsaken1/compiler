@@ -22,6 +22,7 @@ Parser::Parser(Scanner *_scanner, bool _simple, bool print) {
 	top = NULL;
 	simple = _simple;
 	symStack = new SymTableStack();
+	semantic = new SymTableStack();
 	InitTables();
 
 	Parse();
@@ -342,6 +343,7 @@ Node* Parser::ExternalDecl() {
 	if(def == NULL) {
 		if(simple)
 			return StatementList();
+
 		return DeclarationList();
 	}
 	return def;
@@ -543,12 +545,14 @@ Node* Parser::ExpressionStmt() {
 		Next();
 		if(link == NULL)
 			return new NodeStmt("(stmt)", NULL, NULL);
+
+		return new NodeSafeStmt(link);
 	}
 	else 
 		if(link != NULL)
 			throw ParserException(currentToken, "Expression without ';'");
 
-	return link;
+	return NULL;
 }
 
 Node* Parser::SelectionStmt() {
@@ -711,6 +715,7 @@ Node* Parser::Declaration() {
 
 	if(type != NULL) {
 		Node *init = InitDeclaratorList(type);
+
 		if(oper != SEMICOLON)
 			throw ParserException(currentToken, "Init declarator list without ';'");
 		else
@@ -738,35 +743,34 @@ Symbol* Parser::TypeSpec() {
 Node* Parser::InitDeclaratorList(Symbol *type) {
 	Node *first = InitDeclarator(type);
 
-	if(first != NULL) {
-		if(oper != COMMA)
-			return first;
-
+	if(oper == COMMA) {
 		Next();
 		Node *second = InitDeclaratorList(type);
-		if(second == NULL) {
-			return first;
-		}
-		return new NodeBinary(first, COMMA, second);
+
+		if(second == NULL)
+			throw ParserException(currentToken, "Expected expression after ','");
+
+		return new NodeSafeStmt(first, second);
 	}
+	if(first != NULL)
+		return new NodeSafeStmt(first);
+
 	return NULL;
 }
 
 Node* Parser::InitDeclarator(Symbol *type) {
 	Node *decl = Declarator(type);
 	
-	if(decl != NULL) {
-		if(oper != OPER_ASSIGN)
-			return decl;
-
+	if(oper == OPER_ASSIGN) {
 		Next();
 		Node *init = Initialiser();
+
 		if(init == NULL)
 			throw ParserException(currentToken, "Init declarator without initialiser");
 
 		return new NodeBinary(decl, OPER_ASSIGN, init);
 	}
-	return NULL;
+	return decl;
 }
 
 Node* Parser::Initialiser() {

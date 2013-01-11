@@ -192,6 +192,19 @@ public:
 	void Print(int, bool) {}
 };
 
+//--- NodeSafeStmt ---
+
+class NodeSafeStmt: public Node {
+	Node *first, *second;
+
+public:
+	NodeSafeStmt(Node*);
+	NodeSafeStmt(Node*, Node*);
+
+	void Print(int, bool);
+	void Generate(CodeGen*);
+};
+
 //--- NodeStmt ---
 
 class NodeStmt: public Node {

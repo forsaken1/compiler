@@ -157,13 +157,13 @@ void NodeUnary::Generate(CodeGen *cg) {
 	cg->AddCommand(POP, EAX);
 
 	switch(opval) {
-		case OPER_DEC: Dec(cg); break;
-		case OPER_INC: Inc(cg); break;
-		case OPER_MULTIPLY: Dereference(cg); break;
-		case OPER_PLUS: Plus(cg); break;
-		case OPER_MINUS: Minus(cg); break;
-		case OPER_BINARY_NOT: BinaryNot(cg); break;
-		case OPER_NOT: Not(cg); break;
+		case OPER_DEC:			Dec(cg); break;
+		case OPER_INC:			Inc(cg); break;
+		case OPER_MULTIPLY:		Dereference(cg); break;
+		case OPER_PLUS:			Plus(cg); break;
+		case OPER_MINUS:		Minus(cg); break;
+		case OPER_BINARY_NOT:	BinaryNot(cg); break;
+		case OPER_NOT:			Not(cg); break;
 	}
 	cg->AddCommand(PUSH, EAX);
 }
@@ -309,7 +309,9 @@ void NodeBinary::Generate(CodeGen *cg) {
 //------------------------------
 void NodeBinary::Comma(CodeGen *cg) {
 	left->Generate(cg);
+	cg->AddCommand(POP, EAX);
 	right->Generate(cg);
+	cg->AddCommand(POP, EAX);
 }
 
 void NodeBinary::Assign(CodeGen *cg) {
@@ -529,9 +531,8 @@ Symbol* NodeFunc::GetType() {
 void NodeFunc::Generate(CodeGen *cg) {
 	cg->AddProc(name->GetName());
 	stmt->Generate(cg);
-	if(name->GetName() == "main")
-		cg->AddCommand(EXIT);
 
+	cg->AddCommand(RET);
 	cg->AddProcEnd(name->GetName());
 }
 
@@ -581,6 +582,44 @@ void NodePrint::Generate(CodeGen *cg) {
 	}
 }
 
+//--- NodeSafeStmt ---
+
+NodeSafeStmt::NodeSafeStmt(Node *_first) {
+	first = _first;
+	second = NULL;
+}
+
+NodeSafeStmt::NodeSafeStmt(Node *_first, Node *_second) {
+	first = _first;
+	second = _second;
+}
+
+void NodeSafeStmt::Print(int i, bool b) {
+	if(second == NULL) {
+		first->Print(i, b);
+		return;
+	}
+	cout << "(,)" << endl;
+	if(first != NULL) {
+		DrawPath(i, b);
+		first->Print(i + 1, second != NULL);
+	}
+	if(second != NULL) {
+		DrawPath(i, b);
+		second->Print(i + 1, false);
+	}
+}
+
+void NodeSafeStmt::Generate(CodeGen *cg) {
+	if(first != NULL) {
+		first->Generate(cg);
+		cg->AddCommand(POP, EAX);
+	}
+	if(second != NULL) {
+		second->Generate(cg);
+	}
+}
+
 //--- NodeStmt ---
 
 NodeStmt::NodeStmt(string _name, Node *_first, Node *_second) {
@@ -602,11 +641,12 @@ void NodeStmt::Print(int i, bool b) {
 }
 
 void NodeStmt::Generate(CodeGen *cg) {
-	if(first != NULL)
+	if(first != NULL) {
 		first->Generate(cg);
-
-	if(second != NULL)
+	}
+	if(second != NULL) {
 		second->Generate(cg);
+	}
 }
 
 //--- NodeIterationWhile ---
@@ -663,6 +703,7 @@ void NodeIterationDo::Generate(CodeGen *cg) {
 	cg->AddLabel(repeat);
 	
 	stmt->Generate(cg);
+	cg->AddCommand(POP, EAX);
 
 	cond->Generate(cg);
 	cg->AddCommand(POP, EAX);
@@ -706,13 +747,15 @@ void NodeIterationFor::Generate(CodeGen *cg) {
 	string repeat = _GetRandomId("label_for_");
 	string out = _GetRandomId("label_for_");
 
-	if(init != NULL)
+	if(init != NULL) {
 		init->Generate(cg);
+	}
 
 	cg->AddLabel(repeat);
 
-	if(cond != NULL)
+	if(cond != NULL) {
 		cond->Generate(cg);
+	}
 
 	cg->AddCommand(POP, EAX);
 	cg->AddCommand(CMP, EAX, "0");
@@ -720,8 +763,10 @@ void NodeIterationFor::Generate(CodeGen *cg) {
 	
 	stmt->Generate(cg);
 
-	if(cond != NULL)
+	if(cond != NULL) {
 		iter->Generate(cg);
+		cg->AddCommand(POP, EAX);
+	}
 
 	cg->CallLabel(JMP, repeat);
 	cg->AddLabel(out);
@@ -765,6 +810,7 @@ void NodeSelectionStmt::Generate(CodeGen *cg) {
 		cg->AddLabel(labelTrue);
 
 		trueStmt->Generate(cg);
+
 		cg->CallLabel(JMP, labelOut);
 		cg->AddLabel(labelFalse);
 
@@ -796,4 +842,5 @@ void NodeJumpStmt::Print(int i, bool b) {
 
 void NodeJumpStmt::Generate(CodeGen *cg) {
 	
+	//cg->AddCommand(PUSH, EAX);
 }
