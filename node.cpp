@@ -81,7 +81,14 @@ void NodeCall::Print(int i, bool b) {
 }
 
 void NodeCall::Generate(CodeGen *cg) {
-	//
+	args->Generate(cg);
+	cg->AddCommand(CALL, name);
+}
+
+//--- NodeArg ---
+
+void NodeArg::Generate(CodeGen *cg) {
+	cg->AddCommand(PUSH, name);
 }
 
 //--- NodeStruct ---
@@ -563,9 +570,14 @@ void NodePrint::Generate(CodeGen *cg) {
 		cg->AddCommand(INVOKE, func, format->GetId());
 	}
 	else {
-		expr->Generate(cg);
-		cg->AddCommand(POP, EAX);
-		cg->AddCommand(INVOKE, func, format->GetId(), EAX);
+		if(func == CRT_PRINTF) {
+			expr->Generate(cg);
+			cg->AddCommand(POP, EAX);
+			cg->AddCommand(INVOKE, func, format->GetId(), EAX);
+		}
+		else {
+			cg->AddCommand(INVOKE, func, format->GetId(), expr->GetName());
+		}
 	}
 }
 

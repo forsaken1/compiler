@@ -230,7 +230,7 @@ public:
 };
 
 class AsmTernary: public AsmCmd {
-	bool onlyString;
+	bool first, second;
 
 protected:
 	string funcStr, format, regStr;
@@ -238,27 +238,38 @@ protected:
 	Cmd func;
 
 public:
+	AsmTernary(Cmd _cmd, Cmd _func, string str, string _reg): AsmCmd(_cmd) {
+		func = _func;
+		format = str;
+		regStr = _reg;
+		funcStr = GetCmd(func);
+		first = false;
+		second = true;
+	}
+
 	AsmTernary(Cmd _cmd, Cmd _func, string str, Register _reg): AsmCmd(_cmd) {
 		func = _func;
 		format = str;
 		reg = _reg;
 		funcStr = GetCmd(func);
 		regStr = GetReg(reg);
-		onlyString = false;
+		first = false;
+		second = false;
 	}
 
 	AsmTernary(Cmd _cmd, Cmd _func, string str): AsmCmd(_cmd) {
 		func = _func;
 		format = str;
 		funcStr = GetCmd(func);
-		onlyString = true;
+		first = true;
+		second = false;
 	}
 
 	void Print() {
-		if(onlyString)
+		if(first)
 			cout << "\t" << cmdStr << "\t" << funcStr << ", addr " << format << endl;
 		else
-			cout << "\t" << cmdStr << "\t" << funcStr << ", addr " << format << ", " << regStr << endl;
+			cout << "\t" << cmdStr << "\t" << funcStr << ", addr " << format << (second ? ", addr " : ", ") << regStr << endl;
 	}
 };
 
@@ -318,6 +329,10 @@ public:
 	}
 
 	void AddCommand(Cmd op, Cmd func, string str, Register right) {
+		command.push_back(new AsmTernary(op, func, str, right));
+	}
+
+	void AddCommand(Cmd op, Cmd func, string str, string right) {
 		command.push_back(new AsmTernary(op, func, str, right));
 	}
 };

@@ -264,7 +264,7 @@ Node* Parser::PostfixExpr() {
 }
 
 Node* Parser::ArgumentExprList() {
-	Node *left = AssignmentExpr();
+	Node *left = (NodeArg*)AssignmentExpr();
 
 	if(oper == COMMA) {
 		Next();
@@ -453,6 +453,9 @@ Node* Parser::FunctionDefinitionStmt() {
 					return new NodeBinary(name, COMMA, InitDeclaratorList(type));
 				}
 			}
+			//SymTable *table = new SymTable();
+			//symStack->Push(table);
+
 			Next();
 			Node* args = FunctionArgumentList();
 
@@ -465,6 +468,7 @@ Node* Parser::FunctionDefinitionStmt() {
 			if(stmt == NULL)
 				throw ParserException(currentToken, "Function definition without statement");
 
+			//symStack->Pop();
 			symStack->GetTopTable()->AddVar(new SymFunction(name->GetName()));  //symtable add
 
 			return new NodeFunc(type, name, args, stmt);

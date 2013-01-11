@@ -36,6 +36,7 @@ public:
 //--- NodeVar ---
 
 class NodeVar: public Node {
+protected:
 	string name;
 
 public:
@@ -56,6 +57,15 @@ public:
 	NodeCall(string, Node*);
 
 	void Print(int, bool);
+	void Generate(CodeGen*);
+};
+
+//--- NodeArg ---
+
+class NodeArg: public NodeVar {
+public:
+	NodeArg(string _name): NodeVar(_name) {}
+
 	void Generate(CodeGen*);
 };
 
@@ -147,6 +157,7 @@ public:
 class NodeFunc: public Node {
 	Symbol *returnValue;
 	Node *stmt, *args, *name;
+	SymTable *symTable;
 
 public:
 	NodeFunc(Symbol*, Node*, Node*, Node*);
