@@ -44,7 +44,7 @@ public:
 	NodeVar(string);
 
 	void Print(int, bool);
-	void Generate(CodeGen*);
+	virtual void Generate(CodeGen*);
 	Symbol* GetType(SymTable*);
 	string GetName();
 };
@@ -58,6 +58,15 @@ public:
 	NodeCall(string, Node*);
 
 	void Print(int, bool);
+	void Generate(CodeGen*);
+};
+
+//--- NodeLocalVar ---
+
+class NodeLocalVar: public NodeVar {
+public:
+	NodeLocalVar(string _name): NodeVar(_name) {}
+
 	void Generate(CodeGen*);
 };
 

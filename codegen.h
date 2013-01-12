@@ -288,7 +288,7 @@ public:
 		command.push_back(new AsmCmd(label));
 	}
 
-	void CallLabel(Cmd op, string label) {
+	void JumpLabel(Cmd op, string label) {
 		command.push_back(new AsmLabel(op, label));
 	}
 

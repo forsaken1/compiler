@@ -487,7 +487,7 @@ Node* Parser::FunctionArgument() {
 		if(init == NULL)
 			throw ParserException(currentToken, "Function argument list without arguments");
 
-		return init;
+		return new NodeLocalVar(init->GetName());
 	}
 	return NULL;
 }

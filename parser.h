@@ -31,7 +31,6 @@ class Parser {
 	Node* Statement();
 	Node* PrintStmt();
 	Node* PauseStmt();
-	Node* ScanStmt();
 	Node* StatementList();
 	Node* CompoundStmt();
 	Node* ExpressionStmt();
