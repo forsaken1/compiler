@@ -61,9 +61,11 @@ NodeCall::NodeCall(string _name, Node *_args): NodeVar(_name) {
 }
 
 void NodeCall::Print(int i, bool b) { 
-	cout << "(";
-	args->Print(i + 1, true);
-	cout << ")";
+	cout << name << endl;
+	if(args != NULL) {
+		DrawPath(i + 1, b);
+		args->Print(i + 2, false);
+	}
 }
 
 void NodeCall::Generate(CodeGen *cg) {
@@ -77,7 +79,7 @@ void NodeCall::Generate(CodeGen *cg) {
 //--- NodeLocalVar ---
 
 void NodeLocalVar::Generate(CodeGen *cg) {
-	cg->AddCommand(MOV, name, ESP);
+	cg->AddCommand(POP, name);
 }
 
 //--- NodeArg ---
@@ -455,9 +457,8 @@ void NodeFunc::Print(int i, bool b) {
 
 	if(args != NULL) {
 		DrawPath(i, b);
-		args->Print(i + 1, stmt == NULL ? false : true);
+		args->Print(i + 1, stmt != NULL);
 	}
-
 	if(stmt != NULL) {
 		DrawPath(i, b);
 		stmt->Print(i + 1, false);
@@ -471,8 +472,11 @@ Symbol* NodeFunc::GetType() {
 void NodeFunc::Generate(CodeGen *cg) {
 	cg->AddProc(name->GetName());
 
-	if(args != NULL)
+	if(args != NULL) {
+		cg->AddCommand(POP, "_return");
 		args->Generate(cg);
+		cg->AddCommand(PUSH, "_return");
+	}
 
 	stmt->Generate(cg);
 	cg->AddCommand(RET);
@@ -544,7 +548,7 @@ NodeSafeStmt::NodeSafeStmt(Node *_first, Node *_second) {
 
 void NodeSafeStmt::Print(int i, bool b) {
 	if(second == NULL) {
-		first->Print(i, b);
+		first->Print(i - 1, false);
 		return;
 	}
 	cout << "(,)" << endl;
@@ -797,8 +801,10 @@ void NodeJumpStmt::Generate(CodeGen *cg) {
 }
 
 void NodeJumpStmt::Return(CodeGen *cg) {
-	if(expr == NULL)
-		cg->AddCommand(RET);
+	if(expr != NULL)
+		expr->Generate(cg);
+
+	cg->AddCommand(RET);
 }
 
 void NodeJumpStmt::Continue(CodeGen *cg) {

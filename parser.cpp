@@ -258,7 +258,7 @@ Node* Parser::ArgumentExprList() {
 		if(right == NULL)
 			throw ParserException(currentToken, "Argument list without expression after ','");
 
-		return new NodeBinary(left, COMMA, right);
+		return new NodeStmt("(,)", left, right);
 	}
 	return left;
 }
@@ -432,12 +432,12 @@ Node* Parser::FunctionDefinitionStmt() {
 					}
 					if(oper == COMMA) {
 						Next();
-						return new NodeBinary(node, COMMA, InitDeclaratorList(type));
+						return new NodeStmt("(,)", node, InitDeclaratorList(type));
 					}
 				}
 				if(oper == COMMA) {
 					Next();
-					return new NodeBinary(name, COMMA, InitDeclaratorList(type));
+					return new NodeStmt("(,)", name, InitDeclaratorList(type));
 				}
 			}
 			//SymTable *table = new SymTable();
@@ -465,16 +465,16 @@ Node* Parser::FunctionDefinitionStmt() {
 }
 
 Node* Parser::FunctionArgumentList() {
-	Node *args = FunctionArgument();
+	Node *first = FunctionArgument();
 
-	if(args != NULL) {
+	if(first != NULL) {
 		if(oper != COMMA)
-			return args;
+			return first;
 
 		Next();
-		Node *link = FunctionArgumentList();
+		Node *second = FunctionArgumentList();
 
-		return new NodeBinary(args, COMMA, link);
+		return new NodeStmt("(,)", second, first);
 	}
 	return NULL;
 }
@@ -937,4 +937,5 @@ void Parser::InitTables() {
 
 	symStack->GetTopTable()->AddVar(new SymVar(new SymTypeInteger(), "true"));
 	symStack->GetTopTable()->AddVar(new SymVar(new SymTypeInteger(), "false"));
+	symStack->GetTopTable()->AddVar(new SymVar(new SymTypeInteger(), "_return"));
 }
