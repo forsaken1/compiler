@@ -73,6 +73,9 @@ void NodeCall::Generate(CodeGen *cg) {
 		args->Generate(cg);
 
 	cg->AddCommand(CALL, name);
+	if(args != NULL)
+		cg->AddCommand(POP, EAX);
+
 	cg->AddCommand(PUSH, EAX);
 }
 
@@ -801,9 +804,11 @@ void NodeJumpStmt::Generate(CodeGen *cg) {
 }
 
 void NodeJumpStmt::Return(CodeGen *cg) {
-	if(expr != NULL)
+	if(expr != NULL) {
+		cg->AddCommand(POP, "_return");
 		expr->Generate(cg);
-
+		cg->AddCommand(PUSH, "_return");
+	}
 	cg->AddCommand(RET);
 }
 
@@ -812,7 +817,7 @@ void NodeJumpStmt::Continue(CodeGen *cg) {
 }
 
 void NodeJumpStmt::Break(CodeGen *cg) {
-	//cg->
+	
 }
 
 void NodeJumpStmt::Goto(CodeGen *cg) {
