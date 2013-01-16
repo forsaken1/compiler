@@ -7,9 +7,8 @@ Parser::Parser(Scanner *_scanner, bool _simple, bool print) {
 	top = NULL;
 	simple = _simple;
 	symStack = new SymTableStack();
-	semantic = new SymTableStack();
-	InitTables();
 
+	InitTables();
 	Parse();
 	
 	if(print) 
@@ -142,7 +141,7 @@ Node* Parser::DeleteLeftRecursion(int priority, Node *left) {
 }
 
 Node* Parser::CastExpr() {
-	if(symStack->GetTopTable()->TypeAt(text) && lastToken->GetTokenValue() == ROUND_LEFT_BRACKET) {
+	if(symStack->TypeAt(text) && lastToken->GetTokenValue() == ROUND_LEFT_BRACKET) {
 		Next();
 		if(oper == ROUND_RIGHT_BRACKET) {
 			Next();
@@ -164,7 +163,7 @@ Node* Parser::UnaryExpr() {
 		if(oper == ROUND_LEFT_BRACKET) {
 			Next();
 			string type = text;
-			if(!symStack->GetTopTable()->TypeAt(text)) //SYM_STACK
+			if(!symStack->TypeAt(text)) //SYM_STACK
 				ParserException(currentToken, "Undefinite type");
 
 			Next();
@@ -250,7 +249,7 @@ Node* Parser::PostfixExpr() {
 }
 
 Node* Parser::ArgumentExprList() {
-	Node *left = (NodeArg*)AssignmentExpr();
+	Node *left = AssignmentExpr();
 
 	if(oper == COMMA) {
 		Next();
@@ -266,10 +265,10 @@ Node* Parser::ArgumentExprList() {
 Node* Parser::PrimaryExpr() {
 	if(currentToken->GetTokenType() == IDENTIFIER) {
 		if(!simple) {
-			if( !symStack->GetTopTable()->VarAt(text) )
+			if( !symStack->VarAt(text) )
 				throw SemanticException(currentToken, "Undeclared identifier");
 
-			if( symStack->GetTopTable()->TypeAt(text) )
+			if( symStack->TypeAt(text) )
 				throw SemanticException(currentToken, "Using type as identifier");
 		}
 		Next();
@@ -426,6 +425,7 @@ Node* Parser::FunctionDefinitionStmt() {
 				if(oper == OPER_ASSIGN) {
 					Next();
 					Node *node = new NodeBinary(name, OPER_ASSIGN, Initialiser());
+
 					if(oper == SEMICOLON) {
 						Next();
 						return node;
@@ -440,8 +440,8 @@ Node* Parser::FunctionDefinitionStmt() {
 					return new NodeStmt("(,)", name, InitDeclaratorList(type));
 				}
 			}
-			//SymTable *table = new SymTable();
-			//symStack->Push(table);
+			SymTable *table = new SymTable();
+			symStack->Push(table);
 
 			Next();
 			Node* args = FunctionArgumentList();
@@ -455,10 +455,10 @@ Node* Parser::FunctionDefinitionStmt() {
 			if(stmt == NULL)
 				throw ParserException(currentToken, "Function definition without statement");
 
-			//symStack->Pop();
+			symStack->Pop();
 			symStack->GetTopTable()->AddVar(new SymFunction(name->GetName()));  //symtable add
 
-			return new NodeFunc(type, name, args, stmt);
+			return new NodeFunc(table, type, name, args, stmt);
 		}
 	}
 	return NULL;
@@ -717,10 +717,10 @@ Symbol* Parser::TypeSpec() {
 	if(str != NULL) {
 		//добавление struct в SymTable
 	}
-	if(str == NULL && symStack->GetTopTable()->TypeAt(text)) {
+	if(str == NULL && symStack->TypeAt(text)) {
 		string _oper = text;
 		Next();
-		return symStack->GetTopTable()->FindType(_oper);
+		return symStack->FindType(_oper);
 	}
 	return NULL;
 }
@@ -798,7 +798,7 @@ Node* Parser::Declarator(Symbol *type) {
 
 Node* Parser::DirectDeclarator(Symbol *type) {
 	if(currentToken->GetTokenType() == IDENTIFIER) {
-		if( !simple && symStack->GetTopTable()->VarAt(text) )
+		if( !simple && symStack->VarAt(text) )
 			throw SemanticException(currentToken, "Redefinition identifier");
 
 		string _oper = text;

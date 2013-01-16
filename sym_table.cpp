@@ -9,6 +9,7 @@ SymTable::SymTable() {
 }
 
 void SymTable::Print() {
+	cout << endl << "data segment" << endl;
 	if( !c->empty() ) {
 		for(map<string, SymConst*>::iterator it = c->begin(); it != c->end(); it++) {
 			cout << "\t" << it->first << "\t\tdb\t'" << it->second->GetConst() << "', 0" << endl;
@@ -20,6 +21,7 @@ void SymTable::Print() {
 				cout << "\t" << it->first << "\t\tdd\t ?" << endl;
 		}
 	}
+	cout << endl << "data ends" << endl << endl;
 }
 
 map<string, Symbol*>* SymTable::GetTableVar() {
@@ -35,27 +37,36 @@ map<string, Symbol*>* SymTable::GetTableType() {
 }
 
 bool SymTable::VarAt(string name) {
-	return (*var)[name] != NULL;
+	return var->count(name);
 }
 
 bool SymTable::ConstAt(string name) {
-	return (*c)[name] != NULL;
+	return c->count(name);
 }
 
 bool SymTable::TypeAt(string name) {
-	return (*type)[name] != NULL;
+	return type->count(name);
 }
 
 Symbol* SymTable::FindVar(string name) {
-	return (*var)[name];
+	if( var->count(name) )
+		return (*var)[name];
+
+	return NULL;
 }
 
 SymConst* SymTable::FindConst(string name) {
-	return (*c)[name];
+	if( c->count(name) )
+		return (*c)[name];
+
+	return NULL;
 }
 
 Symbol* SymTable::FindType(string name) {
-	return (*type)[name];
+	if( type->count(name) )
+		return (*type)[name];
+
+	return NULL;
 }
 	
 void SymTable::AddVar(Symbol *symb) {
@@ -99,4 +110,82 @@ void SymTableStack::Print() {
 		sn->GetTable()->Print();
 		sn = sn->GetNext();
 	}
+}
+
+bool SymTableStack::VarAt(string name) {
+	SymNode *sn = top;
+	while(sn != NULL) {
+		if(sn->GetTable()->VarAt(name))
+			return true;
+
+		sn = sn->GetNext();
+	}
+	return false;
+}
+
+bool SymTableStack::ConstAt(string name) {
+	SymNode *sn = top;
+	while(sn != NULL) {
+		if(sn->GetTable()->ConstAt(name))
+			return true;
+
+		sn = sn->GetNext();
+	}
+	return false;
+}
+
+bool SymTableStack::TypeAt(string name) {
+	SymNode *sn = top;
+	while(sn != NULL) {
+		if(sn->GetTable()->TypeAt(name))
+			return true;
+
+		sn = sn->GetNext();
+	}
+	return false;
+}
+
+Symbol* SymTableStack::FindVar(string name) {
+	SymNode *sn = top;
+	while(sn != NULL) {
+		if(sn->GetTable()->VarAt(name))
+			return sn->GetTable()->FindVar(name);
+
+		sn = sn->GetNext();
+	}
+	return NULL;
+}
+
+Symbol* SymTableStack::FindType(string name) {
+	SymNode *sn = top;
+	while(sn != NULL) {
+		if(sn->GetTable()->TypeAt(name))
+			return sn->GetTable()->FindType(name);
+
+		sn = sn->GetNext();
+	}
+	return NULL;
+}
+
+SymConst* SymTableStack::FindConst(string name) {
+	SymNode *sn = top;
+	while(sn != NULL) {
+		if(sn->GetTable()->ConstAt(name))
+			return sn->GetTable()->FindConst(name);
+
+		sn = sn->GetNext();
+	}
+	return NULL;
+}
+
+void SymTableStack::AddVar(Symbol *sym) {
+	top->GetTable()->AddVar(sym);
+}
+
+void SymTableStack::AddConst(SymConst *sym) {
+	top->GetTable()->AddConst(sym);
+}
+
+void SymTableStack::AddType(Symbol *sym) {
+	top->GetTable()->AddType(sym);
 }

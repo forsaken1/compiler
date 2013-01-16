@@ -186,6 +186,18 @@ public:
 	void Push(SymTable*);
 	void Print();
 	
+	bool VarAt(string);
+	bool ConstAt(string);
+	bool TypeAt(string);
+
+	Symbol* FindVar(string);
+	Symbol* FindType(string);
+	SymConst* FindConst(string);
+	
+	void AddVar(Symbol*);
+	void AddConst(SymConst*);
+	void AddType(Symbol*);
+
 	SymTable* Pop();
 	SymTable* GetTopTable();
 };

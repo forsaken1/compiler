@@ -63,8 +63,8 @@ NodeCall::NodeCall(string _name, Node *_args): NodeVar(_name) {
 void NodeCall::Print(int i, bool b) { 
 	cout << name << endl;
 	if(args != NULL) {
-		DrawPath(i + 1, b);
-		args->Print(i + 2, false);
+		DrawPath(i, b);
+		args->Print(i + 1, false);
 	}
 }
 
@@ -73,6 +73,7 @@ void NodeCall::Generate(CodeGen *cg) {
 		args->Generate(cg);
 
 	cg->AddCommand(CALL, name);
+
 	if(args != NULL)
 		cg->AddCommand(POP, EAX);
 
@@ -83,12 +84,6 @@ void NodeCall::Generate(CodeGen *cg) {
 
 void NodeLocalVar::Generate(CodeGen *cg) {
 	cg->AddCommand(POP, name);
-}
-
-//--- NodeArg ---
-
-void NodeArg::Generate(CodeGen *cg) {
-	cg->AddCommand(PUSH, name);
 }
 
 //--- NodeStruct ---
@@ -447,11 +442,12 @@ void NodeBinary::Add(CodeGen *cg) {
 
 //--- NodeFunc ---
 
-NodeFunc::NodeFunc(Symbol *_returnValue, Node *_name, Node *_args, Node *_stmt) {
+NodeFunc::NodeFunc(SymTable *_table, Symbol *_returnValue, Node *_name, Node *_args, Node *_stmt) {
 	returnValue = _returnValue;
 	stmt = _stmt;
 	name = _name;
 	args = _args;
+	table = _table;
 }
 
 void NodeFunc::Print(int i, bool b) {
@@ -473,6 +469,8 @@ Symbol* NodeFunc::GetType() {
 }
 
 void NodeFunc::Generate(CodeGen *cg) {
+	table->Print();
+
 	cg->AddProc(name->GetName());
 
 	if(args != NULL) {

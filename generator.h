@@ -12,7 +12,6 @@ public:
 
 		cout << ".686" << endl << ".model flat, stdcall" << endl << endl;
 		cout << "include \\masm32\\include\\masm32rt.inc" << endl << endl;
-		cout << ".data" << endl;
 
 		pr->GetSymStack()->Print();
 
