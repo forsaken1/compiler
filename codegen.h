@@ -11,7 +11,9 @@ enum Register {
 	EBX,
 	ECX,
 	EDX,
+
 	ESP,
+	ESP1,
 
 	CL
 };
@@ -71,7 +73,9 @@ protected:
 			case EBX:	return "ebx";
 			case ECX:	return "ecx";
 			case EDX:	return "edx";
-			case ESP:	return "esp";
+
+			case ESP:	return "[esp]";
+			case ESP1:	return "[esp+4]";
 
 			case CL:	return "cl";
 			default:	return "";

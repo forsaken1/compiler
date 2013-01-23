@@ -13,12 +13,11 @@ protected:
 	void DrawPath(int, bool);
 
 public:
-	virtual void Print(int i, bool b) {}
-	virtual void Generate(CodeGen *cg) {}
-	virtual string GetId() { return ""; }
-	virtual string GetName() { return ""; }
-
-	Symbol* GetType(SymTable *symTable) { return NULL; }
+	virtual void	Print(int i, bool b)	{}
+	virtual void	Generate(CodeGen *cg)	{}
+	virtual string	GetId()					{ return ""; }
+	virtual string	GetName()				{ return ""; }
+	virtual Symbol* GetType(SymTable *symTable) { return NULL; }
 };
 
 //--- NodeConst ---
@@ -43,7 +42,7 @@ protected:
 public:
 	NodeVar(string);
 
-	void Print(int, bool);
+	virtual void Print(int, bool);
 	virtual void Generate(CodeGen*);
 	Symbol* GetType(SymTable*);
 	string GetName();

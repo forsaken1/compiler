@@ -9,19 +9,20 @@ SymTable::SymTable() {
 }
 
 void SymTable::Print() {
-	cout << endl << "data segment" << endl;
+	if( !c->empty() || !var->empty()) {
+		cout << endl << "data segment" << endl;
+	}
 	if( !c->empty() ) {
-		for(map<string, SymConst*>::iterator it = c->begin(); it != c->end(); it++) {
+		for(map<string, SymConst*>::iterator it = c->begin(); it != c->end(); it++)
 			cout << "\t" << it->first << "\t\tdb\t'" << it->second->GetConst() << "', 0" << endl;
-		}
 	}
 	if( !var->empty() ) {
-		for(map<string, Symbol*>::iterator it = var->begin(); it != var->end(); it++) {
+		for(map<string, Symbol*>::iterator it = var->begin(); it != var->end(); it++)
 			if(it->second->GetSymType() != FUNCTION)
 				cout << "\t" << it->first << "\t\tdd\t ?" << endl;
-		}
 	}
-	cout << endl << "data ends" << endl << endl;
+	if( !c->empty() || !var->empty())
+		cout << endl << "data ends" << endl << endl;
 }
 
 map<string, Symbol*>* SymTable::GetTableVar() {

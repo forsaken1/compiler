@@ -158,11 +158,11 @@ void NodeUnary::Minus(CodeGen *cg) {
 }
 
 void NodeUnary::BinaryNot(CodeGen *cg) {
-	
+	cg->AddCommand(NOT, EAX); ////
 }
 
 void NodeUnary::Not(CodeGen *cg) {
-
+	cg->AddCommand(NOT, EAX); ////
 }
 
 void NodeUnary::Dec(CodeGen *cg) {
@@ -310,7 +310,30 @@ void NodeBinary::ExclusiveOrAssign(CodeGen *cg) {
 	cg->AddCommand(XOR, left->GetName(), EAX);
 	cg->AddCommand(PUSH, left->GetName());
 }
+
+void NodeBinary::BinaryAndAssign(CodeGen *cg) {
+	right->Generate(cg);
+	cg->AddCommand(POP, EAX);
+	cg->AddCommand(AND, left->GetName(), EAX);
+	cg->AddCommand(PUSH, left->GetName());
+}
+
+void NodeBinary::BinaryOrAssign(CodeGen *cg) {
+	right->Generate(cg);
+	cg->AddCommand(POP, EAX);
+	cg->AddCommand(OR, left->GetName(), EAX);
+	cg->AddCommand(PUSH, left->GetName());
+}
+
 //------------------------------
+
+void NodeBinary::BinaryAnd(CodeGen *cg) {
+	cg->AddCommand(AND, EAX, EBX);
+}
+
+void NodeBinary::BinaryOr(CodeGen *cg) {
+	cg->AddCommand(OR, EAX, EBX);
+}
 
 void NodeBinary::ShiftLeft(CodeGen *cg) {
 	cg->AddCommand(MOV, ECX, "1");
@@ -513,6 +536,7 @@ void NodePrint::Print(int i, bool b) {
 	cout << funcStrName << endl;
 	DrawPath(i, b);
 	format->Print(i + 1, true);
+
 	if(expr != NULL) {
 		DrawPath(i, b);
 		expr->Print(i + 1, false);
@@ -549,7 +573,7 @@ NodeSafeStmt::NodeSafeStmt(Node *_first, Node *_second) {
 
 void NodeSafeStmt::Print(int i, bool b) {
 	if(second == NULL) {
-		first->Print(i - 1, false);
+		first->Print(i, false);
 		return;
 	}
 	cout << "(,)" << endl;
@@ -620,8 +644,8 @@ void NodeIterationWhile::Print(int i, bool b) {
 }
 
 void NodeIterationWhile::Generate(CodeGen *cg) {
-	string repeat = GetRandomId("label_while_");
-	string out = GetRandomId("label_while_");
+	string repeat = GetRandomId("label_while_repeat_");
+	string out = GetRandomId("label_while_out_");
 
 	cg->AddLabel(repeat);
 
@@ -630,7 +654,11 @@ void NodeIterationWhile::Generate(CodeGen *cg) {
 	cg->AddCommand(CMP, EAX, "0");
 	cg->JumpLabel(JE, out);
 	
+	//cg->AddCommand(PUSH, repeat);
+	//cg->AddCommand(PUSH, out);
 	stmt->Generate(cg);
+	//cg->AddCommand(POP, EAX);
+	//cg->AddCommand(POP, EAX);
 
 	cg->JumpLabel(JMP, repeat);
 	cg->AddLabel(out);
@@ -650,12 +678,16 @@ void NodeIterationDo::Print(int i, bool b) {
 }
 
 void NodeIterationDo::Generate(CodeGen *cg) {
-	string repeat = GetRandomId("label_do_");
-	string out = GetRandomId("label_do_");
+	string repeat = GetRandomId("label_do_repeat_");
+	string out = GetRandomId("label_do_out_");
 
 	cg->AddLabel(repeat);
 	
+	//cg->AddCommand(PUSH, out);
+	//cg->AddCommand(PUSH, repeat);
 	stmt->Generate(cg);
+	//cg->AddCommand(POP, EAX);
+	//cg->AddCommand(POP, EAX);
 
 	cond->Generate(cg);
 	cg->AddCommand(POP, EAX);
@@ -680,30 +712,26 @@ void NodeIterationFor::Print(int i, bool b) {
 		DrawPath(i, b);
 		init->Print(i + 1, true);
 	}
-
 	if(cond != NULL) {
 		DrawPath(i, b);
 		cond->Print(i + 1, true);
 	}
-
 	if(iter != NULL) {
 		DrawPath(i, b);
 		iter->Print(i + 1, true);
 	}
-
 	DrawPath(i, b);
 	stmt->Print(i + 1, false);
 }
 
 void NodeIterationFor::Generate(CodeGen *cg) {
-	string repeat = GetRandomId("label_for_");
-	string out = GetRandomId("label_for_");
+	string repeat = GetRandomId("label_for_repeat_");
+	string out = GetRandomId("label_for_out_");
 
 	if(init != NULL) {
 		init->Generate(cg);
 		cg->AddCommand(POP, EAX);
 	}
-
 	cg->AddLabel(repeat);
 
 	if(cond != NULL) {
@@ -713,7 +741,11 @@ void NodeIterationFor::Generate(CodeGen *cg) {
 		cg->JumpLabel(JE, out);
 	}
 	
+	//cg->AddCommand(PUSH, out);
+	//cg->AddCommand(PUSH, repeat);
 	stmt->Generate(cg);
+	//cg->AddCommand(POP, EAX);
+	//cg->AddCommand(POP, EAX);
 
 	if(iter != NULL) {
 		iter->Generate(cg);
@@ -737,7 +769,7 @@ void NodeSelectionStmt::Print(int i, bool b) {
 	expr->Print(i + 1, true);
 
 	DrawPath(i, b);
-	trueStmt->Print(i + 1, falseStmt == NULL ? false : true);
+	trueStmt->Print(i + 1, falseStmt != NULL);
 
 	if(falseStmt != NULL) {
 		DrawPath(i, b);
@@ -746,9 +778,9 @@ void NodeSelectionStmt::Print(int i, bool b) {
 }
 
 void NodeSelectionStmt::Generate(CodeGen *cg) {
-	string labelTrue = GetRandomId("label_if_");
-	string labelFalse = GetRandomId("label_if_");
-	string labelOut = GetRandomId("label_if_");
+	string labelTrue = GetRandomId("label_if_true_");
+	string labelFalse = GetRandomId("label_if_false_");
+	string labelOut = GetRandomId("label_if_out_");
 
 	expr->Generate(cg);
 	cg->AddCommand(POP, EAX);
@@ -811,11 +843,11 @@ void NodeJumpStmt::Return(CodeGen *cg) {
 }
 
 void NodeJumpStmt::Continue(CodeGen *cg) {
-
+	cg->AddCommand(JMP, EAX);
 }
 
 void NodeJumpStmt::Break(CodeGen *cg) {
-	
+	cg->AddCommand(JMP, EAX);
 }
 
 void NodeJumpStmt::Goto(CodeGen *cg) {
