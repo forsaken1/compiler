@@ -38,6 +38,8 @@ public:
 	virtual SymbolType GetSymType() {
 		return symType;
 	}
+
+	virtual int GetLength() { return 0; }
 };
 
 class SymConst: public Symbol {
@@ -93,8 +95,14 @@ class SymTypeArray: public Symbol {
 	int length;
 
 public:
-	SymTypeArray() {
+	SymTypeArray(Symbol *_elemType, string _name, int _l): Symbol(_name) {
+		elemType = _elemType;
+		length = _l;
 		symType = ARRAY;
+	}
+
+	int GetLength() {
+		return length;
 	}
 };
 
@@ -127,10 +135,16 @@ public:
 //--- SymFunction ---
 
 class SymFunction: public Symbol {
+	Symbol *type;
 
 public:
-	SymFunction(string _name): Symbol(_name) {
+	SymFunction(Symbol *_type, string _name): Symbol(_name) {
+		type = _type;
 		symType = FUNCTION;
+	}
+
+	SymbolType GetReturnType() {
+		return type->GetSymType();
 	}
 };
 

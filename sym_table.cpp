@@ -17,9 +17,14 @@ void SymTable::Print() {
 			cout << "\t" << it->first << "\t\tdb\t'" << it->second->GetConst() << "', 0" << endl;
 	}
 	if( !var->empty() ) {
-		for(map<string, Symbol*>::iterator it = var->begin(); it != var->end(); it++)
+		for(map<string, Symbol*>::iterator it = var->begin(); it != var->end(); it++) {
+			if(it->second->GetSymType() == ARRAY) {
+				cout << "\t" << it->first << "\t\tdd\t " << it->second->GetLength() << " dup(0)" << endl;
+				continue;
+			}
 			if(it->second->GetSymType() != FUNCTION)
 				cout << "\t" << it->first << "\t\tdd\t ?" << endl;
+		}
 	}
 	if( !c->empty() || !var->empty())
 		cout << endl << "data ends" << endl << endl;

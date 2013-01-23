@@ -217,7 +217,9 @@ Node* Parser::PostfixExpr() {
 
 		Next();
 
-		return new NodeCall(left->GetName(), args);
+		SymbolType type = ( (SymFunction*)( symStack->FindVar(left->GetName()) ) )->GetReturnType();
+
+		return new NodeCall(type, left->GetName(), args);
 	}
 	if(oper == SQUARE_LEFT_BRACKET) {
 		//проверка, что left - массив
@@ -456,7 +458,7 @@ Node* Parser::FunctionDefinitionStmt() {
 				throw ParserException(currentToken, "Function definition without statement");
 
 			symStack->Pop();
-			symStack->GetTopTable()->AddVar(new SymFunction(name->GetName()));  //symtable add
+			symStack->GetTopTable()->AddVar(new SymFunction(type, name->GetName()));  //symtable add
 
 			return new NodeFunc(table, type, name, args, stmt);
 		}
@@ -805,14 +807,24 @@ Node* Parser::DirectDeclarator(Symbol *type) {
 		Next();
 		if(oper == SQUARE_LEFT_BRACKET) {
 			Next();
-			Node *link = ConditionalExpr();
+			int length = 0;
+
+			if(currentToken->GetTokenType() == CONST_INTEGER) {
+				length = atoi(text.c_str());
+				Next();
+			}
+			else
+				throw ParserException(currentToken, "Array declaration without length");
+
 			if(oper != SQUARE_RIGHT_BRACKET)
 				throw ParserException(currentToken, "Array declaration without ']'");
 
+			symStack->AddVar(new SymTypeArray(type, _oper, length));
 			Next();
+			return new NodeVar(_oper);
 		}
 		if(oper != ROUND_LEFT_BRACKET)
-			symStack->GetTopTable()->AddVar(new SymVar(type, _oper));  //symtable add
+			symStack->AddVar(new SymVar(type, _oper));  //symtable add
 
 		return new NodeVar(_oper);
 	}
@@ -937,5 +949,4 @@ void Parser::InitTables() {
 
 	symStack->GetTopTable()->AddVar(new SymVar(new SymTypeInteger(), "true"));
 	symStack->GetTopTable()->AddVar(new SymVar(new SymTypeInteger(), "false"));
-	symStack->GetTopTable()->AddVar(new SymVar(new SymTypeInteger(), "_return"));
 }

@@ -31,6 +31,7 @@ public:
 	void Print(int, bool);
 	void Generate(CodeGen*);
 	string GetId();
+	string GetName();
 };
 
 //--- NodeVar ---
@@ -52,9 +53,10 @@ public:
 
 class NodeCall: public NodeVar {
 	Node *args;
+	SymbolType type;
 
 public:
-	NodeCall(string, Node*);
+	NodeCall(SymbolType, string, Node*);
 
 	void Print(int, bool);
 	void Generate(CodeGen*);
@@ -132,7 +134,12 @@ class NodeBinary: public Node {
 	void NotEqual(CodeGen*);
 	void MoreEqual(CodeGen*);
 	void LessEqual(CodeGen*);
+	void BinaryAnd(CodeGen*);
+	void BinaryOr(CodeGen*);
+	void ArrayIndex(CodeGen*);
 
+	void BinaryAndAssign(CodeGen*);
+	void BinaryOrAssign(CodeGen*);
 	void PlusAssign(CodeGen*);
 	void MinusAssign(CodeGen*);
 	void MultiplyAssign(CodeGen*);

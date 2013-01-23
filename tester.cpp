@@ -90,9 +90,11 @@ int main() {
 	//*/
 	///*
 	int __FROM_ = 1;
-	int __TO_   = 47;
+	int __TO_   = 47; //47
 	cout << endl << "Generation tests" << endl << endl;
 	for(int i = __FROM_; i <= __TO_; i++) { 
+		//if(i == 40 || i == 41) continue;
+
 		string str  = string("Debug\\compiler C tests\\generation\\" + to_string((_Longlong)i) + ".in");
 		string str1 = string("tests/generation/" + to_string((_Longlong)i) + ".out");
 

@@ -28,6 +28,10 @@ string NodeConst::GetId() {
 	return id;
 }
 
+string NodeConst::GetName() {
+	return constant; 
+}
+
 void NodeConst::Generate(CodeGen *cg) {
 	cg->AddCommand(PUSH, constant);
 }
@@ -56,7 +60,8 @@ string NodeVar::GetName() {
 
 //--- NodeCall ---
 
-NodeCall::NodeCall(string _name, Node *_args): NodeVar(_name) {
+NodeCall::NodeCall(SymbolType _type, string _name, Node *_args): NodeVar(_name) {
+	type = _type;
 	args = _args;
 }
 
@@ -73,11 +78,9 @@ void NodeCall::Generate(CodeGen *cg) {
 		args->Generate(cg);
 
 	cg->AddCommand(CALL, name);
-
-	if(args != NULL)
-		cg->AddCommand(POP, EAX);
-
-	cg->AddCommand(PUSH, EAX);
+	
+	if(type == TYPE_VOID)
+		cg->AddCommand(PUSH, EAX);
 }
 
 //--- NodeLocalVar ---
@@ -211,6 +214,9 @@ void NodeBinary::Generate(CodeGen *cg) {
 		case OPER_DIVIDE_ASSIGN:		DivideAssign(cg); return;
 		case OPER_DIVIDE_BY_MOD_ASSIGN:	DivideByModAssign(cg); return;	
 		case OPER_EXCLUSIVE_OR_ASSIGN:	ExclusiveOrAssign(cg); return;
+		case OPER_BINARY_AND_ASSIGN:	BinaryAndAssign(cg); return;
+		case OPER_BINARY_OR_ASSIGN:		BinaryOrAssign(cg); return;
+		case ARRAY_INDEX:				ArrayIndex(cg); return;
 	}
 	
 	left->Generate(cg);
@@ -235,14 +241,16 @@ void NodeBinary::Generate(CodeGen *cg) {
 		case OPER_NOT_EQUAL:			NotEqual(cg); break;
 		case OPER_MORE_OR_EQUAL:		MoreEqual(cg); break;
 		case OPER_LESS_OR_EQUAL:		LessEqual(cg); break;
-		case OPER_BINARY_AND:			break;
-		case OPER_BINARY_OR:			break;
-		case OPER_BINARY_AND_ASSIGN:	break;
-		case OPER_BINARY_OR_ASSIGN:		break;
+		case OPER_BINARY_AND:			BinaryAnd(cg); break;
+		case OPER_BINARY_OR:			BinaryOr(cg); break;
 		case OPER_ARROW:				break;
 		case OPER_POINT:				break;
-		case ARRAY_INDEX:				break;
 	}
+	cg->AddCommand(PUSH, EAX);
+}
+
+void NodeBinary::ArrayIndex(CodeGen *cg) {
+	cg->AddCommand(MOV, EAX, left->GetName() + " + " + right->GetName());
 	cg->AddCommand(PUSH, EAX);
 }
 
@@ -497,9 +505,9 @@ void NodeFunc::Generate(CodeGen *cg) {
 	cg->AddProc(name->GetName());
 
 	if(args != NULL) {
-		cg->AddCommand(POP, "_return");
+		cg->AddCommand(POP, EBP);
 		args->Generate(cg);
-		cg->AddCommand(PUSH, "_return");
+		cg->AddCommand(PUSH, EBP);
 	}
 
 	stmt->Generate(cg);
@@ -654,14 +662,13 @@ void NodeIterationWhile::Generate(CodeGen *cg) {
 	cg->AddCommand(CMP, EAX, "0");
 	cg->JumpLabel(JE, out);
 	
-	//cg->AddCommand(PUSH, repeat);
-	//cg->AddCommand(PUSH, out);
+	cg->GetStack()->Push(new Record(repeat, out));
 	stmt->Generate(cg);
-	//cg->AddCommand(POP, EAX);
-	//cg->AddCommand(POP, EAX);
 
 	cg->JumpLabel(JMP, repeat);
 	cg->AddLabel(out);
+	
+	cg->GetStack()->Pop();
 }
 
 //--- NodeIterationDo ---
@@ -683,11 +690,8 @@ void NodeIterationDo::Generate(CodeGen *cg) {
 
 	cg->AddLabel(repeat);
 	
-	//cg->AddCommand(PUSH, out);
-	//cg->AddCommand(PUSH, repeat);
+	cg->GetStack()->Push(new Record(repeat, out));
 	stmt->Generate(cg);
-	//cg->AddCommand(POP, EAX);
-	//cg->AddCommand(POP, EAX);
 
 	cond->Generate(cg);
 	cg->AddCommand(POP, EAX);
@@ -696,6 +700,8 @@ void NodeIterationDo::Generate(CodeGen *cg) {
 	
 	cg->JumpLabel(JMP, repeat);
 	cg->AddLabel(out);
+	
+	cg->GetStack()->Pop();
 }
 
 //--- NodeIterationFor ---
@@ -741,11 +747,8 @@ void NodeIterationFor::Generate(CodeGen *cg) {
 		cg->JumpLabel(JE, out);
 	}
 	
-	//cg->AddCommand(PUSH, out);
-	//cg->AddCommand(PUSH, repeat);
+	cg->GetStack()->Push(new Record(repeat, out));
 	stmt->Generate(cg);
-	//cg->AddCommand(POP, EAX);
-	//cg->AddCommand(POP, EAX);
 
 	if(iter != NULL) {
 		iter->Generate(cg);
@@ -753,6 +756,8 @@ void NodeIterationFor::Generate(CodeGen *cg) {
 	}
 	cg->JumpLabel(JMP, repeat);
 	cg->AddLabel(out);
+	
+	cg->GetStack()->Pop();
 }
 
 //--- NodeSelectionStmt ---
@@ -835,19 +840,19 @@ void NodeJumpStmt::Generate(CodeGen *cg) {
 
 void NodeJumpStmt::Return(CodeGen *cg) {
 	if(expr != NULL) {
-		cg->AddCommand(POP, "_return");
+		cg->AddCommand(POP, EBP);
 		expr->Generate(cg);
-		cg->AddCommand(PUSH, "_return");
+		cg->AddCommand(PUSH, EBP);
 	}
 	cg->AddCommand(RET);
 }
 
 void NodeJumpStmt::Continue(CodeGen *cg) {
-	cg->AddCommand(JMP, EAX);
+	cg->AddCommand(JMP, cg->GetStack()->GetTop()->first);
 }
 
 void NodeJumpStmt::Break(CodeGen *cg) {
-	cg->AddCommand(JMP, EAX);
+	cg->AddCommand(JMP, cg->GetStack()->GetTop()->second);
 }
 
 void NodeJumpStmt::Goto(CodeGen *cg) {

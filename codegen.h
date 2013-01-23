@@ -13,7 +13,7 @@ enum Register {
 	EDX,
 
 	ESP,
-	ESP1,
+	EBP,
 
 	CL
 };
@@ -74,8 +74,8 @@ protected:
 			case ECX:	return "ecx";
 			case EDX:	return "edx";
 
-			case ESP:	return "[esp]";
-			case ESP1:	return "[esp+4]";
+			case ESP:	return "esp";
+			case EBP:	return "ebp";
 
 			case CL:	return "cl";
 			default:	return "";
@@ -277,11 +277,63 @@ public:
 	}
 };
 
+class Record {
+	Record *next;
+
+public:
+	string first, second;
+
+	Record(string f, string s) {
+		first = f;
+		second = s;
+	}
+
+	void SetNext(Record *n) {
+		next = n;
+	}
+
+	Record* GetNext() {
+		return next;
+	}
+};
+
 class CodeGen {
+	class Stack {
+		Record *top;
+		
+	public:
+		Stack() {
+			top = NULL;	 
+		}
+
+		void Push(Record *r) {
+			Record *t = top;
+			top = r;
+			top->SetNext(t);
+		}
+
+		Record* Pop() {
+			Record *t = top;
+			top = top->GetNext();
+			return t;
+		}
+
+		Record* GetTop() {
+			return top;
+		}
+	};
+
+	Stack *stack;
 	vector<AsmCmd*> command;
 
 public:
-	CodeGen() {}
+	CodeGen() {
+		stack = new Stack();
+	}
+
+	Stack* GetStack() {
+		return stack;
+	}
 
 	void Print() {
 		for(int i = 0; i < (int)command.size(); i++)
