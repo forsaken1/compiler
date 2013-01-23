@@ -208,6 +208,7 @@ Node* Parser::PostfixExpr() {
 	Node *left = PrimaryExpr();
 
 	if(oper == OPER_COLON) {
+		symStack->AddVar(new SymLabel(left->GetName()));
 		return new NodeLabel(left->GetName());
 	}
 	if(oper == ROUND_LEFT_BRACKET) {
@@ -661,6 +662,9 @@ Node* Parser::JumpStmt() {
 			throw ParserException(currentToken, "Jump statement without label");
 
 		Node *ident = new NodeVar(text);
+
+		if(!symStack->VarAt(text))
+			symStack->AddVar(new SymLabel(text));
 
 		Next();
 		if(oper != SEMICOLON)

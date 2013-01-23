@@ -16,7 +16,8 @@ enum SymbolType {
 	TYPE_INT,
 	TYPE_FLOAT,
 	TYPE_VOID,
-	TYPE_CHAR
+	TYPE_CHAR,
+	LABEL
 };
 
 class Symbol {
@@ -56,36 +57,41 @@ public:
 	}
 };
 
+//--- SymLabel ---
+
+class SymLabel: public Symbol {
+public:
+	SymLabel(string _name): Symbol(_name) {
+		symType = LABEL;
+	}
+};
+
 //--- SymType ---
 
 class SymTypeVoid: public Symbol {
 public:
-	SymTypeVoid() {
-		name = "void";
+	SymTypeVoid(): Symbol("void") {
 		symType = TYPE_VOID;
 	}
 };
 
 class SymTypeChar: public Symbol {
 public:
-	SymTypeChar() {
-		name = "char";
+	SymTypeChar(): Symbol("char") {
 		symType = TYPE_CHAR;
 	}
 };
 
 class SymTypeFloat: public Symbol {
 public:
-	SymTypeFloat() {
-		name = "float";
+	SymTypeFloat(): Symbol("float") {
 		symType = TYPE_FLOAT;
 	}
 };
 
 class SymTypeInteger: public Symbol {
 public:
-	SymTypeInteger() {
-		name = "int";
+	SymTypeInteger(): Symbol("int") {
 		symType = TYPE_INT;
 	}
 };
