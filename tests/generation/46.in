@@ -1,4 +1,4 @@
-void f(int i, int j) {
+int f(int i, int j) {
 	return i + j;
 }
 

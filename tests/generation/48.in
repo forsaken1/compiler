@@ -1,0 +1,7 @@
+void main() {
+	goto m;
+	print("dont work");
+	return;
+	m:
+	print("do work");
+}

@@ -26,7 +26,7 @@ void SymTable::Print() {
 				cout << "\t" << it->first << "\t\tdd\t ?" << endl;
 		}
 	}
-	if( !c->empty() || !var->empty())
+	if( !c->empty() || !var->empty() )
 		cout << endl << "data ends" << endl << endl;
 }
 

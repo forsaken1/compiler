@@ -207,6 +207,9 @@ Node* Parser::UnaryExpr() {
 Node* Parser::PostfixExpr() {
 	Node *left = PrimaryExpr();
 
+	if(oper == OPER_COLON) {
+		return new NodeLabel(left->GetName());
+	}
 	if(oper == ROUND_LEFT_BRACKET) {
 		//проверка что left функция
 		Next();
@@ -266,15 +269,17 @@ Node* Parser::ArgumentExprList() {
 
 Node* Parser::PrimaryExpr() {
 	if(currentToken->GetTokenType() == IDENTIFIER) {
-		if(!simple) {
-			if( !symStack->VarAt(text) )
+		string _text = text;
+
+		Next();
+		if(!simple && oper != OPER_COLON) {
+			if( !symStack->VarAt(_text) )
 				throw SemanticException(currentToken, "Undeclared identifier");
 
-			if( symStack->TypeAt(text) )
+			if( symStack->TypeAt(_text) )
 				throw SemanticException(currentToken, "Using type as identifier");
 		}
-		Next();
-		return new NodeVar(lastToken->GetText());
+		return new NodeVar(_text);
 	}
 	if(currentToken->GetTokenType() == CONST_INTEGER ||
 	   currentToken->GetTokenType() == CONST_REAL ||
@@ -528,6 +533,10 @@ Node* Parser::CompoundStmt() {
 Node* Parser::ExpressionStmt() {
 	Node *link = Expression();
 
+	if(oper == OPER_COLON) {
+		Next();
+		return link;
+	}
 	if(oper == SEMICOLON) {
 		Next();
 		if(link == NULL)
@@ -648,11 +657,12 @@ Node* Parser::IterationStmt() {
 Node* Parser::JumpStmt() {
 	if(oper == KEYWORD_GOTO) {
 		Next();
-		Node *ident = PrimaryExpr();
-
-		if(ident == NULL)
+		if(currentToken->GetTokenType() != IDENTIFIER)
 			throw ParserException(currentToken, "Jump statement without label");
 
+		Node *ident = new NodeVar(text);
+
+		Next();
 		if(oper != SEMICOLON)
 			throw ParserException(currentToken, "Jump statement without ';'");
 

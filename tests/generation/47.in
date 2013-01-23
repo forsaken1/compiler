@@ -1,8 +1,8 @@
-void sqrt(int f) {
+int sqrt(int f) {
 	return f * f;
 }
 
-void sum(int i, int j) {
+int sum(int i, int j) {
 	return i + j;
 }
 

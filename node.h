@@ -34,6 +34,30 @@ public:
 	string GetName();
 };
 
+//--- NodeLabel ---
+
+class NodeLabel: public Node {
+	string label;
+
+public:
+	NodeLabel(string s) {
+		label = s;
+	}
+
+	void Generate(CodeGen *cg) {
+		string val = "label_" + label;
+		cg->AddLabel(val);
+	}
+
+	string GetName() {
+		return label;
+	}
+
+	void Print(int i, bool b) {
+		cout << "(" << label << ")" << endl;
+	}
+};
+
 //--- NodeVar ---
 
 class NodeVar: public Node {

@@ -856,5 +856,5 @@ void NodeJumpStmt::Break(CodeGen *cg) {
 }
 
 void NodeJumpStmt::Goto(CodeGen *cg) {
-
+	cg->AddCommand(JMP, "label_" + expr->GetName());
 }
