@@ -243,6 +243,7 @@ void NodeBinary::Generate(CodeGen *cg) {
 		case OPER_LESS_OR_EQUAL:		LessEqual(cg); break;
 		case OPER_BINARY_AND:			BinaryAnd(cg); break;
 		case OPER_BINARY_OR:			BinaryOr(cg); break;
+		case OPER_XCHANGE:				XChange(cg); return;
 		case OPER_ARROW:				break;
 		case OPER_POINT:				break;
 	}
@@ -255,6 +256,13 @@ void NodeBinary::ArrayIndex(CodeGen *cg) {
 }
 
 //------------------------------
+
+void NodeBinary::XChange(CodeGen *cg) {
+	cg->AddCommand(XCHG, EAX, EBX);
+	cg->AddCommand(MOV, left->GetName(), EAX);
+	cg->AddCommand(MOV, right->GetName(), EBX);
+}
+
 void NodeBinary::Comma(CodeGen *cg) {
 	left->Generate(cg);
 	cg->AddCommand(POP, EAX);

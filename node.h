@@ -161,6 +161,7 @@ class NodeBinary: public Node {
 	void BinaryAnd(CodeGen*);
 	void BinaryOr(CodeGen*);
 	void ArrayIndex(CodeGen*);
+	void XChange(CodeGen*);
 
 	void BinaryAndAssign(CodeGen*);
 	void BinaryOrAssign(CodeGen*);

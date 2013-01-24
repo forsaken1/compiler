@@ -99,7 +99,7 @@ Node* Parser::ConditionalExpr() {
 Node* Parser::BinaryOperationExpr(int priority) {
 	Node *left = NULL, *right = NULL;
 
-	if(priority == 9)
+	if(priority == 10)
 		left = CastExpr();
 	else
 		left = BinaryOperationExpr(priority + 1);
@@ -111,16 +111,17 @@ Node* Parser::DeleteLeftRecursion(int priority, Node *left) {
 	bool condition = false;
 
 	switch(priority) {
-		case 0: condition = oper == OPER_OR; break;
-		case 1: condition = oper == OPER_AND; break;
-		case 2: condition = oper == OPER_BINARY_OR; break;
-		case 3: condition = oper == OPER_EXCLUSIVE_OR; break;
-		case 4: condition = oper == OPER_BINARY_AND; break;
-		case 5: condition = oper == OPER_EQUAL || oper == OPER_NOT_EQUAL; break;
-		case 6: condition = oper == OPER_LESS || oper == OPER_MORE || oper == OPER_LESS_OR_EQUAL || oper == OPER_MORE_OR_EQUAL; break;
-		case 7: condition = oper == OPER_SHIFT_LEFT || oper == OPER_SHIFT_RIGHT; break;
-		case 8: condition = oper == OPER_PLUS || oper == OPER_MINUS; break;
-		case 9: condition = oper == OPER_MULTIPLY || oper == OPER_DIVIDE || oper == OPER_DIVIDE_BY_MOD; break;
+		case 0:  condition = oper == OPER_OR; break;
+		case 1:  condition = oper == OPER_AND; break;
+		case 2:  condition = oper == OPER_BINARY_OR; break;
+		case 3:  condition = oper == OPER_EXCLUSIVE_OR; break;
+		case 4:  condition = oper == OPER_BINARY_AND; break;
+		case 5:  condition = oper == OPER_EQUAL || oper == OPER_NOT_EQUAL; break;
+		case 6:  condition = oper == OPER_LESS || oper == OPER_MORE || oper == OPER_LESS_OR_EQUAL || oper == OPER_MORE_OR_EQUAL; break;
+		case 7:  condition = oper == OPER_SHIFT_LEFT || oper == OPER_SHIFT_RIGHT; break;
+		case 8:  condition = oper == OPER_PLUS || oper == OPER_MINUS; break;
+		case 9:  condition = oper == OPER_MULTIPLY || oper == OPER_DIVIDE || oper == OPER_DIVIDE_BY_MOD; break;
+		case 10: condition = oper == OPER_XCHANGE; break;
 	}
 	if(!condition) return left;
 
@@ -128,7 +129,7 @@ Node* Parser::DeleteLeftRecursion(int priority, Node *left) {
 	Next();
 	Node *right = NULL;
 
-	if(priority == 9)
+	if(priority == 10)
 		right = CastExpr();
 	else
 		right = BinaryOperationExpr(priority + 1);

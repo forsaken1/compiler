@@ -299,6 +299,7 @@ void Scanner::InitOperationsTable() {
 	operation["->"] = OPER_ARROW;
 	operation["?"] =  OPER_QUESTION;
 	operation[":"] =  OPER_COLON;
+	operation["<>"] = OPER_XCHANGE;
 }
 
 void Scanner::InitKeyWordsTable() {

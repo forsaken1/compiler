@@ -99,7 +99,7 @@ protected:
 			case RCR:	return "rcr";
 			case NOT:	return "not";
 			case CMP:	return "cmp";
-			case XCHG:	return "xcng";
+			case XCHG:	return "xchg";
 			case XOR:	return "xor";
 			case AND:	return "and";
 			case OR:	return "or";

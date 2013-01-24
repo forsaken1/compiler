@@ -50,6 +50,7 @@ string GetTokenName(TokenValue _tv) {
 		case OPER_INC:					return "++";
 		case OPER_BINARY_NOT:			return "~";
 		case OPER_NOT:					return "!";
+		case OPER_XCHANGE:				return "<>";
 
 		case SIZE_OF:					return "sizeof";
 		case CAST_INT:					return "int";

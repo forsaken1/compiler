@@ -42,63 +42,85 @@ void MakeFiles(string dir, int from, int to) {
 }
 
 int main() {
-	int ERROR_TEST_COUNT = 0;
+	int ERROR_TEST_COUNT = 0, SUCCESSFUL_TEST_COUNT = 0;
 	/*
 	int FROM = 1;
 	int TO	 = 60; //60
 	cout << endl << "Scanner tests" << endl << endl;
-	for(int i = FROM; i <= TO; i++) { 
-		string str  = string("Debug\\compiler L tests\\scanner\\" + to_string((_Longlong)i) + ".in");
-		string str1 = string("tests/scanner/" + to_string((_Longlong)i) + ".out");
+	for(int i = FROM; i <= TO; i++) {
+		string name = "";
+		if(i < 10) name = "0";
+		name += to_string((_Longlong)i);
+
+		string str  = string("Debug\\compiler L tests\\scanner\\" + name + ".in");
+		string str1 = string("tests/scanner/" + name + ".out");
 
 		freopen("output.txt", "w", stdout);
 		system(str.c_str());
 		freopen("CON", "w", stdout);
+
 		if( !test(i, CompareFiles("output.txt", str1.c_str())) )
 			ERROR_TEST_COUNT++;
+		else
+			SUCCESSFUL_TEST_COUNT++;
 	}
 	//*/
 	/*
 	int _FROM = 1;
-	int _TO   = 88; //88
+	int _TO   = 90; //90
 	cout << endl << "Parser tests" << endl << endl;
-	for(int i = _FROM; i <= _TO; i++) { 
+	for(int i = _FROM; i <= _TO; i++) {
 		if(i == 32) continue;
+		string name = "";
+		if(i < 10) name = "0";
+		name += to_string((_Longlong)i);
 
-		string str  = string("Debug\\compiler S tests\\parser\\" + to_string((_Longlong)i) + ".in");
-		string str1 = string("tests/parser/" + to_string((_Longlong)i) + ".out");
+		string str  = string("Debug\\compiler S tests\\parser\\" + name + ".in");
+		string str1 = string("tests/parser/" + name + ".out");
 
 		freopen("output.txt", "w", stdout);
 		system(str.c_str());
 		freopen("CON", "w", stdout);
+
 		if( !test(i, CompareFiles("output.txt", str1.c_str())) )
 			ERROR_TEST_COUNT++;
+		else
+			SUCCESSFUL_TEST_COUNT++;
 	}
 	//*/
-	/*
+	///*
 	int _FROM_ = 1;
 	int _TO_   = 1;
 	cout << endl << "Semantics tests" << endl << endl;
 	for(int i = _FROM_; i <= _TO_; i++) { 
-		string str  = string("Debug\\compiler s tests\\semantics\\" + to_string((_Longlong)i) + ".in");
-		string str1 = string("tests/semantics/" + to_string((_Longlong)i) + ".out");
+		string name = "";
+		if(i < 10) name = "0";
+		name += to_string((_Longlong)i);
+
+		string str  = string("Debug\\compiler s tests\\semantics\\" + name + ".in");
+		string str1 = string("tests/semantics/" + name + ".out");
 
 		freopen("output.txt", "w", stdout);
 		system(str.c_str());
 		freopen("CON", "w", stdout);
+
 		if( !test(i, CompareFiles("output.txt", str1.c_str())) )
 			ERROR_TEST_COUNT++;
+		else
+			SUCCESSFUL_TEST_COUNT++;
 	}
 	//*/
-	///*
+	/*
 	int __FROM_ = 1;
-	int __TO_   = 48; //48
+	int __TO_   = 49; //49
 	cout << endl << "Generation tests" << endl << endl;
-	for(int i = __FROM_; i <= __TO_; i++) { 
-		//if(i == 40 || i == 41) continue;
+	for(int i = __FROM_; i <= __TO_; i++) {
+		string name = "";
+		if(i < 10) name = "0";
+		name += to_string((_Longlong)i);
 
-		string str  = string("Debug\\compiler C tests\\generation\\" + to_string((_Longlong)i) + ".in");
-		string str1 = string("tests/generation/" + to_string((_Longlong)i) + ".out");
+		string str  = string("Debug\\compiler C tests\\generation\\" + name + ".in");
+		string str1 = string("tests/generation/" + name + ".out");
 
 		freopen("log.txt", "w", stdout);
 		system(str.c_str());
@@ -107,6 +129,8 @@ int main() {
 		freopen("CON", "w", stdout);
 		if( !test(i, CompareFiles("output.txt", str1.c_str())) )
 			ERROR_TEST_COUNT++;
+		else
+			SUCCESSFUL_TEST_COUNT++;
 	}
 	//*/
 	if(ERROR_TEST_COUNT == 0)
