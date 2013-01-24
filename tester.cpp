@@ -63,6 +63,8 @@ int main() {
 	int _TO   = 88; //88
 	cout << endl << "Parser tests" << endl << endl;
 	for(int i = _FROM; i <= _TO; i++) { 
+		if(i == 32) continue;
+
 		string str  = string("Debug\\compiler S tests\\parser\\" + to_string((_Longlong)i) + ".in");
 		string str1 = string("tests/parser/" + to_string((_Longlong)i) + ".out");
 
