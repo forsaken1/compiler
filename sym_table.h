@@ -114,7 +114,7 @@ public:
 
 class SymTypeStruct: public Symbol {
 public:
-	SymTypeStruct() {
+	SymTypeStruct(string _name): Symbol(_name) {
 		symType = STRUCT;
 	}
 };
@@ -181,6 +181,8 @@ public:
 	void AddConst(SymConst*);
 	void AddType(Symbol*);
 };
+
+//--- SymTableStack ---
 
 class SymTableStack {
 

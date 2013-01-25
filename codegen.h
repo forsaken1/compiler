@@ -327,7 +327,7 @@ class CodeGen {
 	vector<AsmCmd*> command;
 
 public:
-	CodeGen() {
+	CodeGen(bool optimisation) {
 		stack = new Stack();
 	}
 

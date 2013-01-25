@@ -43,7 +43,7 @@ void MakeFiles(string dir, int from, int to) {
 
 int main() {
 	int ERROR_TEST_COUNT = 0, SUCCESSFUL_TEST_COUNT = 0;
-	/*
+	///*
 	int FROM = 1;
 	int TO	 = 60; //60
 	cout << endl << "Scanner tests" << endl << endl;
@@ -65,7 +65,7 @@ int main() {
 			SUCCESSFUL_TEST_COUNT++;
 	}
 	//*/
-	/*
+	///*
 	int _FROM = 1;
 	int _TO   = 90; //90
 	cout << endl << "Parser tests" << endl << endl;
@@ -90,7 +90,7 @@ int main() {
 	//*/
 	///*
 	int _FROM_ = 1;
-	int _TO_   = 1;
+	int _TO_   = 10; //10
 	cout << endl << "Semantics tests" << endl << endl;
 	for(int i = _FROM_; i <= _TO_; i++) { 
 		string name = "";
@@ -110,9 +110,9 @@ int main() {
 			SUCCESSFUL_TEST_COUNT++;
 	}
 	//*/
-	/*
+	///*
 	int __FROM_ = 1;
-	int __TO_   = 49; //49
+	int __TO_   = 50; //50
 	cout << endl << "Generation tests" << endl << endl;
 	for(int i = __FROM_; i <= __TO_; i++) {
 		string name = "";

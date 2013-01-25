@@ -1,5 +1,5 @@
+int f;
+
 void main() {
 	f();
 }
-
-void f() {}

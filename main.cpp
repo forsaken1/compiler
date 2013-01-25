@@ -19,10 +19,10 @@ int main(int argc, char *argv[]) {
 	try {
 		switch(argc) {
 			case 1: {
-				//GetHelp();
-				Scanner scanner("input.txt");
+				GetHelp();
+				/*Scanner scanner("input.txt");
 				Parser parser(&scanner, 0, 1); //no semantics, printing tree
-				Generator gen(&parser);
+				Generator gen(&parser);*/
 				break;
 			}
 			case 2: {
@@ -37,19 +37,24 @@ int main(int argc, char *argv[]) {
 					if(argv[1][0] == 'L' || argv[1][0] == 'l') {
 						Scanner scanner(argv[2]);
 						scanner.Start();
-					} 
-					else if(argv[1][0] == 'S') {
+					}
+					else if(argv[1][0] == 'S') { //without semantics
 						Scanner scanner(argv[2]);
 						Parser parser(&scanner, true, true);
 					} 
-					else if(argv[1][0] == 's') {
+					else if(argv[1][0] == 's') { //with semantics
 						Scanner scanner(argv[2]);
 						Parser parser(&scanner, false, true);
 					}
-					else if(argv[1][0] == 'C' || argv[1][0] == 'c') {
+					else if(argv[1][0] == 'C') { //without optimisation
 						Scanner scanner(argv[2]);
 						Parser parser(&scanner, false, false);
-						Generator gen(&parser);
+						Generator gen(&parser, false);
+					}
+					else if(argv[1][0] == 'c') { //with optimisation
+						Scanner scanner(argv[2]);
+						Parser parser(&scanner, false, false);
+						Generator gen(&parser, true);
 					}
 					else
 						cout << "Error: Invalid argument" << endl;

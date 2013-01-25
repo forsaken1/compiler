@@ -60,8 +60,6 @@ Node* Parser::AssignmentExpr() {
 	Node *left = ConditionalExpr();
 
 	if(assignmentOperator[oper]) {
-		//if(left->GetType()
-		//проверка, что left_type == right_type
 		TokenValue tv = oper;
 		Next();
 		Node *right = AssignmentExpr();
@@ -136,7 +134,6 @@ Node* Parser::DeleteLeftRecursion(int priority, Node *left) {
 
 	if(right == NULL)
 		throw ParserException(currentToken, "Binary expression without right operand");
-	//проверка что left_type == right_type
 
 	return DeleteLeftRecursion(priority, new NodeBinary(left, tv, right));
 }
@@ -150,7 +147,7 @@ Node* Parser::CastExpr() {
 			if(right == NULL)
 				throw ParserException(currentToken, "Cast expression without right operand");
 
-			return new NodeUnary(CAST_CHAR, right); ///заменить, после правки SymStack!!!
+			return new NodeUnary(CAST_CHAR, right);
 		}
 		else
 			throw ParserException(currentToken, "Cast expression without ')'");
@@ -164,13 +161,13 @@ Node* Parser::UnaryExpr() {
 		if(oper == ROUND_LEFT_BRACKET) {
 			Next();
 			string type = text;
-			if(!symStack->TypeAt(text)) //SYM_STACK
+			if(!symStack->TypeAt(text))
 				ParserException(currentToken, "Undefinite type");
 
 			Next();
 			if(oper == ROUND_RIGHT_BRACKET) {
 				Next();
-				return new NodeUnary(SIZE_OF, new NodeConst(type, type)); //заменить, после правки SymStack!!!
+				return new NodeUnary(SIZE_OF, new NodeConst(type, type));
 			}
 			else
 				throw ParserException(currentToken, "Sizeof operation without ')'");
@@ -181,7 +178,7 @@ Node* Parser::UnaryExpr() {
 			if(link == NULL)
 				throw ParserException(currentToken, "Sizeof operation without argument");
 
-			return new NodeUnary(SIZE_OF, link); //заменить, после правки SymStack!!!
+			return new NodeUnary(SIZE_OF, link);
 		}
 	}
 	if(oper == OPER_INC || oper == OPER_DEC) {
@@ -213,7 +210,9 @@ Node* Parser::PostfixExpr() {
 		return new NodeLabel(left->GetName());
 	}
 	if(oper == ROUND_LEFT_BRACKET) {
-		//проверка что left функция
+		if( !simple && symStack->FindVar(left->GetName())->GetSymType() != FUNCTION )
+			throw SemanticException(currentToken, "Term not a function");
+
 		Next();
 		Node *args = ArgumentExprList();
 
@@ -227,7 +226,9 @@ Node* Parser::PostfixExpr() {
 		return new NodeCall(type, left->GetName(), args);
 	}
 	if(oper == SQUARE_LEFT_BRACKET) {
-		//проверка, что left - массив
+		if( !simple && symStack->FindVar(left->GetName())->GetSymType() != ARRAY )
+			throw SemanticException(currentToken, "Term not an array");
+
 		Next();
 		Node *link = Expression();
 
@@ -238,7 +239,6 @@ Node* Parser::PostfixExpr() {
 		else throw ParserException(currentToken, "No ']'");
 	}
 	if(oper == OPER_POINT || oper == OPER_ARROW) {
-		//проверка, что left - структура
 		TokenValue _oper = oper;
 		Next();
 		Node *right = PrimaryExpr();
@@ -465,7 +465,7 @@ Node* Parser::FunctionDefinitionStmt() {
 				throw ParserException(currentToken, "Function definition without statement");
 
 			symStack->Pop();
-			symStack->GetTopTable()->AddVar(new SymFunction(type, name->GetName()));  //symtable add
+			symStack->GetTopTable()->AddVar(new SymFunction(type, name->GetName()));
 
 			return new NodeFunc(table, type, name, args, stmt);
 		}
@@ -516,8 +516,6 @@ Node* Parser::StatementList() {
 
 Node* Parser::CompoundStmt() {
 	if(oper == FIGURE_LEFT_BRACKET) {
-		//symStack->Push(new SymTable()); //дописать поиск в SymStack!!!!!
-
 		Next();
 		Node *decl = DeclarationList();
 		Node *stmt = StatementList();
@@ -732,7 +730,7 @@ Symbol* Parser::TypeSpec() {
 	Node *str = StructSpec();
 
 	if(str != NULL) {
-		//добавление struct в SymTable
+		symStack->AddType(new SymTypeStruct(str->GetName()));
 	}
 	if(str == NULL && symStack->TypeAt(text)) {
 		string _oper = text;
@@ -961,7 +959,4 @@ void Parser::InitTables() {
 	symStack->GetTopTable()->AddType(new SymTypeChar());
 	symStack->GetTopTable()->AddType(new SymTypeInteger());
 	symStack->GetTopTable()->AddType(new SymTypeFloat());
-
-	symStack->GetTopTable()->AddVar(new SymVar(new SymTypeInteger(), "true"));
-	symStack->GetTopTable()->AddVar(new SymVar(new SymTypeInteger(), "false"));
 }

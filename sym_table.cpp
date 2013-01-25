@@ -22,7 +22,7 @@ void SymTable::Print() {
 				cout << "\t" << it->first << "\t\tdd\t " << it->second->GetLength() << " dup(0)" << endl;
 				continue;
 			}
-			if(it->second->GetSymType() != FUNCTION)
+			if(it->second->GetSymType() != FUNCTION && it->second->GetSymType() != LABEL)
 				cout << "\t" << it->first << "\t\tdd\t ?" << endl;
 		}
 	}

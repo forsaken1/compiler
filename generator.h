@@ -5,8 +5,8 @@
 
 class Generator {
 public:
-	Generator(Parser *pr) {
-		CodeGen *cg = new CodeGen();
+	Generator(Parser *pr, bool optimisation) {
+		CodeGen *cg = new CodeGen(optimisation);
 
 		freopen("out.asm", "w", stdout);
 
@@ -27,6 +27,7 @@ public:
 		freopen("log.txt", "w", stdout);
 		system("make.bat");
 		freopen("CON", "w", stdout);
+		//system("del log.txt");
 	}
 };
 
