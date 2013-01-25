@@ -43,7 +43,7 @@ void MakeFiles(string dir, int from, int to) {
 
 int main() {
 	int ERROR_TEST_COUNT = 0, SUCCESSFUL_TEST_COUNT = 0;
-	///*
+	/*
 	int FROM = 1;
 	int TO	 = 60; //60
 	cout << endl << "Scanner tests" << endl << endl;
@@ -65,7 +65,7 @@ int main() {
 			SUCCESSFUL_TEST_COUNT++;
 	}
 	//*/
-	///*
+	/*
 	int _FROM = 1;
 	int _TO   = 90; //90
 	cout << endl << "Parser tests" << endl << endl;
@@ -88,7 +88,7 @@ int main() {
 			SUCCESSFUL_TEST_COUNT++;
 	}
 	//*/
-	///*
+	/*
 	int _FROM_ = 1;
 	int _TO_   = 10; //10
 	cout << endl << "Semantics tests" << endl << endl;
@@ -127,6 +127,7 @@ int main() {
 		freopen("output.txt", "w", stdout);
 		system("out");
 		freopen("CON", "w", stdout);
+
 		if( !test(i, CompareFiles("output.txt", str1.c_str())) )
 			ERROR_TEST_COUNT++;
 		else

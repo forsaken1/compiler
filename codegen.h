@@ -7,6 +7,7 @@
 #include <iostream>
 
 enum Register {
+	DEF,
 	EAX,
 	EBX,
 	ECX,
@@ -147,7 +148,13 @@ public:
 	Cmd GetCmd() {
 		return cmd;
 	}
+
+	virtual string GetFirst() {
+		return "";
+	}
 };
+
+//--- AsmProc ---
 
 class AsmProc: public AsmCmd {
 	string name;
@@ -162,6 +169,8 @@ public:
 	}
 };
 
+//--- AsmProcEnd
+
 class AsmProcEnd: public AsmCmd {
 	string name;
 
@@ -175,6 +184,8 @@ public:
 	}
 };
 
+//--- AsmLabel ---
+
 class AsmLabel: public AsmCmd {
 	string label;
 	
@@ -187,6 +198,8 @@ public:
 		cout << "\t" << cmdStr << "\t\t" << label << endl;
 	}
 };
+
+//--- AsmUnary ---
 
 class AsmUnary: public AsmCmd {
 protected:
@@ -206,7 +219,13 @@ public:
 	void Print() {
 		cout << "\t" << cmdStr << " \t" << regStr << endl;
 	}
+	
+	string GetFirst() {
+		return regStr;
+	}
 };
+
+//--- AsmBinary ---
 
 class AsmBinary: public AsmUnary {
 protected:
@@ -228,10 +247,16 @@ public:
 		regSecondStr = GetReg(regSecond);
 	}
 
+	AsmBinary(Cmd _cmd, string str, string _str): AsmUnary(_cmd, str) {
+		regSecondStr = _str;
+	}
+
 	void Print() {
 		cout << "\t" << cmdStr << " \t" << regStr << ", " << regSecondStr << endl;
 	}
 };
+
+//--- AsmTernary ---
 
 class AsmTernary: public AsmCmd {
 	bool first, second;
@@ -297,6 +322,8 @@ public:
 	}
 };
 
+//--- CodeGen ---
+
 class CodeGen {
 	class Stack {
 		Record *top;
@@ -325,9 +352,11 @@ class CodeGen {
 
 	Stack *stack;
 	vector<AsmCmd*> command;
+	bool optimisation;
 
 public:
-	CodeGen(bool optimisation) {
+	CodeGen(bool _optimisation) {
+		optimisation = _optimisation;
 		stack = new Stack();
 	}
 
@@ -335,7 +364,35 @@ public:
 		return stack;
 	}
 
+	void Optimisation() {
+		for(int i = 0; i < (int)command.size(); i++) {
+			if(command[i]->GetCmd() == PUSH) {
+				if(command[i + 1]->GetCmd() == POP) {
+					if(command[i]->GetFirst() != command[i + 1]->GetFirst()) {
+						string op = command[i]->GetFirst();
+						delete command[i];
+						command[i] = new AsmBinary(MOV, command[i + 1]->GetFirst(), op);
+						command.erase(command.begin() + i + 1);
+						continue;
+					}
+					if(command[i]->GetFirst() == command[i + 1]->GetFirst()) {
+						command.erase(command.begin() + i);
+						command.erase(command.begin() + i + 1);
+						i--;
+					}
+				}
+			}
+
+			if(command[i]->GetCmd() == POP) {
+
+			}
+		}
+	}
+
 	void Print() {
+		if(optimisation)
+			Optimisation();
+
 		for(int i = 0; i < (int)command.size(); i++)
 			command[i]->Print();
 	}
