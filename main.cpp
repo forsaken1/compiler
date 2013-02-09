@@ -19,10 +19,10 @@ int main(int argc, char *argv[]) {
 	try {
 		switch(argc) {
 			case 1: {
-				GetHelp();
-				/*Scanner scanner("input.txt");
-				Parser parser(&scanner, 0, 1); //no semantics, printing tree
-				Generator gen(&parser);*/
+				//GetHelp();
+				Scanner scanner("input.txt");
+				Parser parser(&scanner, 1, 1); //no semantics, printing tree
+				//Generator gen(&parser);
 				break;
 			}
 			case 2: {

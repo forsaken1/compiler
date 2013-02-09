@@ -5,6 +5,6 @@ int sqr(int i) {
 void main() {
 	goto l;
 	print("%d", sqr(3));
-	l:
+	label l:
 	print("do work");
 }

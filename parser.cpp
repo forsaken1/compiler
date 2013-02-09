@@ -162,7 +162,7 @@ Node* Parser::UnaryExpr() {
 			Next();
 			string type = text;
 			if(!symStack->TypeAt(text))
-				ParserException(currentToken, "Undefinite type");
+				throw ParserException(currentToken, "Undefinite type");
 
 			Next();
 			if(oper == ROUND_RIGHT_BRACKET) {
@@ -205,10 +205,6 @@ Node* Parser::UnaryExpr() {
 Node* Parser::PostfixExpr() {
 	Node *left = PrimaryExpr();
 
-	if(oper == OPER_COLON) {
-		symStack->AddVar(new SymLabel(left->GetName()));
-		return new NodeLabel(left->GetName());
-	}
 	if(oper == ROUND_LEFT_BRACKET) {
 		if( !simple && symStack->FindVar(left->GetName())->GetSymType() != FUNCTION )
 			throw SemanticException(currentToken, "Term not a function");
@@ -274,7 +270,7 @@ Node* Parser::PrimaryExpr() {
 		string _text = text;
 
 		Next();
-		if(!simple && oper != OPER_COLON) {
+		if(!simple) {
 			if( !symStack->VarAt(_text) )
 				throw SemanticException(currentToken, "Undeclared identifier");
 
@@ -356,6 +352,7 @@ Node* Parser::Statement() {
 	if(link == NULL) link = JumpStmt();
 	if(link == NULL) link = PrintStmt();
 	if(link == NULL) link = PauseStmt();
+	if(link == NULL) link = LabelStmt();
 
 	return link;
 }
@@ -514,6 +511,29 @@ Node* Parser::StatementList() {
 	return NULL;
 }
 
+Node* Parser::LabelStmt() {
+	if(oper == KEYWORD_LABEL) {
+		Node* node = NULL;
+
+		Next();
+		if(currentToken->GetTokenType() == IDENTIFIER)
+			node = new NodeLabel(text);
+		else
+			throw ParserException(currentToken, "Label statement without identifier");
+
+		if(!symStack->VarAt(text))
+			symStack->AddVar(new SymLabel(text));
+
+		Next();
+		if(oper != OPER_COLON)
+			throw ParserException(currentToken, "Label statement without ':'");
+
+		Next();
+		return node;
+	}
+	return NULL;
+}
+
 Node* Parser::CompoundStmt() {
 	if(oper == FIGURE_LEFT_BRACKET) {
 		Next();
@@ -533,10 +553,6 @@ Node* Parser::CompoundStmt() {
 Node* Parser::ExpressionStmt() {
 	Node *link = Expression();
 
-	if(oper == OPER_COLON) {
-		Next();
-		return link;
-	}
 	if(oper == SEMICOLON) {
 		Next();
 		if(link == NULL)

@@ -2,6 +2,6 @@ void main() {
 	goto m;
 	print("dont work");
 	return;
-	m:
+	label m:
 	print("do work");
 }

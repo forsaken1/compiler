@@ -65,12 +65,11 @@ int main() {
 			SUCCESSFUL_TEST_COUNT++;
 	}
 	//*/
-	/*
+	///*
 	int _FROM = 1;
 	int _TO   = 90; //90
 	cout << endl << "Parser tests" << endl << endl;
 	for(int i = _FROM; i <= _TO; i++) {
-		if(i == 32) continue;
 		string name = "";
 		if(i < 10) name = "0";
 		name += to_string((_Longlong)i);
@@ -88,7 +87,7 @@ int main() {
 			SUCCESSFUL_TEST_COUNT++;
 	}
 	//*/
-	/*
+	///*
 	int _FROM_ = 1;
 	int _TO_   = 10; //10
 	cout << endl << "Semantics tests" << endl << endl;

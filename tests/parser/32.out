@@ -1,1 +1,7 @@
-Syntax error: Ternary expression without true-condition on line 1 in position 5
+if
+|
++---(a)
+|
++---(b)
+|
++---(c)

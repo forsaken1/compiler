@@ -321,4 +321,5 @@ void Scanner::InitKeyWordsTable() {
 	keyWord["print"] =    KEYWORD_PRINT;
 	keyWord["pause"] =    KEYWORD_PAUSE;
 	keyWord["scan"] =	  KEYWORD_SCAN;
+	keyWord["label"] =	  KEYWORD_LABEL;
 }

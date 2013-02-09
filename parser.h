@@ -40,6 +40,7 @@ class Parser {
 	Node* FunctionArgumentList();
 	Node* FunctionArgument();
 	Node* JumpStmt();
+	Node* LabelStmt();
 
 	Node* Declaration();
 	Node* DeclarationList();

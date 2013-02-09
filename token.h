@@ -86,6 +86,7 @@ enum TokenValue {
 	KEYWORD_PRINT,
 	KEYWORD_PAUSE,
 	KEYWORD_SCAN,
+	KEYWORD_LABEL,
 	//--- For binary operations ---
 	SIZE_OF,
 	CAST_INT,
