@@ -41,12 +41,16 @@ unary-operator
 cast-expression
     unary-expression
     ( type-name ) cast-expression
+	
+xchange-expression
+	cast-expression
+	xchange-expression <> cast-expression
 
 multiplicative-expression
-    cast-expression
-    multiplicative-expression * cast-expression
-    multiplicative-expression / cast-expression
-    multiplicative-expression % cast-expression
+    xchange-expression
+    multiplicative-expression * xchange-expression
+    multiplicative-expression / xchange-expression
+    multiplicative-expression % xchange-expression
 
 additive-expression
     multiplicative-expression
@@ -125,10 +129,8 @@ declaration
     declaration-specifiers init-declarator-list ;
 
 declaration-specifiers
-    storage-class-specifier
     type-specifier
-    storage-class-specifier declaration-specifiers
-    type-specifier          declaration-specifiers
+    type-specifier declaration-specifiers
 
 init-declarator-list
     init-declarator
@@ -208,6 +210,10 @@ statement
 	print-statement
 	pause-statement
 	scan-statement
+	label-statement
+	
+label-statement
+	label identifier :
 	
 print-statement
 	print ( string-literal ) ;
@@ -248,6 +254,7 @@ iteration-statement
     for ( expression ; expression ; expression ) statement
 
 jump-statement
+	goto identifier ;
     continue ;
     break ;
     return ;
