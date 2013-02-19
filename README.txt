@@ -6,7 +6,7 @@
 	compiler [опци€]
 
 ќпции:
-	l [им€_файла]	лексический анализ
-	s [им€_файла]	синтаксический анализ
-	c [им€_файла]	компил€ци€
-	h 				помощь
+	(L | l) <путь до файла>		lexical analysis
+	(S | s) <путь до файла>		(without | with semantic) syntax analysis
+	(C | c) <путь до файла>		(without | with optimisation) compilation
+	(H | h)						help

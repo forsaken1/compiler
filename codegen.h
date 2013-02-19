@@ -13,6 +13,11 @@ enum Register {
 	ECX,
 	EDX,
 
+	_EAX,
+	_EBX,
+	_ECX,
+	_EDX,
+
 	ESP,
 	EBP,
 
@@ -55,6 +60,7 @@ enum Cmd {
 	OR,
 	RCL,
 	RCR,
+	LEA,
 //--- Ternary operations ---
 	INVOKE,
 //--- Crt-functions ---
@@ -75,6 +81,9 @@ protected:
 			case ECX:	return "ecx";
 			case EDX:	return "edx";
 
+			case _EAX:	return "[eax]";
+			case _EBX:	return "[ebx]";
+
 			case ESP:	return "esp";
 			case EBP:	return "ebp";
 
@@ -85,6 +94,7 @@ protected:
 
 	string GetCmd(Cmd _cmd) {
 		switch(_cmd) {
+			case LEA:	return "lea";
 			case JNE:	return "jne";
 			case JMP:	return "jmp";
 			case JE:	return "je";
@@ -165,7 +175,7 @@ public:
 	}
 
 	void Print() {
-		cout << endl << name << " proc" << endl;
+		cout << endl << "_" << name << " proc" << endl;
 	}
 };
 
@@ -180,7 +190,7 @@ public:
 	}
 
 	void Print() {
-		cout << endl << name << " endp" << endl << endl;
+		cout << endl << "_" << name << " endp" << endl << endl;
 	}
 };
 

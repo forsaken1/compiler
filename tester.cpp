@@ -65,7 +65,7 @@ int main() {
 			SUCCESSFUL_TEST_COUNT++;
 	}
 	//*/
-	///*
+	/*
 	int _FROM = 1;
 	int _TO   = 90; //90
 	cout << endl << "Parser tests" << endl << endl;
@@ -87,7 +87,7 @@ int main() {
 			SUCCESSFUL_TEST_COUNT++;
 	}
 	//*/
-	///*
+	/*
 	int _FROM_ = 1;
 	int _TO_   = 10; //10
 	cout << endl << "Semantics tests" << endl << endl;

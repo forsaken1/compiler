@@ -10,7 +10,7 @@ void GetHelp() {
 	cout << "Compiler C. Author: Krylov Alexey, C8303A" << endl;
 	cout << "(L | l) <filename> - lexical analysis" << endl;
 	cout << "(S | s) <filename> - (syntax | semantic) analysis" << endl;
-	cout << "(C | c) <filename> - compilation" << endl;
+	cout << "(C | c) <filename> - (without | with optimisation) compilation" << endl;
 	cout << "h - help" << endl << endl;
 }
 
@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
 				//GetHelp();
 				Scanner scanner("input.txt");
 				Parser parser(&scanner, 1, 1); //no semantics, printing tree
-				//Generator gen(&parser);
+				Generator gen(&parser, 0);
 				break;
 			}
 			case 2: {

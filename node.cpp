@@ -54,6 +54,11 @@ void NodeVar::Generate(CodeGen *cg) {
 	cg->AddCommand(PUSH, name);
 }
 
+void NodeVar::GenerateLeft(CodeGen *cg) {
+	cg->AddCommand(LEA, EAX, name);
+	cg->AddCommand(PUSH, EAX);
+}
+
 string NodeVar::GetName() { 
 	return name; 
 }
@@ -63,6 +68,7 @@ string NodeVar::GetName() {
 NodeCall::NodeCall(SymbolType _type, string _name, Node *_args): NodeVar(_name) {
 	type = _type;
 	args = _args;
+	name = "_" + name;
 }
 
 void NodeCall::Print(int i, bool b) { 
@@ -161,11 +167,11 @@ void NodeUnary::Minus(CodeGen *cg) {
 }
 
 void NodeUnary::BinaryNot(CodeGen *cg) {
-	cg->AddCommand(NOT, EAX); ////
+	cg->AddCommand(NOT, EAX);
 }
 
 void NodeUnary::Not(CodeGen *cg) {
-	cg->AddCommand(NOT, EAX); ////
+	cg->AddCommand(NOT, EAX);
 }
 
 void NodeUnary::Dec(CodeGen *cg) {
@@ -251,8 +257,8 @@ void NodeBinary::Generate(CodeGen *cg) {
 }
 
 void NodeBinary::ArrayIndex(CodeGen *cg) {
-	cg->AddCommand(MOV, EAX, left->GetName() + " + " + right->GetName());
-	cg->AddCommand(PUSH, EAX);
+	//cg->AddCommand(MOV, EAX, left->GetName() + " + " + right->GetName());
+	//cg->AddCommand(PUSH, EAX);
 }
 
 //------------------------------
@@ -271,10 +277,12 @@ void NodeBinary::Comma(CodeGen *cg) {
 }
 
 void NodeBinary::Assign(CodeGen *cg) {
+	left->GenerateLeft(cg);
 	right->Generate(cg);
+	cg->AddCommand(POP, EBX);
 	cg->AddCommand(POP, EAX);
-	cg->AddCommand(MOV, left->GetName(), EAX);
-	cg->AddCommand(PUSH, left->GetName());
+	cg->AddCommand(MOV, _EAX, EBX);
+	cg->AddCommand(PUSH, EBX);
 }
 
 void NodeBinary::PlusAssign(CodeGen *cg) {

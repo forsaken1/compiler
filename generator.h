@@ -17,7 +17,7 @@ public:
 
 		cout << endl << ".code" << endl << "start:" << endl;
 
-		cg->AddCommand(CALL, "main");
+		cg->AddCommand(CALL, "_main");
 		cg->AddCommand(EXIT);
 		pr->GetTop()->Generate(cg);
 		cg->Print();

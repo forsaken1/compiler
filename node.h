@@ -13,10 +13,11 @@ protected:
 	void DrawPath(int, bool);
 
 public:
-	virtual void	Print(int i, bool b)	{}
-	virtual void	Generate(CodeGen *cg)	{}
-	virtual string	GetId()					{ return ""; }
-	virtual string	GetName()				{ return ""; }
+	virtual void	Print(int i, bool b)		{}
+	virtual void	Generate(CodeGen *cg)		{}
+	virtual void	GenerateLeft(CodeGen *cg)	{}
+	virtual string	GetId()						{ return ""; }
+	virtual string	GetName()					{ return ""; }
 	virtual Symbol* GetType(SymTable *symTable) { return NULL; }
 };
 
@@ -69,6 +70,7 @@ public:
 
 	virtual void Print(int, bool);
 	virtual void Generate(CodeGen*);
+	virtual void GenerateLeft(CodeGen*);
 	Symbol* GetType(SymTable*);
 	string GetName();
 };
