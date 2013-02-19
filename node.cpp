@@ -212,8 +212,8 @@ Symbol* NodeBinary::GetType(SymTable *symTable) {
 
 void NodeBinary::Generate(CodeGen *cg) {
 	switch(opval) {
-		case OPER_ASSIGN:				Assign(cg); return;
 		case COMMA:						Comma(cg); return;
+		case OPER_ASSIGN:				Assign(cg); return;
 		case OPER_PLUS_ASSIGN:			PlusAssign(cg); return;
 		case OPER_MINUS_ASSIGN:			MinusAssign(cg); return;
 		case OPER_MULTIPLY_ASSIGN:		MultiplyAssign(cg); return;
@@ -282,71 +282,87 @@ void NodeBinary::Assign(CodeGen *cg) {
 	cg->AddCommand(POP, EBX);
 	cg->AddCommand(POP, EAX);
 	cg->AddCommand(MOV, _EAX, EBX);
-	cg->AddCommand(PUSH, EBX);
+	cg->AddCommand(PUSH, _EAX);
 }
 
 void NodeBinary::PlusAssign(CodeGen *cg) {
+	left->GenerateLeft(cg);
 	right->Generate(cg);
+	cg->AddCommand(POP, EBX);
 	cg->AddCommand(POP, EAX);
-	cg->AddCommand(ADD, left->GetName(), EAX);
-	cg->AddCommand(PUSH, left->GetName());
+	cg->AddCommand(ADD, _EAX, EBX);
+	cg->AddCommand(PUSH, _EAX);
 }
 
 void NodeBinary::MinusAssign(CodeGen *cg) {
+	left->GenerateLeft(cg);
 	right->Generate(cg);
+	cg->AddCommand(POP, EBX);
 	cg->AddCommand(POP, EAX);
-	cg->AddCommand(SUB, left->GetName(), EAX);
-	cg->AddCommand(PUSH, left->GetName());
+	cg->AddCommand(SUB, _EAX, EBX);
+	cg->AddCommand(PUSH, _EAX);
 }
 
 void NodeBinary::MultiplyAssign(CodeGen *cg) {
+	left->GenerateLeft(cg);
 	right->Generate(cg);
 	cg->AddCommand(POP, EBX);
-	cg->AddCommand(MOV, EAX, left->GetName());
+	cg->AddCommand(POP, ECX);
+	cg->AddCommand(MOV, EAX, _ECX);
 	cg->AddCommand(MUL, EBX);
-	cg->AddCommand(MOV, left->GetName(), EAX);
-	cg->AddCommand(PUSH, left->GetName());
+	cg->AddCommand(MOV, _ECX, EAX);
+	cg->AddCommand(PUSH, _ECX);
 }
 
 void NodeBinary::DivideAssign(CodeGen *cg) {
+	left->GenerateLeft(cg);
 	right->Generate(cg);
 	cg->AddCommand(POP, EBX);
-	cg->AddCommand(MOV, EAX, left->GetName());
-	cg->AddCommand(MOV, EDX, "0");
+	cg->AddCommand(POP, ECX);
+	cg->AddCommand(MOV, EAX, _ECX);
+	cg->AddCommand(MOV, EDX, DEF);
 	cg->AddCommand(DIV, EBX);
-	cg->AddCommand(MOV, left->GetName(), EAX);
-	cg->AddCommand(PUSH, left->GetName());
+	cg->AddCommand(MOV, _ECX, EAX);
+	cg->AddCommand(PUSH, _ECX);
 }
 
 void NodeBinary::DivideByModAssign(CodeGen *cg) {
+	left->GenerateLeft(cg);
 	right->Generate(cg);
 	cg->AddCommand(POP, EBX);
-	cg->AddCommand(MOV, EAX, left->GetName());
-	cg->AddCommand(MOV, EDX, "0");
+	cg->AddCommand(POP, ECX);
+	cg->AddCommand(MOV, EAX, _ECX);
+	cg->AddCommand(MOV, EDX, DEF);
 	cg->AddCommand(DIV, EBX);
-	cg->AddCommand(MOV, left->GetName(), EDX);
-	cg->AddCommand(PUSH, left->GetName());
+	cg->AddCommand(MOV, _ECX, EDX);
+	cg->AddCommand(PUSH, _ECX);
 }
 
 void NodeBinary::ExclusiveOrAssign(CodeGen *cg) {
+	left->GenerateLeft(cg);
 	right->Generate(cg);
+	cg->AddCommand(POP, EBX);
 	cg->AddCommand(POP, EAX);
-	cg->AddCommand(XOR, left->GetName(), EAX);
-	cg->AddCommand(PUSH, left->GetName());
+	cg->AddCommand(XOR, _EAX, EBX);
+	cg->AddCommand(PUSH, _EAX);
 }
 
 void NodeBinary::BinaryAndAssign(CodeGen *cg) {
+	left->GenerateLeft(cg);
 	right->Generate(cg);
+	cg->AddCommand(POP, EBX);
 	cg->AddCommand(POP, EAX);
-	cg->AddCommand(AND, left->GetName(), EAX);
-	cg->AddCommand(PUSH, left->GetName());
+	cg->AddCommand(AND, _EAX, EBX);
+	cg->AddCommand(PUSH, _EAX);
 }
 
 void NodeBinary::BinaryOrAssign(CodeGen *cg) {
+	left->GenerateLeft(cg);
 	right->Generate(cg);
+	cg->AddCommand(POP, EBX);
 	cg->AddCommand(POP, EAX);
-	cg->AddCommand(OR, left->GetName(), EAX);
-	cg->AddCommand(PUSH, left->GetName());
+	cg->AddCommand(OR, _EAX, EBX);
+	cg->AddCommand(PUSH, _EAX);
 }
 
 //------------------------------
@@ -360,18 +376,18 @@ void NodeBinary::BinaryOr(CodeGen *cg) {
 }
 
 void NodeBinary::ShiftLeft(CodeGen *cg) {
-	cg->AddCommand(MOV, ECX, "1");
+	cg->AddCommand(MOV, ECX, ONE);
 	cg->AddCommand(RCL, EAX, CL);
 }
 
 void NodeBinary::ShiftRight(CodeGen *cg) {
-	cg->AddCommand(MOV, ECX, "1");
+	cg->AddCommand(MOV, ECX, ONE);
 	cg->AddCommand(RCR, EAX, CL);
 }
 
 void NodeBinary::MoreEqual(CodeGen *cg) {
 	cg->AddCommand(CMP, EAX, EBX);
-	cg->AddCommand(MOV, EAX, "0");
+	cg->AddCommand(MOV, EAX, DEF);
 
 	string labelTrue =  GetRandomId("label_");
 	string labelFalse = GetRandomId("label_");
@@ -379,13 +395,13 @@ void NodeBinary::MoreEqual(CodeGen *cg) {
 	cg->JumpLabel(JGE, labelTrue);
 	cg->JumpLabel(JMP, labelFalse);
 	cg->AddLabel(labelTrue);
-	cg->AddCommand(MOV, EAX, "1");
+	cg->AddCommand(MOV, EAX, ONE);
 	cg->AddLabel(labelFalse);
 }
 
 void NodeBinary::LessEqual(CodeGen *cg) {
 	cg->AddCommand(CMP, EAX, EBX);
-	cg->AddCommand(MOV, EAX, "0");
+	cg->AddCommand(MOV, EAX, DEF);
 
 	string labelTrue =  GetRandomId("label_");
 	string labelFalse = GetRandomId("label_");
@@ -393,13 +409,13 @@ void NodeBinary::LessEqual(CodeGen *cg) {
 	cg->JumpLabel(JLE, labelTrue);
 	cg->JumpLabel(JMP, labelFalse);
 	cg->AddLabel(labelTrue);
-	cg->AddCommand(MOV, EAX, "1");
+	cg->AddCommand(MOV, EAX, ONE);
 	cg->AddLabel(labelFalse);
 }
 
 void NodeBinary::More(CodeGen *cg) {
 	cg->AddCommand(CMP, EAX, EBX);
-	cg->AddCommand(MOV, EAX, "0");
+	cg->AddCommand(MOV, EAX, DEF);
 
 	string labelTrue =  GetRandomId("label_");
 	string labelFalse = GetRandomId("label_");
@@ -407,13 +423,13 @@ void NodeBinary::More(CodeGen *cg) {
 	cg->JumpLabel(JG, labelTrue);
 	cg->JumpLabel(JMP, labelFalse);
 	cg->AddLabel(labelTrue);
-	cg->AddCommand(MOV, EAX, "1");
+	cg->AddCommand(MOV, EAX, ONE);
 	cg->AddLabel(labelFalse);
 }
 
 void NodeBinary::Less(CodeGen *cg) {
 	cg->AddCommand(CMP, EAX, EBX);
-	cg->AddCommand(MOV, EAX, "0");
+	cg->AddCommand(MOV, EAX, DEF);
 
 	string labelTrue =  GetRandomId("label_");
 	string labelFalse = GetRandomId("label_");
@@ -421,13 +437,13 @@ void NodeBinary::Less(CodeGen *cg) {
 	cg->JumpLabel(JL, labelTrue);
 	cg->JumpLabel(JMP, labelFalse);
 	cg->AddLabel(labelTrue);
-	cg->AddCommand(MOV, EAX, "1");
+	cg->AddCommand(MOV, EAX, ONE);
 	cg->AddLabel(labelFalse);
 }
 
 void NodeBinary::Equal(CodeGen *cg) {
 	cg->AddCommand(CMP, EAX, EBX);
-	cg->AddCommand(MOV, EAX, "0");
+	cg->AddCommand(MOV, EAX, DEF);
 
 	string labelTrue =  GetRandomId("label_");
 	string labelFalse = GetRandomId("label_");
@@ -435,13 +451,13 @@ void NodeBinary::Equal(CodeGen *cg) {
 	cg->JumpLabel(JE, labelTrue);
 	cg->JumpLabel(JMP, labelFalse);
 	cg->AddLabel(labelTrue);
-	cg->AddCommand(MOV, EAX, "1");
+	cg->AddCommand(MOV, EAX, ONE);
 	cg->AddLabel(labelFalse);
 }
 
 void NodeBinary::NotEqual(CodeGen *cg) {
 	cg->AddCommand(CMP, EAX, EBX);
-	cg->AddCommand(MOV, EAX, "0");
+	cg->AddCommand(MOV, EAX, DEF);
 
 	string labelTrue =  GetRandomId("label_");
 	string labelFalse = GetRandomId("label_");
@@ -449,7 +465,7 @@ void NodeBinary::NotEqual(CodeGen *cg) {
 	cg->JumpLabel(JNE, labelTrue);
 	cg->JumpLabel(JMP, labelFalse);
 	cg->AddLabel(labelTrue);
-	cg->AddCommand(MOV, EAX, "1");
+	cg->AddCommand(MOV, EAX, ONE);
 	cg->AddLabel(labelFalse);
 }
 
@@ -466,12 +482,12 @@ void NodeBinary::Mul(CodeGen *cg) {
 }
 
 void NodeBinary::Div(CodeGen *cg) {
-	cg->AddCommand(MOV, EDX, "0");
+	cg->AddCommand(MOV, EDX, DEF);
 	cg->AddCommand(DIV, EBX);
 }
 
 void NodeBinary::DivideByMod(CodeGen *cg) {
-	cg->AddCommand(MOV, EDX, "0");
+	cg->AddCommand(MOV, EDX, DEF);
 	cg->AddCommand(DIV, EBX);
 	cg->AddCommand(MOV, EAX, EDX);
 }

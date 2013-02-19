@@ -8,6 +8,8 @@
 
 enum Register {
 	DEF,
+	ONE,
+
 	EAX,
 	EBX,
 	ECX,
@@ -76,6 +78,9 @@ protected:
 
 	string GetReg(Register _reg) {
 		switch(_reg) {
+			case DEF:	return "0";
+			case ONE:	return "1";
+
 			case EAX:	return "eax";
 			case EBX:	return "ebx";
 			case ECX:	return "ecx";
@@ -83,6 +88,8 @@ protected:
 
 			case _EAX:	return "[eax]";
 			case _EBX:	return "[ebx]";
+			case _ECX:	return "[ecx]";
+			case _EDX:	return "[edx]";
 
 			case ESP:	return "esp";
 			case EBP:	return "ebp";

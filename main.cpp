@@ -20,9 +20,9 @@ int main(int argc, char *argv[]) {
 		switch(argc) {
 			case 1: {
 				//GetHelp();
-				Scanner scanner("input.txt");
+				/*Scanner scanner("input.txt");
 				Parser parser(&scanner, 1, 1); //no semantics, printing tree
-				Generator gen(&parser, 0);
+				Generator gen(&parser, 0);*/
 				break;
 			}
 			case 2: {
